@@ -37,6 +37,7 @@ from espnet.nets.pytorch_backend.nets_utils import to_torch_tensor
 from espnet.nets.pytorch_backend.rnn.attentions import att_for
 from espnet.nets.pytorch_backend.rnn.decoders import decoder_for
 from espnet.nets.pytorch_backend.rnn.encoders import encoder_for
+from espnet.nets.pytorch_backend.rnn.wav2vec_encoder import wav2vec_encoder_for
 from espnet.nets.st_interface import STInterface
 
 CTC_LOSS_THRESHOLD = 10000
@@ -84,6 +85,8 @@ class E2E(STInterface, torch.nn.Module):
         """Add arguments for the encoder."""
         group = parser.add_argument_group("E2E encoder setting")
         # encoder
+        group.add_argument('--wav2vec', action='store_true', help='Input features are wav2vec or not')
+        group.add_argument('--idim_reduction', action='store_true', help='Reduce input dimension or not')
         group.add_argument('--etype', default='blstmp', type=str,
                            choices=['lstm', 'blstm', 'lstmp', 'blstmp', 'vgglstmp', 'vggblstmp', 'vgglstm', 'vggblstm',
                                     'gru', 'bgru', 'grup', 'bgrup', 'vgggrup', 'vggbgrup', 'vgggru', 'vggbgru'],
@@ -196,7 +199,10 @@ class E2E(STInterface, torch.nn.Module):
         self.replace_sos = getattr(args, "replace_sos", False)
 
         # encoder
-        self.enc = encoder_for(args, idim, self.subsample)
+        if args.wav2vec:
+            self.enc = wav2vec_encoder_for(args, idim, self.subsample)
+        else:
+            self.enc = encoder_for(args, idim, self.subsample)
         # attention (ST)
         self.att = att_for(args)
         # decoder (ST)
