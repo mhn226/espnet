@@ -52,13 +52,17 @@ def get_parser():
         v1: Default API. It only supports the ASRInterface.recognize method and DefaultRNNLM.
         v2: Experimental API. It supports any models that implements ScorerInterface.''')
     # task related
-    parser.add_argument('--trans-json', type=str,
-                        help='Filename of translation data (json)')
+    #parser.add_argument('--trans-json', type=str,
+    #                    help='Filename of translation data (json)')
+    parser.add_argument('--trans-json', nargs='+', default=[],
+                        help='List of file names of translation data (json)')
     parser.add_argument('--result-label', type=str, required=True,
                         help='Filename of result label data (json)')
     # model (parameter) related
-    parser.add_argument('--model', type=str, required=True,
-                        help='Model file parameters to read')
+    #parser.add_argument('--model', type=str, required=True,
+    #                    help='Model file parameters to read')
+    parser.add_argument('--model', nargs='+', default=[],
+                        help='List of model file parameters to read')
     # search related
     parser.add_argument('--nbest', type=int, default=1,
                         help='Output N-best hypotheses')
