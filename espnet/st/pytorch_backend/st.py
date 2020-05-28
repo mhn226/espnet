@@ -878,9 +878,9 @@ def trans_ensemble(args):
                     batch_ = [(name, js_data[name])]
                     feat_ = load_inputs_and_targets(batch_)[0][0]
                     feat.append(feat_)
-                if args.streaming_mode == 'window':
+                if hasattr(args, 'streaming_mode') and args.streaming_mode == 'window':
                     logging.info('Using streaming recognizer with window size %d frames', args.streaming_window)
-                elif args.streaming_mode == 'segment':
+                elif hasattr(args, 'streaming_mode') and args.streaming_mode == 'segment':
                     logging.info('Using streaming recognizer with threshold value %d', args.streaming_min_blank_dur)
                 else:
                     # For now rnnlm = None

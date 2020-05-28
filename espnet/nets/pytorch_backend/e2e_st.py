@@ -199,7 +199,7 @@ class E2E(STInterface, torch.nn.Module):
         self.replace_sos = getattr(args, "replace_sos", False)
 
         # encoder
-        if args.wav2vec:
+        if hasattr(args, 'wav2vec') and args.wav2vec:
             self.enc = wav2vec_encoder_for(args, idim, self.subsample)
         else:
             self.enc = encoder_for(args, idim, self.subsample)
