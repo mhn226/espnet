@@ -525,7 +525,6 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
     # preprate sos
     if models[0].dec.replace_sos and models[0].trans_args.tgt_lang:
         y = train_args[0].char_list.index(models[0].trans_args.tgt_lang)
-
     else:
         y = models[0].dec.sos
     logging.info('<sos> index: ' + str(y))
@@ -590,50 +589,50 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
             hyps_best_kept = sorted(
                 hyps_best_kept, key=lambda x: x['score'], reverse=True)[:beam]
 
-            # sort and get nbest
-            hyps = hyps_best_kept
-            logging.debug('number of pruned hypotheses: ' + str(len(hyps)))
-            logging.debug('best hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyps[0]['yseq'][1:]]))
-            # add eos in the final loop to avoid that there are no ended hyps
-            if i == maxlen - 1:
-                logging.info('adding <eos> in the last position in the loop')
-                for hyp in hyps:
-                    hyp['yseq'].append(models[0].dec.eos)
-
-            # add ended hypotheses to a final list, and removed them from current hypotheses
-            # (this will be a problem, number of hyps < beam)
-            remained_hyps = []
+        # sort and get nbest
+        hyps = hyps_best_kept
+        logging.debug('number of pruned hypotheses: ' + str(len(hyps)))
+        logging.debug('best hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyps[0]['yseq'][1:]]))
+        # add eos in the final loop to avoid that there are no ended hyps
+        if i == maxlen - 1:
+            logging.info('adding <eos> in the last position in the loop')
             for hyp in hyps:
-                if hyp['yseq'][-1] == models[0].dec.eos:
-                    # only store the sequence that has more than minlen outputs
-                    # also add penalty
-                    if len(hyp['yseq']) > minlen:
-                        hyp['score'] += (i + 1) * penalty
-                        if rnnlm:  # Word LM needs to add final <eos> score
-                            hyp['score'] += models[0].trans_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
-                        ended_hyps.append(hyp)
-                else:
-                    remained_hyps.append(hyp)
+                hyp['yseq'].append(models[0].dec.eos)
 
-            # end detection
-            if end_detect(ended_hyps, i) and models[0].trans_args.maxlenratio == 0.0:
-                logging.info('end detected at %d', i)
-                break
-
-            hyps = remained_hyps
-            if len(hyps) > 0:
-                logging.debug('remaining hypotheses: ' + str(len(hyps)))
+        # add ended hypotheses to a final list, and removed them from current hypotheses
+        # (this will be a problem, number of hyps < beam)
+        remained_hyps = []
+        for hyp in hyps:
+            if hyp['yseq'][-1] == models[0].dec.eos:
+                # only store the sequence that has more than minlen outputs
+                # also add penalty
+                if len(hyp['yseq']) > minlen:
+                    hyp['score'] += (i + 1) * penalty
+                    if rnnlm:  # Word LM needs to add final <eos> score
+                        hyp['score'] += models[0].trans_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
+                    ended_hyps.append(hyp)
             else:
-                logging.info('no hypothesis. Finish decoding.')
-                break
+                remained_hyps.append(hyp)
 
-            for hyp in hyps:
-                logging.debug('hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyp['yseq'][1:]]))
+        # end detection
+        if end_detect(ended_hyps, i) and models[0].trans_args.maxlenratio == 0.0:
+            logging.info('end detected at %d', i)
+            break
 
-            logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
+        hyps = remained_hyps
+        if len(hyps) > 0:
+            logging.debug('remaining hypotheses: ' + str(len(hyps)))
+        else:
+            logging.info('no hypothesis. Finish decoding.')
+            break
 
-        nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
-                     :min(len(ended_hyps), models[0].trans_args.nbest)]
+        for hyp in hyps:
+            logging.debug('hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyp['yseq'][1:]]))
+
+        logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
+
+    nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
+                 :min(len(ended_hyps), models[0].trans_args.nbest)]
 
     # check number of hypotheses
     if len(nbest_hyps) == 0:
