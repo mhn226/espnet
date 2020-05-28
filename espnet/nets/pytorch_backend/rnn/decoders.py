@@ -256,6 +256,20 @@ class Decoder(torch.nn.Module, ScorerInterface):
 
         return self.loss, acc, ppl
 
+    def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
+        ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
+        ey.unsqueeze(0)
+        att_c, att_w = self.att[0](h.unsqueeze(0), [h.size(0)], self.dropout_dec[0](hyp['z_prev'][model_index][0]),
+                                   hyp['a_prev'][model_index])
+        ey = torch.cat((ey, att_c), dim=1)  # utt(1) x (zdim + hdim)
+        z_list, c_list = self.rnn_forward(ey, z_list, c_list, hyp['z_prev'][model_index], hyp['c_prev'][model_index])
+        # get nbest local scores and their ids
+        if self.context_residual:
+            logits = self.output(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))
+        else:
+            logits = self.output(self.dropout_dec[-1](z_list[-1]))
+        return logits, z_list, c_list, att_w
+
     def recognize_beam(self, h, lpz, recog_args, char_list, rnnlm=None, strm_idx=0):
         """beam search implementation
 

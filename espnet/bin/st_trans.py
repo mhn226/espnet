@@ -88,6 +88,9 @@ def get_parser():
     # multilingual related
     parser.add_argument('--tgt-lang', default=False, type=str,
                         help='target language ID (e.g., <en>, <de>, and <fr> etc.)')
+
+    # ensembling related
+    parser.add_argument('--ensemble', action='store_true', help='Use ensembling action or not')
     return parser
 
 
@@ -139,10 +142,16 @@ def main(args):
     logging.info('backend = ' + args.backend)
     if args.backend == "pytorch":
         # Experimental API that supports custom LMs
-        from espnet.st.pytorch_backend.st import trans
         if args.dtype != "float32":
             raise NotImplementedError(f"`--dtype {args.dtype}` is only available with `--api v2`")
-        trans(args)
+        if args.ensemble:
+            from espnet.st.pytorch_backend.st import trans_ensemble
+            if args.batchsize != 0:
+                raise ValueError("Bath size must be 0 for this option.")
+            trans_ensemble(args)
+        else:
+            from espnet.st.pytorch_backend.st import trans
+            trans(args)
     else:
         raise ValueError("Only pytorch are supported.")
 

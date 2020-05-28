@@ -484,6 +484,22 @@ class E2E(STInterface, torch.nn.Module):
         y = self.dec.recognize_beam(hs[0], lpz, trans_args, char_list, rnnlm)
         return y
 
+    def translate_step(self, hs, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None):
+        """E2E beam search
+
+        :param ndarray x: input acoustic feature (T, D)
+        :param Namespace recog_args: argument Namespace containing options
+        :param list char_list: list of characters
+        :param torch.nn.Module rnnlm: language model module
+        :return: N-best decoding results
+        :rtype: list
+        """
+        # 2. Decoder
+        # decode the first utterance
+        local_att_scores, z_list, c_list, att_w_list = self.dec.recognize_step(hs, vy, hyp, z_list, c_list, model_index,
+                                                                               recog_args, char_list, rnnlm)
+        return local_att_scores, z_list, c_list, att_w_list
+
     def translate_batch(self, xs, trans_args, char_list, rnnlm=None):
         """E2E beam search.
 

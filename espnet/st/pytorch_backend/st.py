@@ -9,14 +9,18 @@
 import copy
 import json
 import logging
+import multiprocessing
 import os
 import sys
+from argparse import Namespace
 
+import six
 from chainer import training
 from chainer.training import extensions
 import numpy as np
 from tensorboardX import SummaryWriter
 import torch
+import torch.nn.functional as F
 
 from espnet.asr.asr_utils import adadelta_eps_decay
 from espnet.asr.asr_utils import adam_lr_decay
@@ -30,6 +34,7 @@ from espnet.asr.asr_utils import torch_resume
 from espnet.asr.asr_utils import torch_snapshot
 from espnet.asr.pytorch_backend.asr_init import load_trained_model
 from espnet.asr.pytorch_backend.asr_init import load_trained_modules
+from espnet.nets.e2e_asr_common import end_detect
 
 from espnet.nets.pytorch_backend.e2e_asr import pad_list
 import espnet.nets.pytorch_backend.lm.default as lm_pytorch
@@ -48,6 +53,8 @@ from espnet.utils.training.train_utils import set_early_stop
 from espnet.asr.pytorch_backend.asr import CustomConverter as ASRCustomConverter
 from espnet.asr.pytorch_backend.asr import CustomEvaluator
 from espnet.asr.pytorch_backend.asr import CustomUpdater
+
+import espnet.lm.pytorch_backend.extlm as extlm_pytorch
 
 import matplotlib
 matplotlib.use('Agg')
@@ -473,6 +480,438 @@ def trans(args):
                 batch = [(name, js[name]) for name in names]
                 feats = load_inputs_and_targets(batch)[0]
                 nbest_hyps = model.translate_batch(feats, args, train_args.char_list, rnnlm=rnnlm)
+
+                for i, nbest_hyp in enumerate(nbest_hyps):
+                    name = names[i]
+                    new_js[name] = add_results_to_json(js[name], nbest_hyp, train_args.char_list)
+
+    with open(args.result_label, 'wb') as f:
+        f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
+
+def enc_worker(model, feat):
+    return model.encode(feat)
+
+def dec_worker(model, idx, hs, z_list, c_list, train_args, vy, hyp, rnnlm):
+    return model.recognize_step(hs, vy, hyp, z_list, c_list,
+                                 idx, model.recog_args, train_args.char_list, rnnlm)
+
+def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool):
+    manager = multiprocessing.Manager()
+    # encoder
+    hs = [None] * len(models)
+    enc_results = enc_pool.starmap(enc_worker, zip(models, feat))
+    for idx, result in enumerate(enc_results):
+        hs[idx] = result
+
+    # initialization
+    c_list = [None] * len(models)
+    z_list = [None] * len(models)
+    for i, model in enumerate(models):
+        c_list[i] = [model.dec.zero_state(hs[i].unsqueeze(0))]
+        z_list[i] = [model.dec.zero_state(hs[i].unsqueeze(0))]
+        for _ in six.moves.range(1, model.dec.dlayers):
+            c_list[i].append(model.dec.zero_state(hs[i].unsqueeze(0)))
+            z_list[i].append(model.dec.zero_state(hs[i].unsqueeze(0)))
+
+    a = [None] * (len(models))
+    att_w_list = [None] * (len(models))
+    for i, model in enumerate(models):
+        model.dec.att[0].reset()
+
+    beam = models[0].recog_args.beam_size
+    penalty = models[0].recog_args.penalty
+
+
+    # preprate sos
+    if models[0].dec.replace_sos and models[0].recog_args.tgt_lang:
+        y = train_args[0].char_list.index(models[0].recog_args.tgt_lang)
+
+    else:
+        y = models[0].dec.sos
+    logging.info('<sos> index: ' + str(y))
+    logging.info('<sos> mark: ' + train_args[0].char_list[y])
+    vy = hs[0].new_zeros(1).long()
+
+    maxlen = np.amin([hs[idx].size(0) for idx in range(len(models))])
+    if models[0].recog_args.maxlenratio == 0:
+        maxlen = hs[0].shape[0]
+    else:
+        # maxlen >= 1
+        maxlen = max(1, int(models[0].recog_args.maxlenratio * hs[0].size(0)))
+    minlen = int(models[0].recog_args.minlenratio * hs[0].size(0))
+    logging.info('max output length: ' + str(maxlen))
+    logging.info('min output length: ' + str(minlen))
+
+    hyp = {'score': 0.0, 'yseq': [y], 'c_prev': c_list, 'z_prev': z_list, 'a_prev': a}
+
+    hyps = [hyp]
+    ended_hyps = []
+
+    model_indices = [x for x in range(len(models))]
+    # beam search
+    for i in six.moves.range(maxlen):
+        logging.debug('position ' + str(i))
+        hyps_best_kept = []
+        for hyp in hyps:
+            vy.unsqueeze(1)
+            vy[0] = hyp['yseq'][i]
+            logits = [None] * len(models)
+            for model_index, model in enumerate(models):
+                logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
+                    model_index] = model.recognize_step(hs[model_index],
+                                                        vy, hyp, z_list[model_index], c_list[model_index], model_index,
+                                                        model.recog_args, train_args[model_index].char_list, rnnlm)
+            logits = torch.mean(torch.stack(logits), dim=0)
+            local_att_scores = F.log_softmax(logits, dim=1)
+
+            if rnnlm:
+                # rnnlm_state, local_lm_scores = rnnlm.predict(hyp['rnnlm_prev'], vy)
+                # local_scores = local_att_scores + recog_args.lm_weight * local_lm_scores
+                print('Not yet supported')
+            else:
+                local_scores = local_att_scores
+
+            local_best_scores, local_best_ids = torch.topk(local_scores, beam, dim=1)
+
+            for j in six.moves.range(beam):
+                new_hyp = {}
+                # [:] is needed!
+                new_hyp['z_prev'] = [z_list[idx][:] for idx in range(len(models))]
+                new_hyp['c_prev'] = [c_list[idx][:] for idx in range(len(models))]
+                new_hyp['a_prev'] = [att_w_list[idx][:] for idx in range(len(models))]
+                new_hyp['score'] = hyp['score'] + local_best_scores[0, j]
+                new_hyp['yseq'] = [0] * (1 + len(hyp['yseq']))
+                new_hyp['yseq'][:len(hyp['yseq'])] = hyp['yseq']
+                new_hyp['yseq'][len(hyp['yseq'])] = int(local_best_ids[0, j])
+                #if rnnlm:
+                #    new_hyp['rnnlm_prev'] = rnnlm_state
+                hyps_best_kept.append(new_hyp)
+
+            hyps_best_kept = sorted(
+                hyps_best_kept, key=lambda x: x['score'], reverse=True)[:beam]
+
+            # sort and get nbest
+            hyps = hyps_best_kept
+            logging.debug('number of pruned hypotheses: ' + str(len(hyps)))
+            logging.debug('best hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyps[0]['yseq'][1:]]))
+            # add eos in the final loop to avoid that there are no ended hyps
+            if i == maxlen - 1:
+                logging.info('adding <eos> in the last position in the loop')
+                for hyp in hyps:
+                    hyp['yseq'].append(models[0].dec.eos)
+
+            # add ended hypotheses to a final list, and removed them from current hypotheses
+            # (this will be a problem, number of hyps < beam)
+            remained_hyps = []
+            for hyp in hyps:
+                if hyp['yseq'][-1] == models[0].dec.eos:
+                    # only store the sequence that has more than minlen outputs
+                    # also add penalty
+                    if len(hyp['yseq']) > minlen:
+                        hyp['score'] += (i + 1) * penalty
+                        if rnnlm:  # Word LM needs to add final <eos> score
+                            hyp['score'] += models[0].recog_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
+                        ended_hyps.append(hyp)
+                else:
+                    remained_hyps.append(hyp)
+
+            # end detection
+            if end_detect(ended_hyps, i) and models[0].recog_args.maxlenratio == 0.0:
+                logging.info('end detected at %d', i)
+                break
+
+            hyps = remained_hyps
+            if len(hyps) > 0:
+                logging.debug('remaining hypotheses: ' + str(len(hyps)))
+            else:
+                logging.info('no hypothesis. Finish decoding.')
+                break
+
+            for hyp in hyps:
+                logging.debug('hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyp['yseq'][1:]]))
+
+            logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
+
+        nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
+                     :min(len(ended_hyps), models[0].recog_args.nbest)]
+
+        # check number of hypotheses
+        if len(nbest_hyps) == 0:
+            logging.warning('there is no N-best results, perform recognition again with smaller minlenratio.')
+            # should copy because Namespace will be overwritten globally
+            models[0].recog_args = Namespace(**vars(models[0].recog_args))
+            models[0].recog_args.minlenratio = max(0.0, models[0].recog_args.minlenratio - 0.1)
+            return trans_step_ensemble(models, feat, rnnlm, train_args)
+
+        logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
+        logging.info('normalized log probability: ' + str(nbest_hyps[0]['score'] / len(nbest_hyps[0]['yseq'])))
+
+        return nbest_hyps
+
+def trans_step_ensemble(models, feat, rnnlm, train_args):
+    # encoder
+    hs = []
+    for i, model in enumerate(models):
+        #hs.append(model.encode(feat[i]).unsqueeze(0))
+        hs.append(model.encode(feat[i]))
+
+    # initialization
+    c_list = [None] * len(models)
+    z_list = [None] * len(models)
+    for i, model in enumerate(models):
+        c_list[i] = [model.dec.zero_state(hs[i].unsqueeze(0))]
+        z_list[i] = [model.dec.zero_state(hs[i].unsqueeze(0))]
+        for _ in six.moves.range(1, model.dec.dlayers):
+            c_list[i].append(model.dec.zero_state(hs[i].unsqueeze(0)))
+            z_list[i].append(model.dec.zero_state(hs[i].unsqueeze(0)))
+
+    a = [None] * (len(models))
+    att_w_list = [None] * (len(models))
+    for i, model in enumerate(models):
+        model.dec.att[0].reset()
+
+    beam = models[0].recog_args.beam_size
+    penalty = models[0].recog_args.penalty
+
+
+    # preprate sos
+    if models[0].dec.replace_sos and models[0].recog_args.tgt_lang:
+        y = train_args[0].char_list.index(models[0].recog_args.tgt_lang)
+    else:
+        y = models[0].dec.sos
+    logging.info('<sos> index: ' + str(y))
+    logging.info('<sos> mark: ' + train_args[0].char_list[y])
+    vy = hs[0].new_zeros(1).long()
+
+    maxlen = np.amin([hs[idx].size(0) for idx in range(len(models))])
+    if models[0].recog_args.maxlenratio == 0:
+        maxlen = hs[0].shape[0]
+    else:
+        # maxlen >= 1
+        maxlen = max(1, int(models[0].recog_args.maxlenratio * hs[0].size(0)))
+    minlen = int(models[0].recog_args.minlenratio * hs[0].size(0))
+    logging.info('max output length: ' + str(maxlen))
+    logging.info('min output length: ' + str(minlen))
+
+    hyp = {'score': 0.0, 'yseq': [y], 'c_prev': c_list, 'z_prev': z_list, 'a_prev': a}
+
+    hyps = [hyp]
+    ended_hyps = []
+
+    # beam search
+    for i in six.moves.range(maxlen):
+        logging.debug('position ' + str(i))
+        hyps_best_kept = []
+        for hyp in hyps:
+            vy.unsqueeze(1)
+            vy[0] = hyp['yseq'][i]
+            # local_att_scores = [None] * (len(models))
+            logits = [None] * (len(models))
+            for model_index, model in enumerate(models):
+                logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
+                    model_index] = model.recognize_step(hs[model_index],
+                                                        vy, hyp, z_list[model_index], c_list[model_index], model_index,
+                                                        model.recog_args, train_args[model_index].char_list, rnnlm)
+            logits = torch.mean(torch.stack(logits), dim=0)
+            local_att_scores = F.log_softmax(logits, dim=1)
+
+            if rnnlm:
+                # rnnlm_state, local_lm_scores = rnnlm.predict(hyp['rnnlm_prev'], vy)
+                # local_scores = local_att_scores + recog_args.lm_weight * local_lm_scores
+                print('Not yet supported')
+            else:
+                local_scores = local_att_scores
+
+            local_best_scores, local_best_ids = torch.topk(local_scores, beam, dim=1)
+            for j in six.moves.range(beam):
+                new_hyp = {}
+                # [:] is needed!
+                new_hyp['z_prev'] = [z_list[idx][:] for idx in range(len(models))]
+                new_hyp['c_prev'] = [c_list[idx][:] for idx in range(len(models))]
+                new_hyp['a_prev'] = [att_w_list[idx][:] for idx in range(len(models))]
+                new_hyp['score'] = hyp['score'] + local_best_scores[0, j]
+                new_hyp['yseq'] = [0] * (1 + len(hyp['yseq']))
+                new_hyp['yseq'][:len(hyp['yseq'])] = hyp['yseq']
+                new_hyp['yseq'][len(hyp['yseq'])] = int(local_best_ids[0, j])
+                #if rnnlm:
+                #    new_hyp['rnnlm_prev'] = rnnlm_state
+                hyps_best_kept.append(new_hyp)
+
+            hyps_best_kept = sorted(
+                hyps_best_kept, key=lambda x: x['score'], reverse=True)[:beam]
+
+        # sort and get nbest
+        hyps = hyps_best_kept
+        logging.debug('number of pruned hypotheses: ' + str(len(hyps)))
+        logging.debug('best hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyps[0]['yseq'][1:]]))
+        # add eos in the final loop to avoid that there are no ended hyps
+        if i == maxlen - 1:
+            logging.info('adding <eos> in the last position in the loop')
+            for hyp in hyps:
+                hyp['yseq'].append(models[0].dec.eos)
+
+        # add ended hypotheses to a final list, and removed them from current hypotheses
+        # (this will be a problem, number of hyps < beam)
+        remained_hyps = []
+        for hyp in hyps:
+            if hyp['yseq'][-1] == models[0].dec.eos:
+                # only store the sequence that has more than minlen outputs
+                # also add penalty
+                if len(hyp['yseq']) > minlen:
+                    hyp['score'] += (i + 1) * penalty
+                    if rnnlm:  # Word LM needs to add final <eos> score
+                        hyp['score'] += models[0].recog_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
+                    ended_hyps.append(hyp)
+            else:
+                remained_hyps.append(hyp)
+
+        # end detection
+        if end_detect(ended_hyps, i) and models[0].recog_args.maxlenratio == 0.0:
+            logging.info('end detected at %d', i)
+            break
+
+        hyps = remained_hyps
+        if len(hyps) > 0:
+            logging.debug('remaining hypotheses: ' + str(len(hyps)))
+        else:
+            logging.info('no hypothesis. Finish decoding.')
+            break
+
+        for hyp in hyps:
+            logging.debug('hypo: ' + ''.join([train_args[0].char_list[int(x)] for x in hyp['yseq'][1:]]))
+
+        logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
+
+    nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
+                 :min(len(ended_hyps), models[0].recog_args.nbest)]
+
+    # check number of hypotheses
+    if len(nbest_hyps) == 0:
+        logging.warning('there is no N-best results, perform recognition again with smaller minlenratio.')
+        # should copy because Namespace will be overwritten globally
+        models[0].recog_args = Namespace(**vars(models[0].recog_args))
+        models[0].recog_args.minlenratio = max(0.0, models[0].recog_args.minlenratio - 0.1)
+        return trans_step_ensemble(models, feat, rnnlm, train_args)
+
+    logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
+    logging.info('normalized log probability: ' + str(nbest_hyps[0]['score'] / len(nbest_hyps[0]['yseq'])))
+
+    return nbest_hyps
+
+def trans_ensemble(args):
+    """Decode with the given args.
+
+    Args:
+        args (namespace): The program arguments.
+    """
+    set_deterministic_pytorch(args)
+    models = [None] * len(args.model)
+    train_args = [None] * len(args.model)
+    for i, model_ in enumerate(args.model):
+        models[i], train_args[i] = load_trained_model(model_)
+        assert isinstance(models[i], STInterface)
+        models[i].recog_args = args
+
+    # read rnnlm
+    if args.rnnlm:
+        rnnlm_args = get_model_conf(args.rnnlm, args.rnnlm_conf)
+        if getattr(rnnlm_args, "model_module", "default") != "default":
+            raise ValueError("use '--api v2' option to decode with non-default language model")
+        rnnlm = lm_pytorch.ClassifierWithState(
+            lm_pytorch.RNNLM(
+                len(train_args.char_list), rnnlm_args.layer, rnnlm_args.unit))
+        torch_load(args.rnnlm, rnnlm)
+        rnnlm.eval()
+    else:
+        rnnlm = None
+
+    if args.word_rnnlm:
+        rnnlm_args = get_model_conf(args.word_rnnlm, args.word_rnnlm_conf)
+        word_dict = rnnlm_args.char_list_dict
+        char_dict = {x: i for i, x in enumerate(train_args.char_list)}
+        word_rnnlm = lm_pytorch.ClassifierWithState(lm_pytorch.RNNLM(
+            len(word_dict), rnnlm_args.layer, rnnlm_args.unit))
+        torch_load(args.word_rnnlm, word_rnnlm)
+        word_rnnlm.eval()
+
+        if rnnlm is not None:
+            rnnlm = lm_pytorch.ClassifierWithState(
+                extlm_pytorch.MultiLevelLM(word_rnnlm.predictor,
+                                           rnnlm.predictor, word_dict, char_dict))
+        else:
+            rnnlm = lm_pytorch.ClassifierWithState(
+                extlm_pytorch.LookAheadWordLM(word_rnnlm.predictor,
+                                              word_dict, char_dict))
+    # gpu
+    if args.ngpu == 1:
+        gpu_id = list(range(args.ngpu))
+        logging.info('gpu id: ' + str(gpu_id))
+        for model in models:
+            model.cuda()
+        #if rnnlm:
+        #    rnnlm.cuda()
+
+    # read json data
+    # read two (or more) separate json files
+    # each belongs to either fbank or wav2vec
+    # cannot do it with cpcaudio yet since the input senquence lengths are not identical
+    js = []
+    for recog_json_ in args.recog_json:
+        with open(recog_json_, 'rb') as f:
+            tmp = json.load(f)['utts']
+            js.append(tmp)
+    new_js = {}
+    load_inputs_and_targets = LoadInputsAndTargets(
+        mode='asr', load_output=False, sort_in_input_length=False,
+        preprocess_conf=train_args[0].preprocess_conf
+        if args.preprocess_conf is None else args.preprocess_conf,
+        preprocess_args={'train': False})
+
+    if args.batchsize == 0:
+        with torch.no_grad():
+            enc_pool = multiprocessing.Pool(processes=len(models))
+            # dec_pool = multiprocessing.Pool(processes=len(models))
+            for idx, name in enumerate(js[0].keys(), 1):
+                logging.info('(%d/%d) decoding ' + name, idx, len(js[0].keys()))
+                feat = []
+                for js_data in js:
+                    batch_ = [(name, js_data[name])]
+                    feat_ = load_inputs_and_targets(batch_)[0][0]
+                    feat.append(feat_)
+                if args.streaming_mode == 'window':
+                    logging.info('Using streaming recognizer with window size %d frames', args.streaming_window)
+                elif args.streaming_mode == 'segment':
+                    logging.info('Using streaming recognizer with threshold value %d', args.streaming_min_blank_dur)
+                else:
+                    # For now rnnlm = None
+                    rnnlm = None
+                    # nbest_hyps = recog_step_ensemble(models, feat, rnnlm, train_args)
+                    # nbest_hyps = recog_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool, dec_pool)
+                    nbest_hyps = trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
+                new_js[name] = add_results_to_json(js[0][name], nbest_hyps, train_args[0].char_list)
+            enc_pool.close()
+            enc_pool.join()
+    else:
+        """ Don't care about this for now
+        """
+
+        def grouper(n, iterable, fillvalue=None):
+            kargs = [iter(iterable)] * n
+            return zip_longest(*kargs, fillvalue=fillvalue)
+
+        # sort data if batchsize > 1
+        keys = list(js.keys())
+        if args.batchsize > 1:
+            feat_lens = [js[key]['input'][0]['shape'][0] for key in keys]
+            sorted_index = sorted(range(len(feat_lens)), key=lambda i: -feat_lens[i])
+            keys = [keys[i] for i in sorted_index]
+
+        with torch.no_grad():
+            for names in grouper(args.batchsize, keys, None):
+                names = [name for name in names if name]
+                batch = [(name, js[name]) for name in names]
+                feats = load_inputs_and_targets(batch)[0]
+                nbest_hyps = model.recognize_batch(feats, args, train_args.char_list, rnnlm=rnnlm)
 
                 for i, nbest_hyp in enumerate(nbest_hyps):
                     name = names[i]
