@@ -635,18 +635,18 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
         nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
                      :min(len(ended_hyps), models[0].trans_args.nbest)]
 
-        # check number of hypotheses
-        if len(nbest_hyps) == 0:
-            logging.warning('there is no N-best results, perform translation again with smaller minlenratio.')
-            # should copy because Namespace will be overwritten globally
-            models[0].trans_args = Namespace(**vars(models[0].trans_args))
-            models[0].trans_args.minlenratio = max(0.0, models[0].trans_args.minlenratio - 0.1)
-            return trans_step_ensemble(models, feat, rnnlm, train_args)
+    # check number of hypotheses
+    if len(nbest_hyps) == 0:
+        logging.warning('there is no N-best results, perform translation again with smaller minlenratio.')
+        # should copy because Namespace will be overwritten globally
+        models[0].trans_args = Namespace(**vars(models[0].trans_args))
+        models[0].trans_args.minlenratio = max(0.0, models[0].trans_args.minlenratio - 0.1)
+        return trans_step_ensemble(models, feat, rnnlm, train_args)
 
-        logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
-        logging.info('normalized log probability: ' + str(nbest_hyps[0]['score'] / len(nbest_hyps[0]['yseq'])))
+    logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
+    logging.info('normalized log probability: ' + str(nbest_hyps[0]['score'] / len(nbest_hyps[0]['yseq'])))
 
-        return nbest_hyps
+    return nbest_hyps
 
 def trans_step_ensemble(models, feat, rnnlm, train_args):
     # encoder
