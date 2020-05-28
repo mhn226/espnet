@@ -492,7 +492,7 @@ def enc_worker(model, feat):
     return model.encode(feat)
 
 def dec_worker(model, idx, hs, z_list, c_list, train_args, vy, hyp, rnnlm):
-    return model.recognize_step(hs, vy, hyp, z_list, c_list,
+    return model.translate_step(hs, vy, hyp, z_list, c_list,
                                  idx, model.trans_args, train_args.char_list, rnnlm)
 
 def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool):
@@ -558,7 +558,7 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
             logits = [None] * len(models)
             for model_index, model in enumerate(models):
                 logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
-                    model_index] = model.recognize_step(hs[model_index],
+                    model_index] = model.translate_step(hs[model_index],
                                                         vy, hyp, z_list[model_index], c_list[model_index], model_index,
                                                         model.trans_args, train_args[model_index].char_list, rnnlm)
             logits = torch.mean(torch.stack(logits), dim=0)
@@ -709,7 +709,7 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
             logits = [None] * (len(models))
             for model_index, model in enumerate(models):
                 logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
-                    model_index] = model.recognize_step(hs[model_index],
+                    model_index] = model.translate_step(hs[model_index],
                                                         vy, hyp, z_list[model_index], c_list[model_index], model_index,
                                                         model.trans_args, train_args[model_index].char_list, rnnlm)
             logits = torch.mean(torch.stack(logits), dim=0)
