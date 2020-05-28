@@ -493,7 +493,7 @@ def enc_worker(model, feat):
 
 def dec_worker(model, idx, hs, z_list, c_list, train_args, vy, hyp, rnnlm):
     return model.recognize_step(hs, vy, hyp, z_list, c_list,
-                                 idx, model.recog_args, train_args.char_list, rnnlm)
+                                 idx, model.trans_args, train_args.char_list, rnnlm)
 
 def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool):
     manager = multiprocessing.Manager()
@@ -518,13 +518,13 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
     for i, model in enumerate(models):
         model.dec.att[0].reset()
 
-    beam = models[0].recog_args.beam_size
-    penalty = models[0].recog_args.penalty
+    beam = models[0].trans_args.beam_size
+    penalty = models[0].trans_args.penalty
 
 
     # preprate sos
-    if models[0].dec.replace_sos and models[0].recog_args.tgt_lang:
-        y = train_args[0].char_list.index(models[0].recog_args.tgt_lang)
+    if models[0].dec.replace_sos and models[0].trans_args.tgt_lang:
+        y = train_args[0].char_list.index(models[0].trans_args.tgt_lang)
 
     else:
         y = models[0].dec.sos
@@ -533,12 +533,12 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
     vy = hs[0].new_zeros(1).long()
 
     maxlen = np.amin([hs[idx].size(0) for idx in range(len(models))])
-    if models[0].recog_args.maxlenratio == 0:
+    if models[0].trans_args.maxlenratio == 0:
         maxlen = hs[0].shape[0]
     else:
         # maxlen >= 1
-        maxlen = max(1, int(models[0].recog_args.maxlenratio * hs[0].size(0)))
-    minlen = int(models[0].recog_args.minlenratio * hs[0].size(0))
+        maxlen = max(1, int(models[0].trans_args.maxlenratio * hs[0].size(0)))
+    minlen = int(models[0].trans_args.minlenratio * hs[0].size(0))
     logging.info('max output length: ' + str(maxlen))
     logging.info('min output length: ' + str(minlen))
 
@@ -560,13 +560,13 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
                 logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
                     model_index] = model.recognize_step(hs[model_index],
                                                         vy, hyp, z_list[model_index], c_list[model_index], model_index,
-                                                        model.recog_args, train_args[model_index].char_list, rnnlm)
+                                                        model.trans_args, train_args[model_index].char_list, rnnlm)
             logits = torch.mean(torch.stack(logits), dim=0)
             local_att_scores = F.log_softmax(logits, dim=1)
 
             if rnnlm:
                 # rnnlm_state, local_lm_scores = rnnlm.predict(hyp['rnnlm_prev'], vy)
-                # local_scores = local_att_scores + recog_args.lm_weight * local_lm_scores
+                # local_scores = local_att_scores + trans_args.lm_weight * local_lm_scores
                 print('Not yet supported')
             else:
                 local_scores = local_att_scores
@@ -610,13 +610,13 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
                     if len(hyp['yseq']) > minlen:
                         hyp['score'] += (i + 1) * penalty
                         if rnnlm:  # Word LM needs to add final <eos> score
-                            hyp['score'] += models[0].recog_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
+                            hyp['score'] += models[0].trans_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
                         ended_hyps.append(hyp)
                 else:
                     remained_hyps.append(hyp)
 
             # end detection
-            if end_detect(ended_hyps, i) and models[0].recog_args.maxlenratio == 0.0:
+            if end_detect(ended_hyps, i) and models[0].trans_args.maxlenratio == 0.0:
                 logging.info('end detected at %d', i)
                 break
 
@@ -633,14 +633,14 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
             logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
 
         nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
-                     :min(len(ended_hyps), models[0].recog_args.nbest)]
+                     :min(len(ended_hyps), models[0].trans_args.nbest)]
 
         # check number of hypotheses
         if len(nbest_hyps) == 0:
-            logging.warning('there is no N-best results, perform recognition again with smaller minlenratio.')
+            logging.warning('there is no N-best results, perform translation again with smaller minlenratio.')
             # should copy because Namespace will be overwritten globally
-            models[0].recog_args = Namespace(**vars(models[0].recog_args))
-            models[0].recog_args.minlenratio = max(0.0, models[0].recog_args.minlenratio - 0.1)
+            models[0].trans_args = Namespace(**vars(models[0].trans_args))
+            models[0].trans_args.minlenratio = max(0.0, models[0].trans_args.minlenratio - 0.1)
             return trans_step_ensemble(models, feat, rnnlm, train_args)
 
         logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
@@ -670,13 +670,13 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
     for i, model in enumerate(models):
         model.dec.att[0].reset()
 
-    beam = models[0].recog_args.beam_size
-    penalty = models[0].recog_args.penalty
+    beam = models[0].trans_args.beam_size
+    penalty = models[0].trans_args.penalty
 
 
     # preprate sos
-    if models[0].dec.replace_sos and models[0].recog_args.tgt_lang:
-        y = train_args[0].char_list.index(models[0].recog_args.tgt_lang)
+    if models[0].dec.replace_sos and models[0].trans_args.tgt_lang:
+        y = train_args[0].char_list.index(models[0].trans_args.tgt_lang)
     else:
         y = models[0].dec.sos
     logging.info('<sos> index: ' + str(y))
@@ -684,12 +684,12 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
     vy = hs[0].new_zeros(1).long()
 
     maxlen = np.amin([hs[idx].size(0) for idx in range(len(models))])
-    if models[0].recog_args.maxlenratio == 0:
+    if models[0].trans_args.maxlenratio == 0:
         maxlen = hs[0].shape[0]
     else:
         # maxlen >= 1
-        maxlen = max(1, int(models[0].recog_args.maxlenratio * hs[0].size(0)))
-    minlen = int(models[0].recog_args.minlenratio * hs[0].size(0))
+        maxlen = max(1, int(models[0].trans_args.maxlenratio * hs[0].size(0)))
+    minlen = int(models[0].trans_args.minlenratio * hs[0].size(0))
     logging.info('max output length: ' + str(maxlen))
     logging.info('min output length: ' + str(minlen))
 
@@ -711,13 +711,13 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
                 logits[model_index], z_list[model_index], c_list[model_index], att_w_list[
                     model_index] = model.recognize_step(hs[model_index],
                                                         vy, hyp, z_list[model_index], c_list[model_index], model_index,
-                                                        model.recog_args, train_args[model_index].char_list, rnnlm)
+                                                        model.trans_args, train_args[model_index].char_list, rnnlm)
             logits = torch.mean(torch.stack(logits), dim=0)
             local_att_scores = F.log_softmax(logits, dim=1)
 
             if rnnlm:
                 # rnnlm_state, local_lm_scores = rnnlm.predict(hyp['rnnlm_prev'], vy)
-                # local_scores = local_att_scores + recog_args.lm_weight * local_lm_scores
+                # local_scores = local_att_scores + trans_args.lm_weight * local_lm_scores
                 print('Not yet supported')
             else:
                 local_scores = local_att_scores
@@ -760,13 +760,13 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
                 if len(hyp['yseq']) > minlen:
                     hyp['score'] += (i + 1) * penalty
                     if rnnlm:  # Word LM needs to add final <eos> score
-                        hyp['score'] += models[0].recog_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
+                        hyp['score'] += models[0].trans_args.lm_weight * rnnlm.final(hyp['rnnlm_prev'])
                     ended_hyps.append(hyp)
             else:
                 remained_hyps.append(hyp)
 
         # end detection
-        if end_detect(ended_hyps, i) and models[0].recog_args.maxlenratio == 0.0:
+        if end_detect(ended_hyps, i) and models[0].trans_args.maxlenratio == 0.0:
             logging.info('end detected at %d', i)
             break
 
@@ -783,14 +783,14 @@ def trans_step_ensemble(models, feat, rnnlm, train_args):
         logging.debug('number of ended hypotheses: ' + str(len(ended_hyps)))
 
     nbest_hyps = sorted(ended_hyps, key=lambda x: x['score'], reverse=True)[
-                 :min(len(ended_hyps), models[0].recog_args.nbest)]
+                 :min(len(ended_hyps), models[0].trans_args.nbest)]
 
     # check number of hypotheses
     if len(nbest_hyps) == 0:
-        logging.warning('there is no N-best results, perform recognition again with smaller minlenratio.')
+        logging.warning('there is no N-best results, perform translation again with smaller minlenratio.')
         # should copy because Namespace will be overwritten globally
-        models[0].recog_args = Namespace(**vars(models[0].recog_args))
-        models[0].recog_args.minlenratio = max(0.0, models[0].recog_args.minlenratio - 0.1)
+        models[0].trans_args = Namespace(**vars(models[0].trans_args))
+        models[0].trans_args.minlenratio = max(0.0, models[0].trans_args.minlenratio - 0.1)
         return trans_step_ensemble(models, feat, rnnlm, train_args)
 
     logging.info('total log probability: ' + str(nbest_hyps[0]['score']))
@@ -810,7 +810,7 @@ def trans_ensemble(args):
     for i, model_ in enumerate(args.model):
         models[i], train_args[i] = load_trained_model(model_)
         assert isinstance(models[i], STInterface)
-        models[i].recog_args = args
+        models[i].trans_args = args
 
     # read rnnlm
     if args.rnnlm:
@@ -856,8 +856,8 @@ def trans_ensemble(args):
     # each belongs to either fbank or wav2vec
     # cannot do it with cpcaudio yet since the input senquence lengths are not identical
     js = []
-    for recog_json_ in args.recog_json:
-        with open(recog_json_, 'rb') as f:
+    for trans_json_ in args.trans_json:
+        with open(trans_json_, 'rb') as f:
             tmp = json.load(f)['utts']
             js.append(tmp)
     new_js = {}
@@ -885,8 +885,8 @@ def trans_ensemble(args):
                 else:
                     # For now rnnlm = None
                     rnnlm = None
-                    # nbest_hyps = recog_step_ensemble(models, feat, rnnlm, train_args)
-                    # nbest_hyps = recog_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool, dec_pool)
+                    # nbest_hyps = trans_step_ensemble(models, feat, rnnlm, train_args)
+                    # nbest_hyps = trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool, dec_pool)
                     nbest_hyps = trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
                 new_js[name] = add_results_to_json(js[0][name], nbest_hyps, train_args[0].char_list)
             enc_pool.close()
@@ -911,7 +911,7 @@ def trans_ensemble(args):
                 names = [name for name in names if name]
                 batch = [(name, js[name]) for name in names]
                 feats = load_inputs_and_targets(batch)[0]
-                nbest_hyps = model.recognize_batch(feats, args, train_args.char_list, rnnlm=rnnlm)
+                nbest_hyps = model.translate_batch(feats, args, train_args.char_list, rnnlm=rnnlm)
 
                 for i, nbest_hyp in enumerate(nbest_hyps):
                     name = names[i]
