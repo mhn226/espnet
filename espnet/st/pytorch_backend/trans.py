@@ -8,7 +8,7 @@ import torch
 from espnet.asr.asr_utils import add_results_to_json
 from espnet.asr.asr_utils import get_model_conf
 from espnet.asr.asr_utils import torch_load
-from espnet.st.pytorch_backend.st import load_trained_model
+from espnet.asr.pytorch_backend.asr_init import load_trained_model
 from espnet.nets.st_interface import STInterface
 from espnet.nets.beam_search import BeamSearch
 from espnet.nets.lm_interface import dynamic_import_lm
@@ -27,13 +27,14 @@ def trans(args):
     logging.warning("experimental API for custom LMs is selected by --api v2")
     if args.batchsize > 1:
         raise NotImplementedError("batch decoding is not implemented")
-    if args.streaming_mode is not None:
-        raise NotImplementedError("streaming mode is not implemented")
-    if args.word_rnnlm:
-        raise NotImplementedError("word LM is not implemented")
+    #if args.streaming_mode is not None:
+    #    raise NotImplementedError("streaming mode is not implemented")
+    #if args.word_rnnlm:
+    #    raise NotImplementedError("word LM is not implemented")
 
     set_deterministic_pytorch(args)
-    model, train_args = load_trained_model(args.model)
+    if len(args.model) == 1:
+        model, train_args = load_trained_model(args.model[0])
     assert isinstance(model, STInterface)
     model.eval()
 
@@ -58,8 +59,7 @@ def trans(args):
     scorers["lm"] = lm
     scorers["length_bonus"] = LengthBonus(len(train_args.char_list))
     weights = dict(
-        decoder=1.0 - args.ctc_weight,
-        ctc=args.ctc_weight,
+        decoder=1.0,
         lm=args.lm_weight,
         length_bonus=args.penalty)
     beam_search = BeamSearch(
@@ -84,8 +84,9 @@ def trans(args):
     beam_search.to(device=device, dtype=dtype).eval()
 
     # read json data
-    with open(args.trans_json, 'rb') as f:
-        js = json.load(f)['utts']
+    if len(args.trans_json) == 1:
+        with open(args.trans_json[0], 'rb') as f:
+            js = json.load(f)['utts']
     new_js = {}
     with torch.no_grad():
         for idx, name in enumerate(js.keys(), 1):
