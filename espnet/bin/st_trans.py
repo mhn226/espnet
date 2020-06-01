@@ -146,16 +146,20 @@ def main(args):
     logging.info('backend = ' + args.backend)
     if args.backend == "pytorch":
         # Experimental API that supports custom LMs
-        if args.dtype != "float32":
-            raise NotImplementedError(f"`--dtype {args.dtype}` is only available with `--api v2`")
-        if args.ensemble:
-            from espnet.st.pytorch_backend.st import trans_ensemble
-            if args.batchsize != 0:
-                raise ValueError("Bath size must be 0 for this option.")
-            trans_ensemble(args)
-        else:
-            from espnet.st.pytorch_backend.st import trans
+        if args.api == "v2":
+            from espnet.st.pytorch_backend.trans import trans
             trans(args)
+        else:
+            if args.dtype != "float32":
+                raise NotImplementedError(f"`--dtype {args.dtype}` is only available with `--api v2`")
+            if args.ensemble:
+                from espnet.st.pytorch_backend.st import trans_ensemble
+                if args.batchsize != 0:
+                    raise ValueError("Bath size must be 0 for this option.")
+                trans_ensemble(args)
+            else:
+                from espnet.st.pytorch_backend.st import trans
+                trans(args)
     else:
         raise ValueError("Only pytorch are supported.")
 
