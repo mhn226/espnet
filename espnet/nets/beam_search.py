@@ -108,7 +108,8 @@ class BeamSearch(torch.nn.Module):
             print("######### ", idx)
             init_states_ = dict()
             init_scores_ = dict()
-            for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
+            #for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
+            for k, d in chain(self.full_scorers[idx].items()):
                 init_states_[k] = d.init_state(x_)
                 init_scores_[k] = 0.0
             init_states[idx] = init_states_
