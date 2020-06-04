@@ -58,6 +58,7 @@ def trans(args):
     scorers = model.scorers()
     scorers["lm"] = lm
     scorers["length_bonus"] = LengthBonus(len(train_args.char_list))
+    scorers_pool = [scorers]
     weights = dict(
         decoder=1.0,
         lm=args.lm_weight,
@@ -66,7 +67,7 @@ def trans(args):
         beam_size=args.beam_size,
         vocab_size=len(train_args.char_list),
         weights=weights,
-        scorers=scorers,
+        scorers_pool=scorers_pool,
         sos=model.sos,
         eos=model.eos,
         token_list=train_args.char_list,
@@ -159,7 +160,7 @@ def trans_ensemble(args):
         beam_size=args.beam_size,
         vocab_size=len(char_list),
         weights=weights,
-        scorers=scorers_pool,
+        scorers_pool=scorers_pool,
         sos=model.sos,
         eos=model.eos,
         token_list=char_list,
