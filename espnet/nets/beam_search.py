@@ -172,7 +172,7 @@ class BeamSearch(torch.nn.Module):
         scores = dict()
         states = dict()
         for k, d in self.part_scorers[idx].items():
-            scores[k], states[k] = d.score_partial(hyp.yseq, ids, hyp.states[k], x)
+            scores[k], states[k] = d.score_partial(hyp.yseq, ids, hyp.states[idx][k], x[idx])
         return scores, states
 
     def pre_beam(self, scores: Dict[str, torch.Tensor], device: torch.device) -> torch.Tensor:
@@ -305,7 +305,7 @@ class BeamSearch(torch.nn.Module):
                 for idx in range(len(x)):
                     scores[idx], states[idx] = self.score(hyp, x, idx)
                     part_ids[idx] = self.pre_beam(scores[idx], device=x[idx].device)
-                    part_scores[idx], part_states[idx] = self.score_partial(hyp, part_ids, x[idx], idx)
+                    part_scores[idx], part_states[idx] = self.score_partial(hyp, part_ids[idx], x, idx)
 
                 full_avg_scores = dict()
                 part_avg_scores = dict()
