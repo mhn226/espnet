@@ -188,8 +188,6 @@ class BeamSearch(torch.nn.Module):
 
         """
         if self.pre_beam_size < self.n_vocab and self.pre_beam_score_key in scores:
-            print(self.pre_beam_size, self.pre_beam_score_key)
-            aaaaaaaaaaaaaaaaa
             return torch.topk(scores[self.pre_beam_score_key], self.pre_beam_size)[1]
         else:
             return torch.arange(self.n_vocab, device=device)
@@ -264,7 +262,7 @@ class BeamSearch(torch.nn.Module):
             for k, v in states_.items():
                 new_states_[k] = v
             for k, d in self.part_scorers[i].items():
-                new_states_[k] = d.select_state(part_states[k], part_idx)
+                new_states_[k] = d.select_state(part_states[i][k], part_idx)
             new_states.append(states_)
         return new_states
 
