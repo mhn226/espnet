@@ -112,8 +112,8 @@ class BeamSearch(torch.nn.Module):
             for k, d in chain(self.full_scorers[idx].items()):
                 init_states_[k] = d.init_state(x_)
                 init_scores_[k] = 0.0
-            init_states[idx] = init_states_
-            init_scores[idx] = init_scores_
+            init_states.append(init_states_)
+            init_scores.append(init_scores_)
         return Hypothesis(
             score=0.0, scores=init_scores, states=init_states,
             yseq=torch.tensor([self.sos], device=x[0].device))
