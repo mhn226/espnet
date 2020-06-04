@@ -299,12 +299,12 @@ class BeamSearch(torch.nn.Module):
             for hyp in running_hyps:
                 scores = [None] * len(x)
                 states = [None] * len(x)
-                part_ids = [None] * len(x)
+                #part_ids = [None] * len(x)
                 part_scores = [None] * len(x)
                 part_states = [None] * len(x)
                 for idx in range(len(x)):
                     scores[idx], states[idx] = self.score(hyp, x, idx)
-                    part_ids[idx] = self.pre_beam(scores[idx], device=x[idx].device)
+                    #part_ids[idx] = self.pre_beam(scores[idx], device=x[idx].device)
                     part_scores[idx], part_states[idx] = self.score_partial(hyp, part_ids[idx], x, idx)
 
                 full_avg_scores = dict()
@@ -315,6 +315,8 @@ class BeamSearch(torch.nn.Module):
                 for k in self.part_scorers[0]:
                     score_k = [score[k] for score in part_scores]
                     part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
+
+                part_ids = self.pre_beam(full_avg_scores, device=x[0].device)
 
                 # weighted sum scores
                 weighted_scores = torch.zeros(self.n_vocab, dtype=x[0].dtype, device=x[0].device)
