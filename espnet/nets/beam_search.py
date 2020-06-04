@@ -188,6 +188,7 @@ class BeamSearch(torch.nn.Module):
 
         """
         if self.pre_beam_size < self.n_vocab and self.pre_beam_score_key in scores:
+            aaaaaaaaaaaaaaaaaaaaaaaaa
             return torch.topk(scores[self.pre_beam_score_key], self.pre_beam_size)[1]
         else:
             return torch.arange(self.n_vocab, device=device)
