@@ -107,13 +107,13 @@ class BeamSearch(torch.nn.Module):
             init_states_ = dict()
             init_scores_ = dict()
             for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
-                init_states_[k] = d.init_state(x)
+                init_states_[k] = d.init_state(x_)
                 init_scores_[k] = 0.0
             init_states[idx] = init_states_
             init_scores[idx] = init_scores_
         return Hypothesis(
             score=0.0, scores=init_scores, states=init_states,
-            yseq=torch.tensor([self.sos], device=x.device))
+            yseq=torch.tensor([self.sos], device=x[0].device))
 
     @staticmethod
     def append_token(xs: torch.Tensor, x: int) -> torch.Tensor:
@@ -280,10 +280,10 @@ class BeamSearch(torch.nn.Module):
         """
         # set length bounds
         if maxlenratio == 0:
-            maxlen = x.shape[0]
+            maxlen = x[0].shape[0]
         else:
-            maxlen = max(1, int(maxlenratio * x.size(0)))
-        minlen = int(minlenratio * x.size(0))
+            maxlen = max(1, int(maxlenratio * x[0].size(0)))
+        minlen = int(minlenratio * x[0].size(0))
         logging.info('max output length: ' + str(maxlen))
         logging.info('min output length: ' + str(minlen))
 
@@ -314,7 +314,7 @@ class BeamSearch(torch.nn.Module):
                     part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
 
                 # weighted sum scores
-                weighted_scores = torch.zeros(self.n_vocab, dtype=x.dtype, device=x.device)
+                weighted_scores = torch.zeros(self.n_vocab, dtype=x[0].dtype, device=x[0].device)
                 for k in self.full_scorers[0]:
                     weighted_scores += self.weights[k] * full_avg_scores[k]
                 for k in self.part_scorers[0]:
