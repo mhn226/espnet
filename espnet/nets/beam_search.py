@@ -316,7 +316,7 @@ class BeamSearch(torch.nn.Module):
                     score_k = [score[k] for score in scores]
                     full_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
                     if k == "decoder":
-                        score_k = F.log_softmax(score_k, dim=1)
+                        score_k = F.log_softmax(full_avg_scores[k], dim=1)
                 for k in self.part_scorers[0]:
                     score_k = [score[k] for score in part_scores]
                     part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
