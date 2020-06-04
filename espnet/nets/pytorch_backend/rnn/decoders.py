@@ -912,8 +912,9 @@ class Decoder(torch.nn.Module, ScorerInterface):
             logits = self.output(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))
         else:
             logits = self.output(self.dropout_dec[-1](z_list[-1]))
-        logp = F.log_softmax(logits, dim=1).squeeze(0)
-        return logp, dict(c_prev=c_list[:], z_prev=z_list[:], a_prev=att_w, workspace=(att_idx, z_list, c_list))
+        #logp = F.log_softmax(logits, dim=1).squeeze(0)
+        #return logp, dict(c_prev=c_list[:], z_prev=z_list[:], a_prev=att_w, workspace=(att_idx, z_list, c_list))
+        return logits, dict(c_prev=c_list[:], z_prev=z_list[:], a_prev=att_w, workspace=(att_idx, z_list, c_list))
 
 
 def decoder_for(args, odim, sos, eos, att, labeldist):
