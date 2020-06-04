@@ -390,6 +390,7 @@ class BeamSearch(torch.nn.Module):
             if hyp.yseq[-1] == self.eos:
                 # e.g., Word LM needs to add final <eos> score
                 for k, d in chain(self.full_scorers[0].items(), self.part_scorers[0].items()):
+                    print("######## ", k, d)
                     s = d.final_score(hyp.states[k])
                     hyp.scores[k] += s
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
