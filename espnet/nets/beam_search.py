@@ -9,6 +9,7 @@ from typing import NamedTuple
 from typing import Tuple
 
 import torch
+import torch.nn.functional as F
 
 from espnet.nets.e2e_asr_common import end_detect
 from espnet.nets.scorer_interface import PartialScorerInterface
@@ -312,10 +313,10 @@ class BeamSearch(torch.nn.Module):
                 full_avg_scores = dict()
                 part_avg_scores = dict()
                 for k in self.full_scorers[0]:
-                    if k == "decoder":
-                        aaaaaaaaaaaaa
                     score_k = [score[k] for score in scores]
                     full_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
+                    if k == "decoder":
+                        score_k = F.log_softmax(score_k, dim=1)
                 for k in self.part_scorers[0]:
                     score_k = [score[k] for score in part_scores]
                     part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
