@@ -392,7 +392,8 @@ class BeamSearch(torch.nn.Module):
                 for k, d in chain(self.full_scorers[0].items(), self.part_scorers[0].items()):
                     print("######## ", k)
                     print("######## ", d)
-                    s = d.final_score(hyp.states[k])
+                    s = d.final_score(hyp.states[0][k])
+                    print("ssssssss ", s)
                     hyp.scores[k] += s
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
                 ended_hyps.append(hyp)
