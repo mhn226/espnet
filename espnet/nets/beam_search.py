@@ -237,12 +237,10 @@ class BeamSearch(torch.nn.Module):
 
         """
         new_scores = dict()
-        for k, v in scores[0].items():
+        for k, v in scores.items():
             new_scores[k] = hyp.scores[k] + v[idx]
         for k, v in part_scores[0].items():
             new_scores[k] = v[part_idx]
-        print("###### ", new_scores)
-        aaaaaaaaaaaa
         return new_scores
 
     def merge_states(self, states: Any, part_states: Any, part_idx: int) -> Any:
@@ -339,7 +337,7 @@ class BeamSearch(torch.nn.Module):
                     best.append(Hypothesis(
                         score=(weighted_scores[j]),
                         yseq=self.append_token(hyp.yseq, j),
-                        scores=self.merge_scores(hyp, scores, j, part_scores, part_j),
+                        scores=self.merge_scores(hyp, full_avg_scores, j, part_avg_scores, part_j),
                         states=self.merge_states(states, part_states, part_j)))
 
                 # sort and prune 2 x beam -> beam
