@@ -187,11 +187,11 @@ class BeamSearch(torch.nn.Module):
             torch.Tensor: The partial tokens ids for `self.part_scorers`
 
         """
-        if self.pre_beam_size < self.n_vocab and self.pre_beam_score_key in scores:
-            aaaaaaaaaaaaaaaaaaaaaaaaa
-            return torch.topk(scores[self.pre_beam_score_key], self.pre_beam_size)[1]
-        else:
-            return torch.arange(self.n_vocab, device=device)
+        #if self.pre_beam_size < self.n_vocab and self.pre_beam_score_key in scores:
+        #    return torch.topk(scores[self.pre_beam_score_key], self.pre_beam_size)[1]
+        #else:
+        #    return torch.arange(self.n_vocab, device=device)
+        return torch.arange(self.n_vocab, device=device)
 
     def main_beam(self, weighted_scores: torch.Tensor, ids: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """Compute topk full token ids and partial token ids.
