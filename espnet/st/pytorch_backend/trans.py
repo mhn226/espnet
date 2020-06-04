@@ -16,14 +16,14 @@ from espnet.nets.scorers.length_bonus import LengthBonus
 from espnet.utils.deterministic_utils import set_deterministic_pytorch
 from espnet.utils.io_utils import LoadInputsAndTargets
 
-
+"""
 def trans(args):
-    """Decode with custom models that implements ScorerInterface.
-    Notes:
-        The previous backend espnet.asr.pytorch_backend.st.trans only supports E2E and RNNLM
-    Args:
-        args (namespace): The program arguments. See py:func:`espnet.bin.st_trans.get_parser` for details
-    """
+    #Decode with custom models that implements ScorerInterface.
+    #Notes:
+    #    The previous backend espnet.asr.pytorch_backend.st.trans only supports E2E and RNNLM
+    #Args:
+    #    args (namespace): The program arguments. See py:func:`espnet.bin.st_trans.get_parser` for details
+    #
     logging.warning("experimental API for custom LMs is selected by --api v2")
     if args.batchsize > 1:
         raise NotImplementedError("batch decoding is not implemented")
@@ -101,8 +101,8 @@ def trans(args):
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
-
-def trans_ensemble(args):
+"""
+def trans(args):
     """Decode with custom models that implements ScorerInterface.
     Notes:
         The previous backend espnet.asr.pytorch_backend.st.trans only supports E2E and RNNLM
