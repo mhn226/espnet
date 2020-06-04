@@ -239,7 +239,7 @@ class BeamSearch(torch.nn.Module):
         new_scores = dict()
         for k, v in scores.items():
             new_scores[k] = hyp.scores[k] + v[idx]
-        for k, v in part_scores[0].items():
+        for k, v in part_scores.items():
             new_scores[k] = v[part_idx]
         return new_scores
 
