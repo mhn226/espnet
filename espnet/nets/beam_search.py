@@ -188,6 +188,8 @@ class BeamSearch(torch.nn.Module):
 
         """
         if self.pre_beam_size < self.n_vocab and self.pre_beam_score_key in scores:
+            print(self.pre_beam_size, self.pre_beam_score_key)
+            aaaaaaaaaaaaaaaaa
             return torch.topk(scores[self.pre_beam_score_key], self.pre_beam_size)[1]
         else:
             return torch.arange(self.n_vocab, device=device)
@@ -316,11 +318,7 @@ class BeamSearch(torch.nn.Module):
                     score_k = [score[k] for score in scores]
                     full_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
                     if k == "decoder":
-                        print(score_k)
-                        print(full_avg_scores[k])
                         full_avg_scores[k] = F.log_softmax(full_avg_scores[k], dim=1).squeeze()
-                        print(full_avg_scores[k])
-                        aaaaaaaaaaaaa
                 for k in self.part_scorers[0]:
                     score_k = [score[k] for score in part_scores]
                     part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
