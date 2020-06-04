@@ -257,11 +257,16 @@ class BeamSearch(torch.nn.Module):
                 Its values are states of the scorers.
 
         """
-        new_states = dict()
-        for k, v in states.items():
-            new_states[k] = v
-        for k, d in self.part_scorers.items():
-            new_states[k] = d.select_state(part_states[k], part_idx)
+        new_states = []
+        for i, states_ in enumerate(states):
+            new_states_ = dict()
+            print("###### ", states_.items())
+            aaaaaaaaaaaaaaaaaaaaa
+            for k, v in states_.items():
+                new_states_[k] = v
+            for k, d in self.part_scorers[i].items():
+                new_states_[k] = d.select_state(part_states[k], part_idx)
+            new_states.append(states_)
         return new_states
 
     def top_beam_hyps(self, hyps: List[Hypothesis]) -> List[Hypothesis]:
