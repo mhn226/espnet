@@ -394,6 +394,7 @@ class BeamSearch(torch.nn.Module):
                     s = d.final_score(hyp.states[0][k])
                     hyp.scores[k] += s
                     print(s)
+                    aaaaaaaaaaaaaaaa
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
                 ended_hyps.append(hyp)
             else:
