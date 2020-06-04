@@ -310,7 +310,6 @@ class BeamSearch(torch.nn.Module):
                     scores[idx], states[idx] = self.score(hyp, x, idx)
                     part_ids_ = self.pre_beam(scores[idx], device=x[idx].device)
                     part_scores[idx], part_states[idx] = self.score_partial(hyp, part_ids_, x, idx)
-                    print("####### ", part_scores[idx], part_states[idx])
 
                 full_avg_scores = dict()
                 part_avg_scores = dict()
@@ -390,7 +389,7 @@ class BeamSearch(torch.nn.Module):
         for hyp in running_hyps:
             if hyp.yseq[-1] == self.eos:
                 # e.g., Word LM needs to add final <eos> score
-                for k, d in chain(self.full_scorers.items(), self.part_scorers.items()):
+                for k, d in chain(self.full_scorers[0].items(), self.part_scorers[0].items()):
                     s = d.final_score(hyp.states[k])
                     hyp.scores[k] += s
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
