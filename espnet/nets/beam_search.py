@@ -73,14 +73,12 @@ class BeamSearch(torch.nn.Module):
                 assert isinstance(v, ScorerInterface), f"{k} ({type(v)}) does not implement ScorerInterface"
                 if isinstance(v, PartialScorerInterface):
                     part_scorers_[k] = v
-                    aaaaaaaaaaaaaaaaaaaaaa
-                    self.part_scorers.append(part_scorers_)
                 else:
-                    bbbbbbbbbbbbbbbbbb
                     full_scorers_[k] = v
-                    self.full_scorers.append(full_scorers_)
                 if isinstance(v, torch.nn.Module):
                     self.nn_dict[k] = v
+            self.part_scorers.append(part_scorers_)
+            self.full_scorers.append(full_scorers_)
 
         # set configurations
         self.sos = sos
