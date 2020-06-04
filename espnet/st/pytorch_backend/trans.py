@@ -149,9 +149,10 @@ def trans(args):
 
     scorers_pool = []
     for model in models:
-        model.scorers["lm"] = lm
-        model.scorers["length_bonus"] = LengthBonus(len(char_list))
-        scorers_pool = model.scorers()
+        scorers_ = model.scorers()
+        scorers_["lm"] = lm
+        scorers_["length_bonus"] = LengthBonus(len(char_list))
+        scorers_pool.append(scorers_)
     weights = dict(
         decoder=1.0,
         lm=args.lm_weight,
