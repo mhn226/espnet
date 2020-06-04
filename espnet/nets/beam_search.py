@@ -99,13 +99,11 @@ class BeamSearch(torch.nn.Module):
             Hypothesis: The initial hypothesis.
 
         """
-        print("########### ", len(self.full_scorers), len(self.part_scorers))
         #init_states = dict()
         init_scores = dict()
         init_states = []
         #init_scores = []
         for idx, x_ in enumerate(x):
-            print("######### ", idx)
             init_states_ = dict()
             #init_scores_ = dict()
             for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
@@ -390,10 +388,7 @@ class BeamSearch(torch.nn.Module):
             if hyp.yseq[-1] == self.eos:
                 # e.g., Word LM needs to add final <eos> score
                 for k, d in chain(self.full_scorers[0].items(), self.part_scorers[0].items()):
-                    print("######## ", k)
-                    print("######## ", d)
                     s = d.final_score(hyp.states[0][k])
-                    print("ssssssss ", s)
                     hyp.scores[k] += s
                     hyp = hyp._replace(score=hyp.score + self.weights[k] * s)
                 ended_hyps.append(hyp)
