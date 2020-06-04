@@ -35,7 +35,7 @@ class Hypothesis(NamedTuple):
 class BeamSearch(torch.nn.Module):
     """Beam search implementation."""
 
-    def __init__(self, scorers: Dict[str, ScorerInterface], weights: Dict[str, float],
+    def __init__(self, scorers_pool: List[Dict[str, ScorerInterface]], weights: Dict[str, float],
                  beam_size: int, vocab_size: int,
                  sos: int, eos: int, token_list: List[str] = None,
                  pre_beam_ratio: float = 1.5, pre_beam_score_key: str = "decoder"):
@@ -58,20 +58,27 @@ class BeamSearch(torch.nn.Module):
         super().__init__()
         # set scorers
         self.weights = weights
-        self.full_scorers = dict()
-        self.part_scorers = dict()
+        #self.full_scorers = dict()
+        #self.part_scorers = dict()
+        self.full_scorers = []
+        self.part_scorers = []
         self.nn_dict = torch.nn.ModuleDict()
-        for k, v in scorers.items():
-            w = weights.get(k, 0)
-            if w == 0 or v is None:
-                continue
-            assert isinstance(v, ScorerInterface), f"{k} ({type(v)}) does not implement ScorerInterface"
-            if isinstance(v, PartialScorerInterface):
-                self.part_scorers[k] = v
-            else:
-                self.full_scorers[k] = v
-            if isinstance(v, torch.nn.Module):
-                self.nn_dict[k] = v
+        for scorers in scorers_pool:
+            full_scorers_ = dict()
+            part_scorers_ = dict()
+            for k, v in scorers.items():
+                w = weights.get(k, 0)
+                if w == 0 or v is None:
+                    continue
+                assert isinstance(v, ScorerInterface), f"{k} ({type(v)}) does not implement ScorerInterface"
+                if isinstance(v, PartialScorerInterface):
+                    part_scorers_[k] = v
+                    self.part_scorers.append(part_scorers_)
+                else:
+                    full_scorers_[k] = v
+                    self.full_scorers.append(full_scorers_)
+                if isinstance(v, torch.nn.Module):
+                    self.nn_dict[k] = v
 
         # set configurations
         self.sos = sos
@@ -116,7 +123,7 @@ class BeamSearch(torch.nn.Module):
         x = torch.tensor([x], dtype=xs.dtype, device=xs.device)
         return torch.cat((xs, x))
 
-    def score(self, hyp: Hypothesis, x: torch.Tensor) -> Tuple[Dict[str, torch.Tensor], Dict[str, Any]]:
+    def score(self, hyp: Hypothesis, x: torch.Tensor, idx) -> Tuple[Dict[str, torch.Tensor], Dict[str, Any]]:
         """Score new hypothesis by `self.full_scorers`.
 
         Args:
@@ -132,11 +139,11 @@ class BeamSearch(torch.nn.Module):
         """
         scores = dict()
         states = dict()
-        for k, d in self.full_scorers.items():
+        for k, d in self.full_scorers[idx].items():
             scores[k], states[k] = d.score(hyp.yseq, hyp.states[k], x)
         return scores, states
 
-    def score_partial(self, hyp: Hypothesis, ids: torch.Tensor, x: torch.Tensor) \
+    def score_partial(self, hyp: Hypothesis, ids: torch.Tensor, x: torch.Tensor, idx) \
             -> Tuple[Dict[str, torch.Tensor], Dict[str, Any]]:
         """Score new hypothesis by `self.part_scorers`.
 
@@ -154,7 +161,7 @@ class BeamSearch(torch.nn.Module):
         """
         scores = dict()
         states = dict()
-        for k, d in self.part_scorers.items():
+        for k, d in self.part_scorers[idx].items():
             scores[k], states[k] = d.score_partial(hyp.yseq, ids, hyp.states[k], x)
         return scores, states
 
@@ -280,16 +287,31 @@ class BeamSearch(torch.nn.Module):
             logging.debug('position ' + str(i))
             best = []
             for hyp in running_hyps:
-                scores, states = self.score(hyp, x)
-                part_ids = self.pre_beam(scores, device=x.device)
-                part_scores, part_states = self.score_partial(hyp, part_ids, x)
+                scores = []
+                states = []
+                part_ids = []
+                part_scores = []
+                part_states = []
+                for idx in range(len(x)):
+                    scores[idx], states[idx] = self.score(hyp, x[idx], idx)
+                    part_ids[idx] = self.pre_beam(scores[idx], device=x[idx].device)
+                    part_scores[idx], part_states[idx] = self.score_partial(hyp, part_ids, x[idx], idx)
+
+                full_avg_scores = dict()
+                part_avg_scores = dict()
+                for k in self.full_scorers[0]:
+                    score_k = [score[k] for score in scores]
+                    full_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
+                for k in self.part_scorers[0]:
+                    score_k = [score[k] for score in part_scores]
+                    part_avg_scores[k] = torch.mean(torch.stack(score_k), dim=0)
 
                 # weighted sum scores
                 weighted_scores = torch.zeros(self.n_vocab, dtype=x.dtype, device=x.device)
-                for k in self.full_scorers:
-                    weighted_scores += self.weights[k] * scores[k]
-                for k in self.part_scorers:
-                    weighted_scores[part_ids] += self.weights[k] * part_scores[k]
+                for k in self.full_scorers[0]:
+                    weighted_scores += self.weights[k] * full_avg_scores[k]
+                for k in self.part_scorers[0]:
+                    weighted_scores[part_ids] += self.weights[k] * part_avg_scores[k]
                 weighted_scores += hyp.score
 
                 # update hyps

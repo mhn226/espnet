@@ -146,11 +146,11 @@ def trans_ensemble(args):
     else:
         lm = None
 
-    scorers = []
+    scorers_pool = []
     for model in models:
         model.scorers["lm"] = lm
         model.scorers["length_bonus"] = LengthBonus(len(char_list))
-        scorers = model.scorers()
+        scorers_pool = model.scorers()
     weights = dict(
         decoder=1.0,
         lm=args.lm_weight,
@@ -159,7 +159,7 @@ def trans_ensemble(args):
         beam_size=args.beam_size,
         vocab_size=len(char_list),
         weights=weights,
-        scorers=scorers,
+        scorers=scorers_pool,
         sos=model.sos,
         eos=model.eos,
         token_list=char_list,
