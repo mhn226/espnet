@@ -197,7 +197,7 @@ def trans(args):
                 encs.append(enc)
             nbest_hyps = beam_search(x=encs, maxlenratio=args.maxlenratio, minlenratio=args.minlenratio)
             nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
-            new_js[name] = add_results_to_json(js[name], nbest_hyps, char_list)
+            new_js[name] = add_results_to_json(js[0][name], nbest_hyps, char_list)
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
