@@ -99,11 +99,18 @@ class BeamSearch(torch.nn.Module):
             Hypothesis: The initial hypothesis.
 
         """
-        init_states = dict()
-        init_scores = dict()
-        for k, d in chain(self.full_scorers.items(), self.part_scorers.items()):
-            init_states[k] = d.init_state(x)
-            init_scores[k] = 0.0
+        #init_states = dict()
+        #init_scores = dict()
+        init_states = []
+        init_scores = []
+        for idx, x_ in enumerate(x):
+            init_states_ = dict()
+            init_scores_ = dict()
+            for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
+                init_states_[k] = d.init_state(x)
+                init_scores_[k] = 0.0
+            init_states[idx] = init_states_
+            init_scores[idx] = init_scores_
         return Hypothesis(
             score=0.0, scores=init_scores, states=init_states,
             yseq=torch.tensor([self.sos], device=x.device))
