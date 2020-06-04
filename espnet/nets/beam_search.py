@@ -101,19 +101,20 @@ class BeamSearch(torch.nn.Module):
         """
         print("########### ", len(self.full_scorers), len(self.part_scorers))
         #init_states = dict()
-        #init_scores = dict()
+        init_scores = dict()
         init_states = []
-        init_scores = []
+        #init_scores = []
         for idx, x_ in enumerate(x):
             print("######### ", idx)
             init_states_ = dict()
-            init_scores_ = dict()
+            #init_scores_ = dict()
             for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
-            #for k, d in chain(self.full_scorers[idx].items()):
                 init_states_[k] = d.init_state(x_)
-                init_scores_[k] = 0.0
+                #init_scores_[k] = 0.0
             init_states.append(init_states_)
-            init_scores.append(init_scores_)
+            #init_scores.append(init_scores_)
+        for k, d in chain(self.full_scorers[idx].items(), self.part_scorers[idx].items()):
+            init_scores[k] = 0.0
         return Hypothesis(
             score=0.0, scores=init_scores, states=init_states,
             yseq=torch.tensor([self.sos], device=x[0].device))
@@ -236,9 +237,9 @@ class BeamSearch(torch.nn.Module):
 
         """
         new_scores = dict()
-        for k, v in scores.items():
+        for k, v in scores[0].items():
             new_scores[k] = hyp.scores[k] + v[idx]
-        for k, v in part_scores.items():
+        for k, v in part_scores[0].items():
             new_scores[k] = v[part_idx]
         return new_scores
 
