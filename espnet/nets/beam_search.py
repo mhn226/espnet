@@ -207,7 +207,6 @@ class BeamSearch(torch.nn.Module):
         """
         # no pre beam performed
         if weighted_scores.size(0) == ids.size(0):
-            aaaaaaaaaaaaaaaaaaaaa
             top_ids = weighted_scores.topk(self.beam_size)[1]
             return top_ids, top_ids
 
