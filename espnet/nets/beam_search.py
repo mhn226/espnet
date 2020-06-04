@@ -241,6 +241,8 @@ class BeamSearch(torch.nn.Module):
             new_scores[k] = hyp.scores[k] + v[idx]
         for k, v in part_scores[0].items():
             new_scores[k] = v[part_idx]
+        print("###### ", new_scores)
+        aaaaaaaaaaaa
         return new_scores
 
     def merge_states(self, states: Any, part_states: Any, part_idx: int) -> Any:
@@ -260,8 +262,6 @@ class BeamSearch(torch.nn.Module):
         new_states = []
         for i, states_ in enumerate(states):
             new_states_ = dict()
-            print("###### ", states_.items())
-            aaaaaaaaaaaaaaaaaaaaa
             for k, v in states_.items():
                 new_states_[k] = v
             for k, d in self.part_scorers[i].items():
