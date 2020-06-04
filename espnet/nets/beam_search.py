@@ -297,11 +297,11 @@ class BeamSearch(torch.nn.Module):
             logging.debug('position ' + str(i))
             best = []
             for hyp in running_hyps:
-                scores = []
-                states = []
-                part_ids = []
-                part_scores = []
-                part_states = []
+                scores = [None] * len(x)
+                states = [None] * len(x)
+                part_ids = [None] * len(x)
+                part_scores = [None] * len(x)
+                part_states = [None] * len(x)
                 for idx in range(len(x)):
                     scores[idx], states[idx] = self.score(hyp, x, idx)
                     part_ids[idx] = self.pre_beam(scores[idx], device=x[idx].device)
