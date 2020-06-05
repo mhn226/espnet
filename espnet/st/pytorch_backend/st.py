@@ -560,12 +560,8 @@ def trans_step_ensemble_parallelizing(models, feat, rnnlm, train_args, enc_pool)
                     model_index] = model.translate_step(hs[model_index],
                                                         vy, hyp, z_list[model_index], c_list[model_index], model_index,
                                                         model.trans_args, train_args[model_index].char_list, rnnlm)
-            print("######### ", logits)
             logits = torch.mean(torch.stack(logits), dim=0)
             local_att_scores = F.log_softmax(logits, dim=1)
-            print("######### ", logits)
-            print("######### ", local_att_scores)
-            aaaaaaaaaaaaaaaaaaaaa
 
             if rnnlm:
                 # rnnlm_state, local_lm_scores = rnnlm.predict(hyp['rnnlm_prev'], vy)
