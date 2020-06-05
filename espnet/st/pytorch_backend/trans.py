@@ -103,10 +103,10 @@ def trans(args):
     with torch.no_grad():
         for idx, name in enumerate(js[0].keys(), 1):
             logging.info('(%d/%d) decoding ' + name, idx, len(js[0].keys()))
+            encs = []
             for model_idx, js_ in enumerate(js):
                 batch = [(name, js_[name])]
                 feat = load_inputs_and_targets(batch)[0][0]
-                encs = []
                 enc = models[model_idx].encode(torch.as_tensor(feat).to(device=device, dtype=dtype))
                 encs.append(enc)
             nbest_hyps = beam_search(x=encs, maxlenratio=args.maxlenratio, minlenratio=args.minlenratio)
