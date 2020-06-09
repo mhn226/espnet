@@ -131,11 +131,9 @@ if [ -f $data/segments ]; then
   echo "$cmd JOB=1:$nj $logdir/make_raw_wav2vec_${name}.JOB.log \
       python3 local/wav2vec_feature_extract.py $model $logdir/segments.JOB $featsdir/speech_seg_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.scp $write_utt2dur_opt $write_num_frames_opt $logdir JOB "
 
-   $cmd JOB=1:8 $logdir/make_raw_wav2vec_${name}.JOB.log \
+   $cmd JOB=1:$nj $logdir/make_raw_wav2vec_${name}.JOB.log \
    python3 local/wav2vec_feature_extract.py $model $logdir/segments.JOB $featsdir/speech_seg_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.scp $write_utt2dur_opt $write_num_frames_opt $logdir JOB || exit 1;
 
-   $cmd JOB=9:16 $logdir/make_raw_wav2vec_${name}.JOB.log \
-   python3 local/wav2vec_feature_extract.py $model $logdir/segments.JOB $featsdir/speech_seg_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.ark $featsdir/raw_wav2vec_$name.JOB.scp $write_utt2dur_opt $write_num_frames_opt $logdir JOB || exit 1;
 else
   echo "$0: [info]: no segments file exists: assuming wav.scp indexed by utterance."
   split_scps=
