@@ -1,0 +1,4 @@
+dictionary: data/lang_1char/train_sp.fr_units_tc.txt
+stage 4: Network Training
+sh: 0: getcwd() failed: No such file or directory
+run.pl: job failed, log is in exp/wav2vec_cmvnfalse/train.log
