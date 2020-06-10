@@ -62,6 +62,15 @@ class Reporter(chainer.Chain):
         logging.info('mtl loss:' + str(mtl_loss))
         reporter.report({'loss': mtl_loss}, self)
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 class E2E(STInterface, torch.nn.Module):
     """E2E module.
@@ -85,8 +94,10 @@ class E2E(STInterface, torch.nn.Module):
         """Add arguments for the encoder."""
         group = parser.add_argument_group("E2E encoder setting")
         # encoder
-        group.add_argument('--wav2vec', action='store_true', help='Input features are wav2vec or not')
-        group.add_argument('--idim_reduction', action='store_true', help='Reduce input dimension or not')
+        #group.add_argument('--wav2vec', action='store_true', help='Input features are wav2vec or not')
+        group.add_argument('--wav2vec', type=str2bool, nargs='?', default=False, help='Input features are wav2vec or not')
+        #group.add_argument('--idim_reduction', action='store_true', help='Reduce input dimension or not')
+        group.add_argument('--idim_reduction', type=str2bool, nargs='?', default=False, help='Reduce input dimension or not')
         group.add_argument('--etype', default='blstmp', type=str,
                            choices=['lstm', 'blstm', 'lstmp', 'blstmp', 'vgglstmp', 'vggblstmp', 'vgglstm', 'vggblstm',
                                     'gru', 'bgru', 'grup', 'bgrup', 'vgggrup', 'vggbgrup', 'vgggru', 'vggbgru'],

@@ -95,6 +95,10 @@ def get_parser():
 
     # ensembling related
     parser.add_argument('--ensemble', action='store_true', help='Use ensembling action or not')
+
+    # add ctc-weight so that it would work with model trained by the old version
+    parser.add_argument('--ctc-weight', type=float, default=0.0,
+                        help='CTC weight in joint decoding')
     return parser
 
 

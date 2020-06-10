@@ -416,7 +416,7 @@ def trans(args):
 
     """
     set_deterministic_pytorch(args)
-    model, train_args = load_trained_model(args.model)
+    model, train_args = load_trained_model(args.model[0])
     assert isinstance(model, STInterface)
     # args.ctc_weight = 0.0
     model.trans_args = args
@@ -443,7 +443,7 @@ def trans(args):
             rnnlm.cuda()
 
     # read json data
-    with open(args.trans_json, 'rb') as f:
+    with open(args.trans_json[0], 'rb') as f:
         js = json.load(f)['utts']
     new_js = {}
 
