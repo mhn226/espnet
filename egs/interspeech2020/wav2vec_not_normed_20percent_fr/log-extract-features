@@ -1,0 +1,28 @@
+dictionary: data/lang_1char/train_sp.fr_units_tc.txt
+stage 2: Dictionary and Json Data Preparation
+make a non-linguistic symbol list for all languages
+&#91;
+&#93;
+&amp;
+&apos;
+&quot;
+make a dictionary
+134 data/lang_1char/train_sp.fr_units_tc.txt
+make json files
+local/data2json.sh --nj 16 --feat dump/train_sp.fr/deltafalse/feats.scp --text data/train_sp.fr/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt data/train_sp.fr data/lang_1char/train_sp.fr_units_tc.txt
+/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/interspeech2020/st/../../../utils/feat_to_shape.sh --cmd run.pl --nj 16 --filetype  --preprocess-conf  --verbose 0 dump/train_sp.fr/deltafalse/feats.scp data/train_sp.fr/tmp-ExzOR/input/shape.scp
+local/data2json.sh --feat dump/train_dev.fr/deltafalse/feats.scp --text data/train_dev.fr/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt data/train_dev.fr data/lang_1char/train_sp.fr_units_tc.txt
+/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/interspeech2020/st/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/train_dev.fr/deltafalse/feats.scp data/train_dev.fr/tmp-EQljz/input/shape.scp
+sym2int.pl: replacing ½ with 1
+** Replaced 1 instances of OOVs with 1
+local/data2json.sh --feat dump/mustc-tst-COMMON.fr/deltafalse/feats.scp --text data/mustc-tst-COMMON.fr/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt data/mustc-tst-COMMON.fr data/lang_1char/train_sp.fr_units_tc.txt
+/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/interspeech2020/st/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/mustc-tst-COMMON.fr/deltafalse/feats.scp data/mustc-tst-COMMON.fr/tmp-xSh2z/input/shape.scp
+local/data2json.sh --feat dump/mustc-tst-HE.fr/deltafalse/feats.scp --text data/mustc-tst-HE.fr/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt data/mustc-tst-HE.fr data/lang_1char/train_sp.fr_units_tc.txt
+/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/interspeech2020/st/../../../utils/feat_to_shape.sh --cmd run.pl --nj 1 --filetype  --preprocess-conf  --verbose 0 dump/mustc-tst-HE.fr/deltafalse/feats.scp data/mustc-tst-HE.fr/tmp-54p4V/input/shape.scp
+sym2int.pl: replacing ∇ with 1
+sym2int.pl: replacing τ with 1
+** Replaced 2 instances of OOVs with 1
+local/update_json.sh --text data/train_sp.en/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt dump/train_sp.fr/deltafalse/data.tc.json data/train_sp.en data/lang_1char/train_sp.fr_units_tc.txt
+json updated. original json is kept in dump/train_sp.fr/deltafalse/.backup.
+local/update_json.sh --text data/train_dev.en/text.tc --nlsyms data/lang_1char/non_lang_syms_tc.txt dump/train_dev.fr/deltafalse/data.tc.json data/train_dev.en data/lang_1char/train_sp.fr_units_tc.txt
+json updated. original json is kept in dump/train_dev.fr/deltafalse/.backup.
