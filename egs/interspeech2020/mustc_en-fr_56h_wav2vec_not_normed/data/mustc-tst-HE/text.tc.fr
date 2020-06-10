@@ -1,0 +1,600 @@
+ted_01922_0012980_0015530 L&apos; intelligence - qu&apos; est-ce que c&apos; est ?
+ted_01922_0016820_0047880 Si nous jetons un œil à l&apos; histoire de la façon dont l&apos; intelligence a été vue , un exemple précurseur fut la célèbre citation d&apos; Edsger Dijkstra disant que la question &quot; Une machine peut-elle penser ? &quot; est à peu près aussi intéressante que la question &quot; Un sous-marin peut-il nager ? &quot; Edsger Dijkstra , en l&apos; écrivant , la dirigeait comme une critique des pionniers des sciences informatiques , comme Alan Turing .
+ted_01922_0048420_0072920 Cependant , si vous prenez du recul et pensez à ce qu&apos; étaient les innovations les plus puissantes qui nous ont permis de construire des machine artificielles sachant nager et des machines artificielles sachant voler , vous trouvez que ce fut uniquement à travers la compréhension des mécanismes physiques sous-jacents de la nage et du vol que nous avons pu construire ces machines .
+ted_01922_0073830_0083750 Donc , il y a plusieurs années , j&apos; ai entrepris un programme pour essayer de comprendre les mécanismes physiques fondamentaux sous-jacents à l&apos; intelligence .
+ted_01922_0084650_0089180 Prenons du recul . Commençons tout d&apos; abord avec une expérience de pensée .
+ted_01922_0089800_0109970 Supposons que vous êtes une race extra-terrestre qui ne sait rien ni de la biologie terrestre ni des neurosciences terrestres ou encore de l&apos; intelligence terrestre , mais vous avez des télescopes incroyables et vous êtes à même de voir la Terre , et vous avez de très longues vies , donc vous pouvez voir la Terre sur des millions , même des milliards d&apos; années .
+ted_01922_0110540_0113110 Et vous verrez un phénomène très étrange .
+ted_01922_0113630_0140410 Vous observerez que , durant le dernier millénaire , la Terre est continuellement bombardée d &quot; astéroïdes jusqu&apos; à un moment , et à ce moment , qui correspond à environ 2000 années de notre calendrier les astériodes sur une trajectoire de collision avec la Terre qui l&apos; auraient percutée ont mystérieusement dévié ou ont explosé avant de pouvoir atteindre la Terre .
+ted_01922_0141120_0146370 Bien sûr , en tant que terriens , nous savons que la raison serait que nous essayons de nous sauver .
+ted_01922_0146380_0148870 Nous essayons d&apos; éviter un impact .
+ted_01922_0149500_0168930 Mais si vous êtes une race extra-terrestre qui ne sait rien de tout cela , qui n&apos; a aucune idée du concept d&apos; intelligence terrestre , vous seriez forcés de mettre en place une théorie physique qui explique comment , à partir d&apos; un certain point dans le temps , les astéroïdes qui démoliraient la surface d&apos; une planète en sont mystérieusement empêchés .
+ted_01922_0169740_0176880 Je pense donc que c&apos; est la même question que celle qui consiste à comprendre la nature physique de l&apos; intelligence .
+ted_01922_0177960_0193100 Et dans ce programme que j&apos; ai entrepris il y a plusieurs années , j&apos; ai étudié une variété de différents fils conducteurs à travers la science , à travers une multitude de disciplines , qui convergeaient , je le pense , vers un unique , mécanisme sous-jacent pour décrire l&apos; intelligence .
+ted_01922_0193680_0212080 En cosmologie , par exemple , il y a eu une multitude de preuves que notre Univers semble être finement ajusté pour le développement de l&apos; intelligence , et , en particulier , pour le développement des états universaux qui maximisent la diversité de futurs possibles .
+ted_01922_0213040_0244110 Dans la stratégie de jeu , par exemple , dans le Go - tout le monde se souvient de 1997 lorsque le Deep Blue d&apos; IBM a battu Garry Kasparov aux échecs - mais peu de gens sont au courant que dans les dix dernières années , le jeu de Go , sans doute un jeu bien plus stimulant car il a un bien plus grand facteur de ramification , a aussi commencé à succomber face aux programmes informatiques pour la même raison : les meilleures techniques pour les ordinateurs jouant au Go sont des techniques qui tentent de maximiser les options futures durant la partie .
+ted_01922_0245160_0259730 Finalement , dans la planification des mouvements chez les robots , une grande variété de nouvelles techniques qui ont essayé de tirer avantage de la capacité des robots à maximiser la liberté d&apos; action future de façon à accomplir des tâches complexes .
+ted_01922_0260580_0273380 De cette façon , parlant de tous ces différents sujets et les mettant ensemble , je me suis demandé , il y a quelques années , s&apos; il y avait un mécanisme sous-jacent à l&apos; intelligence que nous pourrions tirer de tous ces différents sujets ?
+ted_01922_0273470_0276750 Y a-t-il une équation unique pour l&apos; intelligence ?
+ted_01922_0278050_0288400 Et la réponse , je pense , est oui . &#91; &quot; F = T ∇ Sτ &quot; &#93; Ce que vous voyez est probablement le plus proche équivalent à un E = mc ² pour l&apos; intelligence que j&apos; ai jamais vu .
+ted_01922_0288400_0301910 Ce que vous voyez ici est l&apos; assertion que l&apos; intelligence est une force , F , qui agit de façon à maximiser la capacité d&apos; action future .
+ted_01922_0302920_0315980 Elle agit de façon à maximiser la capacité d&apos; action future , ou encore elle garde le maximum d&apos; options possibles , avec une certaine vigueur puissance T , avec la diversité de futurs accessibles possibles , S , jusqu&apos; à un horizon temporel futur , tau .
+ted_01922_0316490_0319550 En bref , l&apos; intelligence n&apos; aime pas être prise au piège .
+ted_01922_0319570_0324500 L&apos; intelligence tente de maximiser la liberté d&apos; action future et garde des portes ouvertes .
+ted_01922_0325480_0330350 Étant donné cette unique équation , il est naturel de se demander , que pouvons-nous faire avec ça ?
+ted_01922_0330370_0331510 A quel point est-ce utile pour établir des prévisions ?
+ted_01922_0331760_0334060 Est-ce qu&apos; elle prédit l&apos; intelligence humaine ?
+ted_01922_0334060_0336430 Est-ce qu&apos; elle prédit l&apos; intelligence artificielle ?
+ted_01922_0336690_0346050 Je vais maintenant vous montrer une vidéo qui va , je pense , mettre en valeur quelques applications incroyables de cette seule équation .
+ted_01922_0346650_0359570 ( Vidéo ) Narrateur : Des recherches récentes en cosmologie ont suggéré que les univers qui produisent plus de désordre , ou &quot; entropie &quot; au cours de leur durée de vie devraient tendre à avoir des conditions plus favorables à l&apos; existence d&apos; être intelligents comme nous .
+ted_01922_0359860_0365580 Mais si cette connexion expérimentale en cosmologie entre l&apos; entropie et l&apos; intelligence suggérait une corrélation plus profonde ?
+ted_01922_0365880_0372330 Et si le comportement intelligent n&apos; était pas simplement corrélé avec la production d&apos; une entropie sur le long-terme , mais plutôt qu&apos; elle émergeait directement de celle-ci ?
+ted_01922_0372630_0381300 Pour savoir , nous avons développé une machine logicielle appelée Entropica , créée pour maximiser la production d&apos; une entropie sur le long-terme du système quelconque dans lequel elle se trouve .
+ted_01922_0381830_0391600 Aussi impressionnant que ça puisse paraître , Entropica fut à même de réussir plusieurs tests d&apos; intelligence animale , a pu jouer à des jeux humains , et elle a même réussi à gagner de l&apos; argent en plaçant en bourse , le tout sans à recevoir d&apos; instruction .
+ted_01932_0013330_0019110 Ce soir , je vais vous parler de sortir du placard pas juste au sens usuel , pas juste du placard gay .
+ted_01932_0019850_0021190 Je pense qu&apos; on a tous des placards .
+ted_01932_0022010_0034020 Votre placard peut être dire à quelqu&apos; un que vous l&apos; aimez pour la première fois , ou que vous êtes enceinte , ou que vous avez un cancer , ou toute autre conversation difficile qu&apos; on a au cours de nos vies .
+ted_01932_0034650_0045690 Un placard , c&apos; est juste une conversation difficile , et bien que les sujets varient énormément , l&apos; expérience d&apos; être dans et de sortir du placard est universelle .
+ted_01932_0046460_0051190 Ça fait peur , et on déteste ça , et il faut le faire .
+ted_01932_0052420_0078580 Il y a quelques années , je travaillais au Café Walnut , un petit restaurant en ville , pendant cette période , je traversais des phases de lesbienne militante en puissance : ne rasant plus mes aisselles , citant les chansons d&apos; Ani DiFranco comme parole d&apos; évangile et selon l&apos; ampleur de mes shorts cargo et la façon dont je me suis rasée la tête récemment , la question me revenait souvent , en général par un jeune enfant :
+ted_01932_0079470_0083030 &quot; Hum , êtes-vous un garçon ou une fille ? &quot;
+ted_01932_0084710_0086680 Il y avait un silence gênant à la table .
+ted_01932_0087640_0092150 Je serrais ma mâchoire un peu plus fort , tenais ma cafetière avec un peu plus d&apos; intensité .
+ted_01932_0093120_0097550 Le père remuait maladroitement son journal et la mère lançait un regard froid à son enfant .
+ted_01932_0098140_0101230 Mais je ne disais rien , et je bouillais à l&apos; intérieur .
+ted_01932_0102050_0111250 A un point où dès que j&apos; arrivais à une table avec un enfant âgé entre 3 et 10 ans , j&apos; étais prête à me battre . ( Rires ) Et c&apos; était un sentiment horrible .
+ted_01932_0111500_0114280 Alors je me suis promis que , la prochaine fois , je dirais quelque chose .
+ted_01932_0115270_0116940 J&apos; aurais cette conversation difficile .
+ted_01932_0117490_0119400 Dans les semaines suivantes , c&apos; est arrivé de nouveau .
+ted_01932_0120320_0122540 &quot; Êtes-vous un garçon ou une fille ? &quot;
+ted_01932_0123070_0134770 Même silence , mais cette fois j&apos; étais prête , je vais leur faire la leçon &quot; Études des Femmes pour Débutant &quot; à cette table . ( Rires ) J&apos; ai mes citations de Betty Friedan .
+ted_01932_0134770_0136800 J&apos; ai mes citations de Gloria Steinem .
+ted_01932_0136800_0139570 J&apos; ai même un peu de &quot; Monologues du Vagin &quot; que je vais leur citer .
+ted_01932_0139580_0153930 Alors je prends une grande respiration et regarde vers le bas et une petite fille de 4 ans dans une robe rose me fixe , pas un défi pour un débat féministe , juste une enfant avec une question : &quot; Êtes-vous un garçon ou une fille ? &quot;
+ted_01932_0154960_0160060 Je prends une autre respiration , m&apos; accroupis à côté d&apos; elle , et dis : &quot; Hey , je sais c&apos; est un peu déroutant .
+ted_01932_0160270_0168700 J&apos; ai les cheveux à la garçonne , j&apos; ai des habits de garçon , mais je suis une fille . Tu sais des fois tu mets une robe rose , des fois tu mets ton pyjama confortable ?
+ted_01932_0168830_0170700 Eh bien , je suis une fille du genre pyjama . &quot;
+ted_01932_0172330_0177780 Et l&apos; enfant me regarde dans les yeux , et dit du tac au tac : &quot; Mon pyjama préféré est violet avec des poissons .
+ted_01932_0177780_0184800 Je peux avoir un pancake , svp ? &quot; ( Rires ) Et c&apos; était tout . &quot; Oh ok .
+ted_01932_0184950_0185600 Tu es une fille .
+ted_01932_0185950_0187020 Et donc ce pancake ? &quot;
+ted_01932_0188350_0197310 C&apos; est la conversation difficile la plus facile que j&apos; ai jamais eue . Pourquoi ? Parce que Pancake Girl et moi , étions toutes deux honnêtes avec l&apos; autre .
+ted_01932_0199230_0205220 Donc comme beaucoup d&apos; entre nous , j&apos; ai vécu dans quelques placards dans ma vie , le plus souvent , mes murs étaient des arcs-en-ciel .
+ted_01932_0205710_0209520 Mais à l&apos; intérieur , dans le noir , on ne peut pas voir la couleur des murs .
+ted_01932_0209960_0212890 Vous savez juste ce que c&apos; est que de vivre dans un placard .
+ted_01932_0213380_0219400 Donc vraiment , mon placard n&apos; est pas différent du vôtre ou du vôtre , ou du vôtre .
+ted_01932_0220120_0234420 Oui , je vous donnerai 100 raisons pourquoi le mien était plus dur que le vôtre , mais voilà : Dur n&apos; est pas relatif . Dur c&apos; est dur . Qui peut dire qu&apos; expliquer à quelqu&apos; un que vous déclarez faillite est plus dur qu&apos; avouer que vous avez été infidèle ?
+ted_01932_0234430_0239800 Qui peut dire que son coming out est plus dur que dire à votre enfant que vous divorcez ?
+ted_01932_0239800_0242700 Il n&apos; y a pas plus dur , il y a juste dur .
+ted_01932_0243340_0252450 On doit arrêter de classer nos difficultés avec celles des autres et se sentir mieux ou pas au sujet de nos secrets et juste s&apos; accorder sur le fait qu&apos; on a tous des moments durs .
+ted_01932_0253370_0261190 On vit tous , à un moment , dans un placard , On s&apos; y sent en sûreté , du moins plus que de l&apos; autre côté de la porte .
+ted_01932_0261710_0268910 Mais je suis ici pour vous dire , peu importe de quoi vos murs sont faits , un placard n&apos; est pas un endroit où l&apos; on peut vivre .
+ted_01932_0270030_0271890 Merci . ( Applaudissements )
+ted_01932_0272060_0275620 Donc imaginez-vous il y a 20 ans .
+ted_01932_0276350_0282380 Moi , j&apos; avais une queue de cheval , une robe sans bretelle et des chaussures à talon .
+ted_01939_0012940_0019520 Il y a 18 ans , j&apos; ai eu une opération neurochirurgicale et depuis ce temps , la neurologie est devenue une de mes passions personnelles .
+ted_01939_0019930_0021040 En fait , je suis ingénieur .
+ted_01939_0021910_0036960 Tout d&apos; abord , permettez-moi de dire que j&apos; ai récemment rejoint l &quot; équipe du projet Moonshot , où je dirige un département , le département de l&apos; affichage du Google X Lab , et les études de neurologie dont je vais parler aujourd&apos; hui , sont des travaux que j&apos; ai accompli avant de rejoindre Google et en annexe , en dehors de mon travail à Google .
+ted_01939_0037310_0042060 Cela dit , il y a un stigmate quand vous avez eu une opération neurochirurgicale .
+ted_01939_0042820_0045110 Est-ce que vous êtes toujours intelligent ou non ?
+ted_01939_0045740_0048560 Et si non , est-ce que vous pouvez le redevenir par vous même ?
+ted_01939_0049630_0055990 Après mon opération neurochirurgicale , une partie de mon cerveau avait disparu , et j&apos; ai dû faire face à cela .
+ted_01939_0056020_0061330 Ce n&apos; était pas la matière grise , mais c&apos; était la matière inerte et gluante du milieu qui fabrique les neurotransmetteurs et des hormones primordiales .
+ted_01939_0062450_0074100 Immédiatement après mon opération , je devais décider des quantités de chacun de plus d&apos; une douzaine de puissants produits chimiques à prendre chaque jour , parce que si je n&apos; avais rien pris , je serais morte en quelques heures .
+ted_01939_0075060_0085870 Tous les jours , maintenant depuis 18 ans , je dois essayer de déterminer les combinaisons et les mélanges de produits chimiques , et essayer de les prendre , pour rester en vie .
+ted_01939_0086710_0088920 Il y a eu plusieurs cas où c&apos; était vraiment juste .
+ted_01939_0089490_0102020 Mais heureusement , je tiens à cœur les expériences , alors j&apos; ai décidé que je ferais des expériences pour tenter de trouver plus de doses optimales , parce qu&apos; il n&apos; y a pas vraiment de feuille de route claire et détaillée sur ça .
+ted_01939_0102620_0116530 J&apos; ai commencé à essayer différents mélanges , et j&apos; ai été époustouflée par la façon dont des changements minuscules de doses changeaient radicalement ma conscience , le sentiment de qui j&apos; étais , de ma pensée et mon comportement envers les gens .
+ted_01939_0117120_0148430 Un cas particulièrement dramatique : pendant quelques mois , j&apos; ai effectivement essayé des dosages et des produits chimiques typiques d&apos; un homme ayant la vingtaine , et j&apos; ai été sidérée par l&apos; évolution de mes pensées . ( Rires ) J&apos; étais en colère tout le temps , je pensais tout le temps au sexe , et je pensais que j&apos; étais la personne la plus intelligente dans le monde entier , et ... - ( Rires ) - Bien sûr au fil des années , j&apos; ai rencontré des gars du genre , ou peut-être une sorte de version édulcorée de cela .
+ted_01939_0148470_0150360 J&apos; étais assez extrême .
+ted_01939_0150680_0155230 Mais pour moi , la surprise c&apos; était ... je ne cherchais pas à être arrogante .
+ted_01939_0155350_0165780 J&apos; essayais bel et bien , avec un peu d&apos; insécurité , de résoudre un problème auquel je faisais face , et ce n&apos; était pas vraiment ce que ça rendait .
+ted_01939_0165790_0167360 Donc je ne pouvais plus le supporter .
+ted_01939_0167400_0168570 J&apos; ai changé mes doses .
+ted_01939_0168590_0177710 Mais cette expérience , je pense , m&apos; a donné une autre vision des hommes et de ce qu&apos; ils peuvent traverser , et depuis je m&apos; entends beaucoup mieux avec les hommes .
+ted_01939_0178050_0192630 Ce que j&apos; essayais de faire , avec l&apos; ajustement de ces hormones et de ces neurotransmetteurs et tout ça , était d&apos; essayer de récupérer mon intelligence après ma maladie et l&apos; opération , ma créativité , mon flux de pensées .
+ted_01939_0193160_0209090 Je raisonne principalement en images , et donc , pour moi , c&apos; est devenu une métrique clé . Comment obtenir ces images mentales que j&apos; utilise en guise de prototypage rapide , ou si vous voulez , mes idées , comme essayer des nouvelles idées de tailles différentes ; envisager des scénarios .
+ted_01939_0209410_0211080 Ce genre de raisonnement n&apos; est pas nouveau .
+ted_01939_0211190_0215670 Des philosophes tels que Hum , Descartes et Hobbes voyaient les choses de la même façon .
+ted_01939_0215680_0220610 Ils pensaient que les images mentales et les idées étaient en fait la même chose .
+ted_01939_0221140_0234190 Il y a aujourd&apos; hui des gens qui contestent ce fait et beaucoup de débats sur le fonctionnement de l&apos; esprit , mais pour moi c&apos; est simple : les images mentales , pour la plupart d&apos; entre nous , sont au cœur de la pensée inventive et créative .
+ted_01939_0234860_0245120 Donc , après plusieurs années , je me suis ajustée et j&apos; ai beaucoup d&apos; images mentales vraiment géniales et saisissantes avec beaucoup de raffinement et une structure analytique en arrière plan .
+ted_01939_0245120_0253420 Et donc maintenant je travaille sur cette question : comment puis-je obtenir ces images mentales de ma tête sur mon écran d&apos; ordinateur plus rapidement ?
+ted_01939_0254050_0261710 Vous pouvez imaginer , si vous voulez , un directeur de film ayant la possibilité d&apos; utiliser son imagination seule pour diriger le monde en face de nous ?
+ted_01939_0262180_0264890 Ou un musicien pour extraire la musique de sa tête .
+ted_01939_0265640_0271820 Il y a des possibilités incroyables , comme un moyen pour les personnes créatives de partager leurs pensées à la vitesse de la lumière .
+ted_01939_0272090_0278740 Et la vérité est que ce qui coince encore pour être en mesure de le faire est simplement d&apos; augmenter la résolution des systèmes du scanner cérébral .
+ted_01939_0279270_0286410 Alors laissez-moi vous montrer pourquoi je pense que nous sommes assez proches du but en partageant avec vous deux expériences récentes de deux groupes précurseurs dans la neuroscience .
+ted_01939_0287250_0298390 Les deux utilisaient l&apos; IRMf - technologie d&apos; imagerie par résonance magnétique fonctionnelle - pour créer des images du cerveau . Et voici un scanner du cerveau de Giorgio Ganis et de ses collègues à l&apos; Université d&apos; Harvard .
+ted_01954_0013280_0028920 Dans beaucoup de sociétés tribales et patriarcales , les pères sont généralement reconnus parce qu&apos; ils ont des fils , mais je suis l&apos; un des rares pères à être connu parce qu&apos; il a une fille et j&apos; en suis fier .
+ted_01954_0036150_0054460 Malala a commencé son combat pour l&apos; instruction et s&apos; est battue pour ses droits en 2007 . Ses efforts ont été honorés en 2011 et elle a reçu le Prix National de la Jeunesse pour la Paix et elle est devenue une jeune fille très célèbre et très populaire dans son pays .
+ted_01954_0055560_0060470 Avant ça , elle était ma fille , mais maintenant , je suis son père .
+ted_01954_0063850_0078780 Mesdames et messieurs , si nous jetons un œil sur l&apos; histoire humaine , l&apos; histoire des femmes est l&apos; histoire de l&apos; injustice , de l&apos; inégalité , de la violence et de l&apos; exploitation .
+ted_01954_0081200_0095590 Vous voyez , dans les sociétés patriarcales , dès le tout début , lorsqu&apos; une fille naît , on ne célèbre pas sa venue au monde .
+ted_01954_0096970_0101500 Elle n&apos; est pas bien accueillie ni par son père , ni par sa mère .
+ted_01954_0101510_0108600 Le voisinage vient pour s&apos; apitoyer avec la mère et personne ne félicite le père .
+ted_01954_0111460_0117970 Et la mère est très mal à l&apos; aise d&apos; avoir eu une fille .
+ted_01954_0120220_0125760 Quand elle donne la vie à son premier bébé et que c&apos; est une fille , une première fille , elle est triste .
+ted_01954_0127120_0142070 Quand elle donne la vie à sa seconde fille , elle est choquée , et elle espère un fils , quand elle donne la vie à une troisième fille , elle se sent coupable comme une criminelle .
+ted_01954_0145150_0153440 Les mères ne sont pas les seules à souffrir , mais la fille , le nouveau-né fille , en grandissant , elle souffre aussi .
+ted_01954_0154760_0164430 À l&apos; âge de cinq ans , alors qu&apos; elle devrait aller à l&apos; école , elle reste à la maison et ses frères vont à l&apos; école .
+ted_01954_0166610_0171200 Jusqu&apos; à l&apos; âge de 12 ans , d&apos; une certaine manière , elle a une vie agréable .
+ted_01954_0171880_0173140 Elle peut s&apos; amuser .
+ted_01954_0173340_0179800 Elle peut jouer avec ses amies dans les rues et elle peut se déplacer dans les rues comme un papillon .
+ted_01954_0181550_0193490 Mais à l&apos; adolescence , quand elle arrive à 13 ans , on lui interdit de sortir de la maison sans escorte masculine .
+ted_01954_0194930_0198280 Elle est enfermée entre les quatre murs de sa maison .
+ted_01954_0200020_0204640 Elle n&apos; est plus un individu libre .
+ted_01954_0205140_0221770 Elle devient le soi-disant honneur de son père et de ses frères et de sa famille . Et si elle transgresse le code de ce soi-disant honneur , elle peut même être tuée .
+ted_01954_0224690_0238160 C&apos; est intéressant de savoir que ce soi-disant code d&apos; honneur n&apos; affecte pas seulement la vie de la jeune fille , il affecte aussi la vie des membres masculins de la famille .
+ted_01954_0240560_0269830 Je connais une famille où il y a sept sœurs et un frère et cet unique frère a dû émigrer dans les pays du Golfe pour gagner la vie de ses sept sœurs et de ses parents car il pense que ce sera humiliant si ses sept sœurs apprennent un métier et sortent de la maison pour gagner leur vie .
+ted_01954_0272410_0283110 Donc , ce frère sacrifie toutes les joies de sa vie et le bonheur de ses sœurs sur l&apos; autel de ce soi-disant honneur .
+ted_01954_0285370_0291080 Et il y a une autre norme dans les sociétés patriarcales que l&apos; on appelle l&apos; obéissance .
+ted_01954_0295360_0303760 Une fille sage doit être très silencieuse , très humble et très soumise .
+ted_01954_0306870_0308050 C&apos; est le critère .
+ted_01954_0308070_0311260 La fille idéale doit être très silencieuse .
+ted_01954_0312030_0324760 Elle est supposée se taire et elle est supposée accepter les décisions de son père et de sa mère et les décisions de ses aînés , même si elle ne les aime pas .
+ted_01954_0325420_0337010 Si on la marie à un homme qu&apos; elle n&apos; aime pas ou si on la marie à un vieil homme , elle doit l&apos; accepter , parce qu&apos; elle ne veut pas qu&apos; on pense qu&apos; elle est désobéissante .
+ted_01954_0337890_0341010 Si on la marie très tôt , elle doit l&apos; accepter .
+ted_01954_0341100_0343530 Sinon , on dira qu&apos; elle est désobéissante .
+ted_01954_0345220_0346690 Et ensuite qu&apos; arrive-t-il ?
+ted_01954_0348000_0355880 Selon les mots d&apos; une poétesse , elle est mariée , engrossée , puis elle donnera la vie à d&apos; autres fils et d&apos; autres filles .
+ted_01954_0358080_0369650 Et là est l&apos; ironie de la situation : cette mère enseignera la même leçon d&apos; obéissance à sa fille et la même leçon d&apos; honneur à ses fils .
+ted_01954_0371540_0375750 Et ce cercle vicieux continuera , continuera .
+ted_01954_0378110_0417930 Mesdames et messieurs , cette malédiction de millions de femmes , on peut la changer si nous pensons autrement , si les femmes et les hommes pensent autrement , si les femmes et les hommes des sociétés tribales et patriarcales , dans les pays en voie de développement , arrivent à briser quelques normes familiales et sociétales , s&apos; ils arrivent à abolir les lois discriminatoires de leurs systèmes étatiques , celles qui vont contre les droits humains de base des femmes .
+ted_01954_0421070_0442540 Chers frères et sœurs , lorsque Malala est née , pour la première fois , croyez-moi , car , pour être honnête , je n&apos; aime pas les nouveaux-nés , mais lorsque je l&apos; ai vue et que j&apos; ai regardé dans ses yeux , croyez-moi , je me suis senti extrêmement honoré .
+ted_01954_0444400_0455930 Et longtemps avant sa naissance , j&apos; ai réfléchi à son nom et j&apos; étais fasciné par une combattante héroïque et légendaire de l &quot; Afghanistan .
+ted_01954_0456780_0464270 Elle s&apos; appelait Malala de Maiwand et j&apos; ai donné son nom à ma fille .
+ted_01954_0464270_0492150 Quelques jours après la naissance de Malala , la naissance de ma fille , mon cousin est venu , c&apos; était une coïncidence , il est venu chez moi et il m&apos; a apporté un arbre généalogique de la famille Yousafzai et quand j&apos; ai regardé l&apos; arbre , il retraçait nos ancêtres sur 300 ans .
+ted_01954_0492320_0502590 Mais j&apos; ai vu que c&apos; étaient tous des hommes et j&apos; ai pris ma plume , j&apos; ai tiré un trait depuis mon nom et j&apos; ai écrit &quot; Malala &quot; .
+ted_01954_0502590_0514500 Quand elle a été plus grande , quand elle avait quatre ans et demi , je l&apos; ai admise dans mon école .
+ted_01954_0515790_0520070 Vous allez demander pourquoi je mentionne l&apos; admission d&apos; une fille dans une école ?
+ted_01961_0014050_0025530 Le monde fait de vous quelque chose que vous n&apos; êtes pas , Mais vous savez à l&apos; intérieur ce que vous êtes , et cette question brûle dans votre cœur : Comment allez-vous le devenir ?
+ted_01961_0027100_0032720 Je suis peut-être quelque peu unique en ça , mais je ne suis pas seule , pas seule du tout .
+ted_01961_0034530_0041080 Donc quand je suis devenue une top-modèle , J&apos; ai senti que j&apos; avais enfin réalisé le rêve que j&apos; avais toujours eu depuis que j&apos; étais petite .
+ted_01961_0041850_0046780 Mon Moi extérieur correspondait enfin à ma vérité intérieure , mon Moi intérieur .
+ted_01961_0048130_0060400 Pour des raisons compliquées que j&apos; expliquerai plus tard , quand je regarde cette photo , sur le moment je pensais , Geena , tu as réussi , tu l&apos; as fait , tu y es arrivée .
+ted_01961_0061970_0067570 Mais en octobre dernier , je me suis rendue compte que je ne faisais que commencer .
+ted_01961_0069280_0081130 Nous tous sommes mis dans des cases par notre famille , par notre religion , par notre société , notre époque dans l&apos; histoire , même nos propres corps .
+ted_01961_0081960_0091440 Certaines personnes ont le courage de se libérer , de ne pas accepter les limites imposées par la couleur de leur peau ou par les croyances de ceux qui les entourent .
+ted_01961_0092700_0097920 Ces personnes sont toujours la menace au statu quo , à ce qui est considéré acceptable .
+ted_01961_0100240_0112040 Dans mon cas , pour les neuf dernières années , certains de mes voisins , certains de mes amis , collègues , même mon agent , ne connaissaient pas mon passé .
+ted_01961_0113230_0117700 Je pense , dans les romans policiers , c&apos; est ce qu&apos; on appelle la révélation . Voici la mienne .
+ted_01961_0120730_0125610 J&apos; ai été déclarée garçon à ma naissance par rapport à l&apos; apparence de mes organes génitaux .
+ted_01961_0126550_0133160 Je me souviens quand j&apos; avais cinq ans aux Philippines marchant autour de la maison , je portais toujours ce T-shirt sur ma tête .
+ted_01961_0134070_0140740 Et ma mère me demandait : &quot; Pourquoi tu portes toujours ce T-shirt sur ta tête ? &quot; J&apos; ai dit : &quot; Maman , ce sont mes cheveux .
+ted_01961_0140760_0145760 Je suis une fille . &quot; Je savais déjà comment m&apos; identifier .
+ted_01961_0148200_0161060 Le genre a toujours été considéré comme un fait , immuable , mais nous savons maintenant que c&apos; est en fait plus fluide , complexe et mystérieux .
+ted_01961_0162140_0174370 A cause de mon succès , je n&apos; ai jamais eu le courage de partager mon histoire , pas parce que je pensais que ce que je suis est mal , mais à cause de la façon dont le monde traite ceux d&apos; entre nous qui veulent se libérer .
+ted_01961_0175930_0180570 Chaque jour , je suis tellement reconnaissante parce que je suis une femme .
+ted_01961_0181660_0186920 J&apos; ai une mère et un père et une famille qui m&apos; acceptent pour qui je suis .
+ted_01961_0188130_0190710 Beaucoup ne sont pas si chanceux .
+ted_01961_0192780_0197340 Il y a une longue tradition dans la culture asiatique qui fête le mystère de la fluidité du genre .
+ted_01961_0198400_0200790 Il y a une déesse Bouddhiste de la compassion .
+ted_01961_0201440_0204970 Il y a une déesse Hindoue , la déesse Hijra .
+ted_01961_0205410_0211910 Quand j&apos; avais huit ans , j&apos; étais à une fête aux Philippines célébrant ces mystères .
+ted_01961_0212790_0223660 J&apos; étais devant la scène , et je me souviens , il en sort cette belle femme juste devant moi , je me souviens de ce moment quelque chose m&apos; a frappée : C&apos; est le genre de femme que je voudrais être .
+ted_01961_0225520_0234770 Donc quand j&apos; avais quinze ans , toujours habillée comme un garçon , j&apos; ai rencontré cette femme nommée T. L. Elle est une responsable de concours de beauté transgenre .
+ted_01961_0235930_0256280 Cette nuit-là , elle m&apos; a demandée : &quot; Pourquoi tu ne rejoins pas le concours de beauté ? &quot; Elle m&apos; a convaincue que si je venais elle s&apos; occuperait des frais d&apos; inscription et des vêtements , et cette nuit-là , j&apos; ai gagné &quot; meilleure en maillot de bain &quot; &quot; meilleure en longue robe &quot; et placée en première dauphine parmi plus de 40 candidates .
+ted_01961_0258170_0259770 Ce moment a changé ma vie .
+ted_01961_0260930_0264100 Tout d&apos; un coup , j&apos; avais découvert le monde des concours de beauté .
+ted_01961_0265190_0270690 Peu de personnes peuvent dire que leur premier boulot est reine de beauté pour femmes transgenres , mais je le prends . ( Rires )
+ted_01961_0272830_0292810 Donc de mes 15 à 17 ans , j&apos; ai rejoint du concours le plus prestigieux au concours à l&apos; arrière du camion , littéralement , ou parfois ça pouvait être la chaussée à côté du champ de riz , et quand il pleut - il pleut beaucoup dans les Philippines - les organisateurs devaient le déplacer dans la maison de quelqu&apos; un .
+ted_01961_0295300_0301310 J&apos; ai aussi connu la bonté des étrangers , surtout quand on voyageait dans des provinces reculées des Philippines .
+ted_01961_0301780_0305510 Mais le plus important , j&apos; ai rencontré quelques-uns de mes meilleurs amis dans cette communauté .
+ted_01961_0306820_0321300 En 2001 , ma mère , qui avait déménagé à San Francisco , m&apos; a appelée et m&apos; a dit que ma demande de carte verte était acceptée , que je pouvais venir aux États-Unis maintenant . J&apos; y ai résisté . J&apos; ai dit à ma mère : &quot; Maman , je m&apos; amuse .
+ted_01961_0321330_0337040 Je suis ici avec mes amis , j&apos; adore voyager , être une reine de concours de beauté . &quot; Mais deux semaines plus tard elle m&apos; a appelée , elle m&apos; a dit : &quot; Est-ce que tu savais que si tu viens aux États-Unis tu pourrais changer ton nom et l&apos; indicateur du genre ? &quot; C&apos; était tout ce que j&apos; avais besoin d&apos; entendre .
+ted_01961_0338460_0341390 Ma mère m&apos; a aussi dit de mettre deux E dans l&apos; orthographe de mon nom .
+ted_01961_0342230_0346320 Elle est aussi venue avec moi quand je me suis faite opérer en Thaïlande à mes 19 ans .
+ted_01961_0347710_0357110 C&apos; est intéressant , dans certaines des villes les plus rurales de Thaïlande , ils pratiquent certaines des opérations les plus prestigieuses , sûres et sophistiquées .
+ted_01997_0012640_0017970 Il y a peu , j&apos; ai pris ma retraite de la Police de l&apos; autoroute de Californie après 23 ans de service .
+ted_01997_0018950_0026720 La majorité de ces 23 années a consisté à patrouiller sur la partie au sud du comté de Marin , qui comporte le Golden Gate Bridge .
+ted_01997_0028310_0037750 Le pont est une structure emblématique , connue dans le monde entier pour sa vue spectaculaire sur San Francisco , sur l&apos; Océan Pacifique et pour son architecture , source d&apos; inspiration .
+ted_01997_0038930_0046170 Malheureusement , c&apos; est aussi un aimant à suicide , le site le plus utilisé dans le monde .
+ted_01997_0047770_0050390 Le Golden Gate Bridge a été inauguré en 1937 .
+ted_01997_0050900_0071410 Joseph Strauss , ingénieur en chef , en charge de la construction du pont , a déclaré : &quot; Il est pratiquement impossible de se suicider depuis le pont , se suicider depuis le pont n&apos; est ni pratique , ni probable . &quot; Mais depuis son ouverture , plus de 1600 personnes se sont données la mort en sautant de ce pont .
+ted_01997_0071410_0090070 Certains pensent que voyager entre les deux tours vous mènera vers une autre dimension - ce pont a été tellement romancé - que la chute vous libérera de vos soucis et de vos peines , que les eaux en dessous purifieront votre âme .
+ted_01997_0091580_0096400 Laissez-moi vous dire ce qu&apos; il se passe réellement lorsqu&apos; on utilise le pont pour se suicider .
+ted_01997_0097330_0111820 Après une chute libre de quatre ou cinq secondes , le corps frappe l&apos; eau à une vitesse de 120 km / h. L&apos; impact fracasse les os , certains d&apos; entre eux perforent les organes vitaux .
+ted_01997_0113170_0114620 La plupart des gens meurent lors de l&apos; impact .
+ted_01997_0115520_0120450 Ceux qui ne meurent pas tombent généralement dans l&apos; eau , impuissants , et se noient ensuite .
+ted_01997_0122110_0132360 Je ne pense pas que ceux qui envisagent cette méthode réalisent de quelle façon épouvantable ils feront face à la mort . Voici le parapet . Sauf autour des deux tours , il y a 80 centimètres d&apos; acier longeant le pont .
+ted_01997_0133390_0142740 C&apos; est là que se tiennent la plupart des gens avant de s&apos; ôter la vie .
+ted_01997_0144020_0152390 Je peux vous dire , par expérience , qu&apos; une fois que les gens sont sur ce parapet , dans leur période la plus sombre , il est très difficile de les ramener .
+ted_01997_0154100_0159090 J&apos; ai pris cette photo l&apos; année dernière alors que cette jeune femme parlait à un officier en réfléchissant à sa vie .
+ted_01997_0160170_0165970 Je voudrais vous dire que nous avons réussi , ce jour-là , à la ramener de l&apos; autre côté de la rampe .
+ted_01997_0167330_0171150 Quand j&apos; ai commencé à travailler sur le pont nous n&apos; avions aucune formation sérieuse .
+ted_01997_0171920_0174690 On luttait pour passer à travers ces appels .
+ted_01997_0175870_0181720 Ce n&apos; était pas rendre service à ceux qui songeaient au suicide , mais également aux officiers .
+ted_01997_0183050_0185340 On a fait beaucoup , beaucoup de chemin depuis cette époque .
+ted_01997_0186050_0191060 Désormais , des officiers vétérans et des psychologues forment les nouveaux officiers .
+ted_01997_0192490_0202990 Voici Jason Garber . J&apos; ai rencontré Jason le 22 juillet de l&apos; année dernière quand j&apos; ai reçu un appel concernant un candidat potentiel au suicide assis sur le parapet vers le milieu .
+ted_01997_0203910_0210580 J&apos; ai répondu , et lorsque je suis arrivé , j&apos; ai observé Jason qui parlait à l&apos; officier du Golden Gate Bridge .
+ted_01997_0211780_0216040 Jason n&apos; avait que 32 ans et avait pris l&apos; avion depuis le New Jersey .
+ted_01997_0217080_0223550 En fait , il avait pris l&apos; avion jusqu&apos; ici en deux autres occasions depuis le New Jersey pour tenter de se suicider depuis le pont .
+ted_01997_0225410_0231600 Après une heure de discussion avec Jason , il nous a demandé si nous connaissions l&apos; histoire de la boîte de Pandore .
+ted_01997_0232860_0248450 Rappelez-vous de votre mythologie grecque , Zeus créa Pandore , et l&apos; envoya sur Terre avec une boîte , en lui disant , &quot; N&apos; ouvre jamais cette boîte , jamais . &quot; Eh bien , un jour , la curiosité de Pandore l&apos; emporta et elle ouvrit la boîte .
+ted_01997_0249670_0254310 De celle-ci sortirent les fléaux , les peines , et toute sorte de maux contre les hommes .
+ted_01997_0255520_0258740 La seule bonne chose dans la boîte était l&apos; espoir .
+ted_01997_0260300_0274900 Jason nous a ensuite demandé : &quot; Que se passe-t-il lorsqu&apos; on ouvre la boîte et que l&apos; espoir n&apos; y est pas ? &quot; Il s&apos; est arrêté quelques temps , s&apos; est penché vers sa droite , et il était parti .
+ted_01997_0276460_0281820 Ce jeune homme du New Jersey , intelligent et gentil , venait tout juste de se suicider .
+ted_01997_0284430_0298570 J&apos; ai parlé aux parents de Jason ce soir-là , et je suppose que lorsque je leur parlais que je ne donnais pas l&apos; impression d&apos; aller bien , parce que le lendemain , le rabbin de la famille appela pour prendre des nouvelles .
+ted_01997_0299390_0301940 Les parents de Jason lui avaient demandé de le faire .
+ted_01997_0303230_0307540 Les dommages collatéraux du suicide affectent tellement de personnes .
+ted_01997_0310500_0343100 Je vous pose la question : &quot; Que feriez-vous si un membre de votre famille , un ami ou un être cher était suicidaire ? Que diriez-vous ? Sauriez-vous quoi dire ? &quot; D&apos; après mon expérience , il ne s&apos; agit pas uniquement de ce que vous dites , il s&apos; agit d&apos; écouter . Écouter pour comprendre . Ne discutez pas , n&apos; accusez pas , ne leur dites pas que vous savez ce qu&apos; ils ressentent , parce que vous ne le savez probablement pas .
+ted_01997_0344470_0349800 En étant simplement là , vous pourriez tout simplement être le déclencheur dont ils ont besoin .
+ted_01997_0351620_0357260 Si vous pensez que quelqu&apos; un est suicidaire , n&apos; ayez pas peur de lui faire face , de lui poser des questions .
+ted_01997_0358590_0375300 Une façon de leur poser des questions est la suivante : &quot; D&apos; autres personnes , dans des circonstances similaires ont pensé à mettre fin à leurs jours ; as-tu déjà eu ce genre de pensées ? &quot; Confronter la personne sans détour pourrait tout simplement sauver sa vie et être un point tournant pour elle .
+ted_01997_0376950_0396710 Voici d&apos; autres signes à chercher : le désespoir , penser que les choses sont terribles et ne s&apos; amélioreront pas ; l&apos; impuissance , croire qu&apos; il n&apos; y a rien à faire ; un retrait récent de la vie sociale et la perte de l&apos; intérêt en la vie .
+ted_01997_0399700_0410290 J&apos; ai imaginé cette présentation il y a tout juste quelques jours , et j&apos; ai reçu un e-mail d&apos; une dame dont j&apos; aimerais vous lire la lettre .
+ted_01997_0411260_0427920 Elle a perdu son fils le 19 Janvier de cette année , et elle m&apos; a écrit cet email il y a seulement quelques jours . C&apos; est avec sa permission et sa bénédiction que je vous lis ceci .
+ted_01997_0429910_0432740 &quot; Bonjour Kevin . J&apos; imagine que vous êtes à la conférence TED .
+ted_01997_0433940_0435910 Ça doit être une sacrée expérience d&apos; être là-bas .
+ted_01997_0436720_0439550 Je pense à aller marcher sur le pont ce week-end .
+ted_01997_0440580_0442110 Je voulais seulement vous glisser un mot .
+ted_01997_0442770_0458720 J&apos; espère que vous parlerez à beaucoup de gens et qu&apos; ils rentreront chez eux pour en parler à leurs amis , qui en parleront à leurs amis , etc ... Je suis toujours apathique mais de plus en plus souvent , je réalise que Mike ne reviendra pas à la maison .
+ted_01997_0460210_0466160 Mike avait pris la route depuis Petaluma vers San Francisco pour aller voir le match des 49ers avec son père le 19 Janvier .
+ted_01997_0466940_0468100 Il n&apos; est jamais arrivé .
+ted_01997_0469660_0473450 J&apos; ai appelé la police de Petaluma et déclaré sa disparition ce soir-là .
+ted_01997_0474390_0483250 Le lendemain matin , deux officiers venaient chez moi et m&apos; informait que la voiture de Mike avait été laissée sur ce pont .
+ted_01997_0484760_0489920 Un témoin l&apos; avait vu se jeter depuis le pont à 13h58 le jour précédent .
+ted_01997_0491340_0498650 Merci beaucoup de vous battre pour ceux qui pourraient , seulement temporairement , être trop faibles pour se battre pour eux-mêmes .
+ted_01997_0499900_0504500 Qui n&apos; a jamais eu de mauvais moment sans pour autant souffrir d&apos; une vraie maladie mentale ?
+ted_01997_0506040_0507930 Ça ne devrait pas être si facile d&apos; y mettre un terme .
+ted_01997_0509210_0511550 Mes prières vous accompagnent dans votre combat .
+ted_01997_0512630_0522170 Le GGB , Golden Gate Bridge , est sensé être un passage à travers notre magnifique baie , et pas un cimetière .
+ted_01997_0523780_0525730 Bonne chance pour cette semaine . Vicky . &quot;
+ted_01997_0528970_0539500 Je ne peux pas imaginer le courage que ça lui a demandé d&apos; aller sur ce pont et de faire le chemin que son fils a pris ce jour-là , et aussi le courage de simplement continuer .
+ted_01997_0542710_0549850 J&apos; aimerais vous présenter un homme qui représente pour moi l&apos; espoir et le courage .
+ted_01997_0551760_0560240 Le 11 Mars 2005 , j&apos; ai répondu à un appel radio concernant un possible sujet suicidaire sur le trottoir du pont à côté de la tour nord .
+ted_02007_0013060_0018750 Qu&apos; est-ce que la réalité augmentée et le football professionnel ont à voir avec l&apos; empathie ?
+ted_02007_0019140_0022630 Et quelle est la vitesse de vol d&apos; une hirondelle en vol libre ?
+ted_02007_0023600_0028510 Malheureusement , je ne vais répondre qu&apos; à une de ces questions aujourd&apos; hui , alors s&apos; il vous plaît , essayez de cacher votre déception .
+ted_02007_0029380_0039370 La plupart des gens , lorsqu&apos; ils pensent à la réalité augmentée , pensent à &quot; Minority Report &quot; et Tom Cruise agitant ses mains en l&apos; air , mais la réalité augmentée n&apos; est pas de la science fiction .
+ted_02007_0039370_0053150 La réalité augmentée est quelque chose qui va se produire durant notre vie et qui se produira parce que nous avons les outils pour que cela se produise , et les gens doivent le savoir , parce que la réalité augmentée va changer nos vies autant qu&apos; Internet et le téléphone portable .
+ted_02007_0053530_0055920 Comment crée-t-on de la réalité augmentée ?
+ted_02007_0056080_0059310 Je porte actuellement l&apos; étape une , les Google Glass .
+ted_02007_0059870_0061730 Je suis sûr que beaucoup d&apos; entre vous connaissent les Google Glass .
+ted_02007_0062190_0069510 Ce que vous ne savez peut-être pas , c&apos; est que les Google Glass vous permettront de voir ce que je vois .
+ted_02007_0069700_0074240 Elles vous permettront d&apos; expérimenter ce que c&apos; est que d&apos; être un athlète professionnel sur le terrain .
+ted_02007_0074620_0079510 Actuellement , le seul moyen que vous avez d&apos; essayer de ressentir ça est pour moi de vous le décrire .
+ted_02007_0079510_0080700 Je dois utiliser des mots .
+ted_02007_0080920_0084430 Je dois créer un cadre que vous remplirez avec votre imagination .
+ted_02007_0085500_0098100 Avec les Google Glass , nous pouvons les mettre sous un casque , et avoir l&apos; impression de courir sur le terrain à 160 kilomètres à l&apos; heure , votre sang battant contre votre tempe .
+ted_02007_0098430_0108210 Vous pouvez ressentir ce que c&apos; est que d&apos; avoir un homme de 120 kilos courant vers vous essayant de vous décapiter avec chaque once de son être .
+ted_02007_0108580_0110930 J&apos; ai vécu tout cela , et on ne se sent pas très bien .
+ted_02007_0111780_0117250 J&apos; ai une séquence qui va vous permettre de voir ce que c&apos; est que de porter des Google Glass sous un casque pour vous donner un aperçu de ce que c&apos; est .
+ted_02007_0117280_0128280 Malheureusement , cette séquence ne provient pas d&apos; un entraînement de la NFL parce que la NFL pense qu&apos; une technologie qui émerge , c&apos; est un sous-marin qui fait surface , mais - ( Rires ) - on fait ce que l&apos; on peut .
+ted_02007_0128770_0131930 Regardons une vidéo .
+ted_02007_0132210_0141210 ( Vidéo ) Chris Kluwe : Partez ! Aïe ! Ça craint de se faire plaquer .
+ted_02007_0142500_0156690 Chris Kluwe : Comme vous pouvez le voir , un aperçu de ce que c&apos; est que d&apos; être plaqué sur un terrain de football du point de vue de la personne plaquée .
+ted_02007_0156940_0160580 Vous avez peut-être remarqué qu&apos; il manque certaines personnes : le reste de l&apos; équipe .
+ted_02007_0161420_0163800 Nous avons une vidéo montrant ça grâce à l&apos; Université de Washington .
+ted_02007_0164160_0170040 ( Vidéo ) Quarterback : Hey , Mice 54 ! Mice 54 ! Huit bleu ! Huit Bleu ! Allez ! Oh !
+ted_02007_0170050_0183600 Chris Kluwe : Encore une fois , ça vous rapproche un peu de ce que ça fait d&apos; être sur le terrain , mais pas ce que ça fait que d&apos; être à la NFL .
+ted_02007_0184640_0187750 Les fans veulent vivre ça . Les fans veulent être sur ce terrain .
+ted_02007_0187750_0195450 Ils veulent incarner leurs joueurs favoris , et ils m&apos; ont déjà parlé sur YouTube , ils m&apos; ont parlé sur Twitter , ils disaient : &quot; Hé ! Est-ce que vous pouvez faire ça avec un quarterback ?
+ted_02007_0195460_0196690 Pouvez-vous faire ça avec un arrière ?
+ted_02007_0196700_0198140 On veut cette expérience-là . &quot;
+ted_02007_0198450_0203010 Un fois que nous avons cette expérience avec GoPro et les Google Glass , comment faisons-nous pour la rendre plus immersive ?
+ted_02007_0203060_0204380 Comment franchissons-nous l&apos; étape suivante ?
+ted_02007_0204730_0210950 On franchit cette étape en utilisant ce qu&apos; on appelle l&apos; Oculus Rift , dont je suis sûr que beaucoup d&apos; entre vous ont entendu parler .
+ted_02007_0211540_0217350 L&apos; Oculus Rift a été décrit comme l&apos; un des appareils de réalité virtuelle les plus réalistes jamais créés et ce ne sont pas des paroles en l&apos; air .
+ted_02007_0217620_0238500 Je vais vous montrer pourquoi ce ne sont pas des paroles en l&apos; air avec cette vidéo . ( Vidéo ) Homme : Oh ! Oh ! Non , non , non ! Je ne veux plus jouer ! Non ! Oh mon Dieu ! Aaaah !
+ted_02007_0238620_0244990 Chris Kluwe : C&apos; est l&apos; expérience d&apos; un homme sur des montagnes russes craignant pour sa vie .
+ted_02007_0246130_0257270 A votre avis , que ressentira un fan quand on prendra une séquence vidéo d&apos; un Adrian Peterson passant la ligne , se débarrassant d&apos; un défenseur d&apos; un rapide mouvement du bras avant de sprinter pour marquer un touchdown ?
+ted_02007_0257700_0265820 A votre avis , que ressentira un fan lorsqu&apos; il sera Messi courant sur le terrain mettant le ballon au fond du filet , ou Federer faisant un service à Wimbledon ?
+ted_02007_0266260_0274540 A votre avis , que ressentira-t-il lorsqu&apos; il descendra le versant d&apos; une montagne à plus de 100 kilomètres à l&apos; heure comme un skieur lors d&apos; une descente olympique ?
+ted_02007_0275280_0278300 Je pense qu&apos; il pourrait y avoir des soldes sur les couches pour adultes . ( Rires )
+ted_02007_0278550_0281550 Mais ce n&apos; est pas encore de la réalité augmentée .
+ted_02007_0281550_0285610 Ce n&apos; est que de la réalité virtuelle ( RV ) . Comment obtient-on de la réalité augmentée ( RA ) ?
+ted_02007_0286170_0296760 On obtient de la réalité augmentée quand les coachs , les managers et les propriétaires regardent les informations qui affluent , que les gens veulent voir , et qu&apos; ils se disent : &quot; Comment pouvons-nous utiliser cela pour rendre nos équipes meilleures ?
+ted_02007_0297050_0302830 Comment est-ce qu&apos; on l&apos; utilise pour gagner des matchs ? &quot; Parce que les équipes utilisent toujours la technologie pour gagner des matchs . Ils aiment gagner . Ça leur rapporte de l&apos; argent .
+ted_02007_0303660_0306300 Un bref historique de la technologie en NFL .
+ted_02007_0306310_0311540 En 1965 , les Colts de Baltimore ont mis un bracelet à leur quarterback pour lui permettre de jouer plus vite .
+ted_02007_0312080_0313670 Cette année-là , ils ont gagné le Super Bowl .
+ted_02007_0313700_0315000 D&apos; autres équipes ont fait de même .
+ted_02007_0315230_0318210 Plus de personnes ont regardé les matchs parce que c&apos; était plus excitant . Ça allait plus vite .
+ted_02007_0318790_0325190 En 1994 , la NFL a mis des émetteurs radio dans les casques des quarterbacks , et plus tard , des défenseurs .
+ted_02007_0325480_0327870 Plus de personnes ont regardé les matchs parce que le jeu était plus rapide .
+ted_02007_0327880_0329160 C&apos; était plus divertissant .
+ted_02007_0329530_0341300 En 2023 , imaginez que vous êtes un joueur retournant vers la mêlée , votre prochain coup est affiché juste devant vos yeux sur votre visière en plastique que vous portez déjà actuellement .
+ted_02007_0341660_0343760 Plus besoin de s&apos; inquiéter de tactiques oubliées .
+ted_02007_0343770_0345860 Plus besoin de s&apos; inquiéter de la mémorisation des stratégies .
+ted_02007_0346080_0347640 Vous n&apos; avez qu&apos; à aller sur le terrain et à réagir .
+ted_02007_0347880_0354130 Et les coachs n&apos; attendent que ça , parce que des tactiques loupées font perdre des matchs , et les coachs détestent perdre des matchs .
+ted_02007_0354270_0356210 Les coachs sont virés à cause de matchs perdus .
+ted_02017_0012100_0015640 J&apos; ai grandi dans une toute petite ville de campagne dans l&apos; Etat de Victoria .
+ted_02017_0016230_0019380 J&apos; ai eu une éducation tout à fait normale et tranquille .
+ted_02017_0020490_0025540 J&apos; allais à l&apos; école , je traînais avec mes amis , je me chamaillais avec mes plus jeunes sœurs .
+ted_02017_0026170_0027140 Tout était extrêmement normal .
+ted_02017_0028160_0036980 Quand j&apos; avais 15 ans , un membre de ma communauté a contacté mes parents et voulait me nominer au prix de la réussite de la communauté .
+ted_02017_0038150_0043830 Mes parents ont répondu : &quot; Hm , c&apos; est très gentil , mais il y a comme un petit problème avec ça .
+ted_02017_0043840_0048720 Elle n&apos; a vraiment rien réussi . &quot; ( Rires )
+ted_02017_0049610_0050790 Ils avaient raison , vous savez .
+ted_02017_0051000_0068520 J&apos; allais à l&apos; école , j&apos; avais de bonnes notes , j&apos; avais un petit boulot tranquille après les cours dans le salon de coiffure de ma mère , je passais beaucoup de temps à regarder &quot; Buffy contre les Vampires &quot; et &quot; Dawson &quot; . Oui , je sais . Quel éclectisme ! Ils avaient raison , vous savez .
+ted_02017_0068520_0071760 Je ne faisais rien qui ne sortait de l&apos; ordinaire , absolument rien .
+ted_02017_0072640_0077860 Je ne faisais rien qui pouvait être considéré comme une réussite , si l&apos; on enlevait la question du handicap .
+ted_02017_0079430_0101200 Des années plus tard , j&apos; étais en deuxième cycle d&apos; enseignement dans un lycée de Melbourne , et ça faisait 20 minutes que je donnais un cours de droit à des secondes quand ce garçon a levé la main et dit : &quot; Hey , Mademoiselle , quand est-ce que vous allez commencer votre discours ? &quot; J&apos; ai répondu : &quot; Quel discours ? &quot; Vous voyez , je leur parlais des lois sur la diffamation depuis près de 20 minutes .
+ted_02017_0102340_0105500 Il a dit : &quot; Vous savez , votre discours de motivation .
+ted_02017_0105960_0116220 Quand les gens en fauteuil roulant viennent à l&apos; école , ils disent souvent , des trucs inspirants ? &quot; ( Rires ) &quot; Souvent c&apos; est dans le grand hall . &quot;
+ted_02017_0118950_0126140 C&apos; est à cet instant que ça m&apos; a frappée : les seules expériences que ce gamin avait eues avec des handicapés ne consistaient qu&apos; à les voir comme des sources d&apos; inspiration .
+ted_02017_0128140_0132430 Nous ne le sommes pas , pour ce gamin , ce n&apos; est pas de sa faute , c&apos; est vrai pour beaucoup d&apos; entre nous .
+ted_02017_0133080_0137720 Pour beaucoup d&apos; entre nous , les handicapés ne sont pas nos professeurs , nos docteurs ou nos manucures .
+ted_02017_0139950_0141000 Nous ne sommes pas de vraies personnes .
+ted_02017_0141020_0143430 Nous sommes là pour inspirer .
+ted_02017_0145580_0155300 En fait , je me tiens sur cette scène avec mon look , dans ce fauteuil roulant , vous attendez sûrement de moi que je vous inspire .
+ted_02017_0155300_0159890 Non ? ( Rires ) Oui .
+ted_02017_0162010_0166100 Eh bien , mesdames et messieurs , j&apos; ai peur de vous décevoir de façon spectaculaire .
+ted_02017_0166920_0168570 Je ne suis pas là pour vous inspirer .
+ted_02017_0169070_0173100 Je suis ici pour vous dire que l&apos; on vous a menti au sujet des handicaps .
+ted_02017_0173710_0185350 Oui , nous avons répandu ce mensonge disant que les handicaps sont des Mauvaises Choses , avec un grand M et un grand C. C&apos; est une mauvaise chose et vivre avec un handicap vous rend exceptionnel .
+ted_02017_0186360_0190250 Ce n&apos; est pas une mauvaise chose , ça ne vous rend pas exceptionnel .
+ted_02017_0191610_0198030 Au cours des dernières années , on a été en mesure de propager ce mensonge encore plus loin sur les réseaux sociaux .
+ted_02017_0198200_0225540 Vous avez pu voir des images comme celle-ci : &quot; Le seul handicap dans la vie c&apos; est d&apos; avoir mauvais caractère &quot; Ou celle-ci : &quot; Votre excuse est invalide &quot; . En effet . Ou celle-là : &quot; Essayez avant d&apos; arrêter ! &quot; Ce ne sont que quelques exemples , il y a beaucoup d&apos; images de ce genre dehors , Vous avez peut-être vu celle de la petite fille sans main faisant un dessin avec un crayon qu&apos; elle tient dans sa bouche .
+ted_02017_0226420_0230230 Vous avez peut-être vu un enfant courir avec des prothèses en fibres de carbone .
+ted_02017_0231130_0248090 Ces images , il y en a beaucoup , c&apos; est ce qu&apos; on appelle du porno inspirant . ( Rires ) J&apos; utilise le terme porno délibérément , parce qu&apos; on objective un groupe de personnes pour le bien d&apos; un autre groupe de personnes .
+ted_02017_0248510_0253540 Dans ce cas , nous objectivons les personnes handicapées pour le bien-être des personnes valides .
+ted_02017_0254220_0266050 L&apos; objectif de ces images est de vous inspirer , de vous motiver , pour que vous les regardiez et que vous pensiez : &quot; Bon , aussi horrible que soit ma vie , ça pourrait être pire .
+ted_02017_0267280_0269160 Je pourrais être comme cette personne . &quot;
+ted_02017_0270680_0272260 Et si vous étiez cette personne ?
+ted_02017_0273970_0286350 J&apos; ai perdu le compte du nombre de fois où un étranger est venu vers moi pour me dire à quel point il pense que je suis courageuse ou inspirante , c&apos; était bien avant que mon travail n&apos; ait une quelconque visibilité .
+ted_02017_0286710_0296510 Il me félicitait de réussir à me lever le matin et à me rappeler mon propre nom . ( Rires ) C&apos; est objectivant .
+ted_02017_0296720_0303460 Ces images-ci et celles-là objectivent les personnes handicapées au bénéfice des personnes valides .
+ted_02017_0303760_0311490 Elles sont ainsi pour que vous puissiez les regarder , vous dire que les choses ne sont pas si mauvaises , pour mettre vos inquiétudes dans une nouvelle perspective .
+ted_02017_0313030_0318110 La vie en temps que personne handicapée est en réalité quelque peu difficile .
+ted_02017_0318130_0319620 Nous surmontons effectivement des épreuves .
+ted_02017_0320430_0324520 Mais les choses que nous surmontons ne sont pas celles auxquelles vous pensez .
+ted_02017_0325000_0326950 Ce ne sont pas des choses liées à nos corps .
+ted_02024_0013910_0026390 Le 5 novembre 1990 , un homme , El-Sayyid Nosair , est entré dans le hall d&apos; un hôtel à Manhattan et a assassiné le rabbin Meir Kahane , le leader de la Ligue de Défense Juive .
+ted_02024_0028120_0043520 Nosair a d&apos; abord été reconnu non coupable du meurtre , mais , alors qu&apos; il était en prison pour des charges mineures , lui et d&apos; autres hommes ont commencé à planifier des attaques sur une dizaine de sites à New York , des tunnels , des synagogues et le siège de l&apos; ONU .
+ted_02024_0044700_0047410 Heureusement , ces plans ont été déjoués par un informateur du FBI .
+ted_02024_0049110_0052930 Malheureusement , l&apos; attentat de 1993 contre le World Trade Center ne l&apos; a pas été .
+ted_02024_0054700_0057780 Nosair a finalement été condamné pour son implication dans ce complot .
+ted_02024_0059890_0061510 El-Sayyid Nosair est mon père .
+ted_02024_0064010_0075780 Je suis né à Pittsburgh , en Pennsylvanie , en 1983 , fils de lui-même , ingénieur égyptien , et d&apos; une mère américaine aimante , institutrice en primaire , qui ont ensemble fait de leur mieux pour rendre mon enfance heureuse .
+ted_02024_0077310_0081070 Ce n&apos; est qu&apos; à partir de mes 7 ans que notre dynamique familiale a changé .
+ted_02024_0082440_0089270 Mon père m&apos; a présenté un visage de l&apos; Islam que peu de gens , dont la majorité des musulmans , sont amenés à voir .
+ted_02024_0091120_0099810 Mon expérience est que , quand les gens prennent le temps d&apos; interagir les uns avec les autres , il ne faut pas longtemps pour comprendre qu&apos; en majorité , nous voulons tous les mêmes choses dans la vie .
+ted_02024_0100790_0113730 Cependant , dans chaque religion , dans chaque population , vous retrouvez le même faible pourcentage de gens qui ont une telle ferveur en leurs croyances qu&apos; ils se sentent obligés de tout faire pour que les autres vivent de la même manière qu&apos; eux .
+ted_02024_0115990_0126160 Quelques mois avant son arrestation , il m&apos; a expliqué que lui et quelques amis avaient , les derniers week-ends , été dans un club de tir de Long Island pour s&apos; entraîner à tirer .
+ted_02024_0127130_0128980 Il m&apos; a demandé de venir avec lui le lendemain .
+ted_02024_0130640_0136090 Nous sommes arrivés au club de tir Calverton , qui , à l&apos; insu de notre groupe , était surveillé par le FBI .
+ted_02024_0138000_0144870 Quand ce fut mon tour de tirer , mon père m&apos; aida à caler le fusil contre mon épaule et m&apos; expliqua comment viser la cible à environ 30 mètres .
+ted_02024_0146710_0157050 Ce jour-là , la dernière balle que j&apos; ai tirée a touché la petite lumière orange située au-dessus de la cible . Et , à la surprise générale , et surtout à la mienne , la cible a complètement explosé en flammes .
+ted_02024_0159060_0165560 Mon oncle s&apos; est tourné vers les autres et a dit en arabe : &quot; Ibn abuh &quot; . Tel père , tel fils .
+ted_02024_0167790_0174660 Ils ont tous semblé trouver cette remarque très amusante , mais ce n&apos; est que quelques années plus tard que j&apos; ai totalement compris pourquoi ils trouvaient ça si amusant .
+ted_02024_0176260_0182080 Ils pensaient me voir aussi à même de détruire que mon père l&apos; était .
+ted_02024_0182080_0196190 Ils allaient finalement être condamnés pour avoir garé une camionnette chargée d&apos; une tonne d&apos; explosifs dans le parking souterrain de la tour Nord du World Trade Center , dont l&apos; explosion a causé la mort de 6 personnes et blessé plus de 1 000 autres .
+ted_02024_0196200_0199160 C&apos; était des hommes pour qui j&apos; avais du respect .
+ted_02024_0201110_0203180 C&apos; était des hommes que j&apos; appelais &quot; ammu &quot; , ce qui veut dire &quot; oncle &quot; .
+ted_02024_0205150_0214620 A l&apos; âge de 19 ans , j&apos; avais déjà déménagé 20 fois , et cette instabilité pendant l&apos; enfance ne m&apos; a pas vraiment permis de me faire beaucoup d&apos; amis .
+ted_02024_0215460_0220940 A chaque fois que je commençais à me sentir à l&apos; aise avec quelqu&apos; un , c&apos; était le moment de déménager dans une autre ville .
+ted_02024_0221760_0225600 Étant perpétuellement le petit nouveau , j&apos; ai souvent été harcelé à l&apos; école .
+ted_02045_0012780_0017200 En ce moment même , il y a un film qui passe dans votre tête .
+ted_02045_0018200_0020160 C&apos; est un incroyable film multi-pistes .
+ted_02045_0021010_0027960 Il vous passe ce que vous voyez et entendez en ce moment même en images 3D , et avec le son surround , mais ce n&apos; est que le début .
+ted_02045_0029220_0032910 Votre film a l&apos; odorat , le goût et le sens du toucher .
+ted_02045_0034290_0039610 Il vous fait ressentir votre corps , la douleur , la faim , les orgasmes .
+ted_02045_0041200_0045210 Il a des émotions : la colère et le bonheur .
+ted_02045_0046750_0051350 Il a des souvenirs , comme des scènes de votre enfance qui se jouent devant vous .
+ted_02045_0053000_0059450 Et il a cette voix off permanente dans votre flux de pensées conscientes .
+ted_02045_0062320_0069610 Le centre de ce film , c&apos; est vous , en train de faire l&apos; expérience directe de tout ceci .
+ted_02045_0071440_0080980 Ce film , c&apos; est votre flux de conscience , le sujet qui fait l&apos; expérience de l &quot; esprit et du monde .
+ted_02045_0083350_0086890 La conscience est l&apos; un des faits essentiels de l&apos; existence humaine .
+ted_02045_0087740_0089440 Nous sommes tous conscients .
+ted_02045_0090540_0094950 Nous avons tous notre propre film intérieur , vous , vous et vous aussi .
+ted_02045_0096290_0098610 Il n&apos; y a rien d&apos; autre dont nous ayons une connaissance aussi directe .
+ted_02045_0100020_0102930 Au moins , moi , j&apos; ai une connaissance directe de ma conscience .
+ted_02045_0103680_0106600 Je ne peux pas être sûr que vous autres soyez conscients .
+ted_02045_0107150_0109760 La conscience est aussi ce qui fait que la vie vaut la peine d&apos; être vécue .
+ted_02045_0110770_0116010 Sans conscience , rien dans nos vies n&apos; aurait de sens ou de valeur .
+ted_02045_0117690_0127910 Mais , en même temps , c&apos; est aussi le phénomène le plus mystérieux de tout l&apos; univers . Pourquoi sommes-nous conscients ? Pourquoi avons-nous ces films intérieurs ?
+ted_02045_0128070_0137350 Pourquoi ne sommes nous pas de simples robots qui traitent toutes ces données , produisent ces résultats , sans faire l&apos; expérience de ce film intérieur ?
+ted_02045_0138310_0141660 Aujourd&apos; hui , personne ne connait la réponse à ces questions .
+ted_02045_0142880_0150300 Je vais avancer l&apos; idée que , pour pouvoir intégrer la conscience à la science , quelques idées radicales sont nécessaires .
+ted_02045_0151230_0154730 Certains disent qu&apos; une science de la conscience est impossible .
+ted_02045_0156140_0158610 La science , par nature , est objective .
+ted_02045_0159820_0162520 La conscience , par nature , est subjective .
+ted_02045_0163650_0165980 Donc , il ne pourra jamais exister une science de la conscience .
+ted_02045_0167550_0170000 Ça a été la vision dominante pendant presque tout le 20ème siècle .
+ted_02045_0170930_0180850 Les psychologues étudiaient objectivement le comportement , les neuroscientifiques étudiaient objectivement le cerveau , et personne ne parlait jamais de la conscience .
+ted_02045_0182370_0188600 Même il y 30 ans , quand TED a débuté , il y avait très peu de travaux scientifiques sur la conscience .
+ted_02045_0190020_0193430 Mais il y a une vingtaine d&apos; années , ça a commencé à changer .
+ted_02045_0195630_0204320 Des neuroscientifiques comme Francis Crick et des physiciens comme Roger Penrose ont dit qu&apos; il était temps pour la science de s&apos; attaquer à la conscience .
+ted_02045_0205500_0210850 Et depuis , il y a eu une explosion , une éclosion de travaux scientifiques sur la conscience .
+ted_02045_0211420_0216400 Ce travail est extraordinaire . C&apos; est super . Mais il souffre encore de certaines limitations fondamentales .
+ted_02045_0219130_0231570 Ces dernières années , la pièce maitresse des sciences de la conscience a été la recherche de corrélations , de corrélations entre certaines zones du cerveau et certains états de conscience .
+ted_02045_0233140_0238570 Nous avons eu un aperçu de ce genre de recherches avec le magnifique travail que Nancy Kanwisher nous a présenté il y a quelques minutes .
+ted_02045_0239580_0253200 Maintenant nous comprenons beaucoup mieux quelles zones du cerveau s&apos; activent lorsque , par exemple , nous voyons des visages de manière consciente , ou lorsque nous souffrons , ou lorsque nous sommes heureux .
+ted_02045_0254340_0256670 Mais , ça reste une science des corrélations .
+ted_02045_0257500_0259950 Ce n&apos; est pas une science d&apos; explications .
+ted_02045_0260470_0269670 Nous savons que ces zones du cerveau s&apos; activent avec certains types d&apos; expériences conscientes , mais nous ne savons pas pourquoi .
+ted_02045_0270770_0285590 Autrement dit , ce type de recherches en neurosciences répondent à quelques-unes des questions que nous nous posons sur la conscience , comme quelles parties du cerveau font quoi et avec quoi sont-elles liées .
+ted_02045_0285940_0288710 Mais en un sens , ce sont là des problèmes faciles .
+ted_02045_0288750_0289650 Sans vouloir heurter les neuroscientifiques .
+ted_02045_0291240_0293450 Il n&apos; y a pas vraiment de problème facile avec la conscience .
+ted_02045_0293890_0307000 Mais ça ne questionne pas le vrai mystère , au cœur de cette question : pourquoi donc tout ces processus physiques du cerveau devraient-ils être accompagnés par la conscience ?
+ted_02045_0307440_0310620 Pourquoi ce film intérieur existe-t-il ?
+ted_02045_0310780_0313240 Aujourd&apos; hui , on n&apos; a pas la moindre idée là-dessus .
+ted_02045_0314250_0318820 Et vous pourriez dire : Laissons encore quelques années aux neurosciences .
+ted_02045_0319620_0329910 On finira par découvrir que ce n&apos; est qu&apos; un autre phénomène émergent comme les embouteillages , les ouragans , la vie , et on finira bien par le comprendre .
+ted_02045_0330830_0348060 Les cas classiques d&apos; émergences sont tous des cas de comportement émergent . Comment les embouteillages se forment , comment les ouragans fonctionnent , comment un organisme vivant se reproduit s&apos; adapte et métabolise . Ce sont toutes des questions sur le fonctionnement objectif .
+ted_02045_0348160_0361900 On pourrait appliquer ça au cerveau humain en expliquant certains comportements et certaines fonctions du cerveau humain comme des phénomènes émergents : comment on marche , comment on parle , comment on joue aux échecs , toutes ces questions sur le comportement .
+ted_02045_0362180_0368320 Mais quand on en vient à la conscience , ces questions sur le comportement sont en fait des problèmes simples .
+ted_02045_0369200_0377650 Le problème dificile c&apos; est de savoir pourquoi tous ces comportements s&apos; accompagnent d&apos; expériences subjectives .
+ted_02045_0377820_0386880 Et là-dessus , ni le paradigme habituel de l&apos; émergence , ni même les paradigmes habituels des neurosciences , ne nous ont appris grand chose , jusqu&apos; à présent .
+ted_02045_0388870_0391600 Je suis un scientifique matérialiste pur et dur .
+ted_02045_0393140_0407150 Je veux une théorie scientifique de la conscience , une théorie qui fonctionne , et pendant longtemps , je me suis frappé la tête contre le mur à chercher une théorie de la conscience en termes purement physiques qui fonctionnerait .
+ted_02045_0407720_0412260 Je suis finalement arrivé à la conclusion que ça ne marche pas pour des raisons systématiques .
+ted_02045_0413990_0445560 C&apos; est une longue histoire , mais l&apos; idée principale est qu&apos; avec des explications purement réductionnistes , en termes physiques , basées sur le cerveau , on ne peut obtenir que des histoires sur le fonctionnement d&apos; un système , sa structure , sa dynamique , les comportements qu&apos; il produit . C&apos; est parfait pour résoudre les problèmes simples : comment on se comporte , comment on fonctionne .
+ted_02045_0447250_0450620 c&apos; est fondamentalement différent , et ça demeure une question en suspens . Je pense donc que nous sommes là dans une impasse .
+ted_02045_0452690_0465460 On a cette merveilleuse chaîne d&apos; explications dont on a l&apos; habitude : la physique explique la chimie , la chimie explique la biologie , la biologie explique une partie de la psychologie .
+ted_02045_0466580_0469570 Mais la conscience ne semble pas avoir sa place dans ce schéma .
+ted_02045_0470800_0473520 D&apos; un côté : c&apos; est un fait , nous sommes conscients .
+ted_02045_0474660_0478900 De l&apos; autre côté : on ne sait pas comment l&apos; accorder avec notre approche scientifique du monde .
+ted_02045_0479990_0488570 Je pense donc que la conscience , aujourd&apos; hui , est une sorte d&apos; anomalie , une anomalie qu&apos; on doit intégrer dans notre vision du monde , mais on ne sait pas encore comment .
+ted_02045_0490140_0504550 Face à une telle anomalie , il faut sans doute des idées radicales . Je crois qu&apos; on a besoin d&apos; une ou deux idées qui , à première vue , paraissent un peu folles , avant qu&apos; on ne puisse aborder la conscience
+ted_02045_0505850_0509140 de façon scientifique . Et il y a bien sûr quelques propositions pour ces idées folles .
+ted_02045_0510760_0513700 Mon ami Dan Dennett , ici présent , en a une .
+ted_02045_0514320_0517920 Son idée folle est qu&apos; il n&apos; y a pas de problème ardu de la conscience .
+ted_02045_0518520_0526020 Toute cette idée d&apos; un film subjectif intérieur n&apos; est qu&apos; une espèce d&apos; illusion ou de confusion .
+ted_02045_0526260_0534440 En fait , tout ce que nous avons à faire , c&apos; est expliquer les fonctions objectives , les comportements du cerveau , et ainsi , nous aurons expliqué tout ce qu&apos; il est nécessaire d&apos; expliquer .
+ted_02045_0535800_0537400 Eh bien , donnons-lui plus de voix !
+ted_02045_0538430_0547130 C&apos; est le genre d&apos; idée radicale que nous devons explorer si nous voulons une théorie de la conscience purement réductionniste , fondée sur le cerveau .
+ted_02045_0548420_0555370 Mais en même temps , pour moi et pour beaucoup d&apos; autres , cette vision ramène un peu trop à simplement nier le fait de la conscience pour être satisfaisante .
+ted_02045_0556010_0557520 Je pars donc dans une autre direction .
+ted_02045_0558760_0565190 Durant le temps qu&apos; il me reste , je voudrais explorer deux idées folles
+ted_02045_0567020_0570720 qui me semblent prometteuses . La première idée folle est que la conscience est fondamentale .
+ted_02045_0573110_0581130 Les physiciens considèrent parfois certains aspects de l&apos; univers comme des composant essentiel : l&apos; espace , le temps , et la masse .
+ted_02045_0582160_0588620 Ils postulent des lois fondamentales qui les gouvernent , comme les lois de la gravitation ou de la mécanique quantique .
+ted_02045_0589070_0593870 Ces propriétés et ces lois fondamentales ne peuvent pas s&apos; explique dans des termes plus basiques .
+ted_02045_0595120_0599470 Au contraire , elles sont considérées comme des primaires , et on construit le monde à partir d&apos; elles .
+ted_02045_0600820_0604460 Mais , parfois , cette liste de fondamentales s&apos; agrandit .
+ted_02045_0605970_0627480 Au 19ème siècle , Maxwell a découvert que l&apos; on ne pouvait pas expliquer l&apos; électromagnétisme avec les fondamentales de l&apos; époque : l&apos; espace , le temps , lamasse , les lois de Newton . Il a donc postulé les lois fondamentales de l&apos; électromagnétisme et a proposé la charge électrique comme l&apos; élément fondamental régi par ces lois .
+ted_02045_0628920_0632970 Je crois que nous en sommes au même point avec la conscience .
+ted_02045_0633810_0643800 Si on n&apos; arrive pas à l&apos; expliquer en termes des lois fondamentales existantes - espace , temps , masse , charge - logiquement , il faudrait donc agrandir la liste .
+ted_02045_0644480_0652430 Il est alors naturel de postuler que la conscience elle-même est un composant fondamental , un élément essentiel de construction de la nature .
+ted_02045_0653050_0655940 Ça ne veut pas dire qu&apos; on ne peut plus l&apos; étudier scientifiquement .
+ted_02045_0656200_0659640 Ça ouvre la voie à son étude scientifique .
+ted_02045_0659870_0670900 Ce que nous devons donc étudier sont les lois fondamentales qui gouvernent la conscience , les lois qui relient la conscience aux autres composants fondamentaux : l&apos; espace , le temps , la masse , les phénomènes physiques .
+ted_02102_0013340_0014880 Voici ma nièce , Stella .
+ted_02102_0015270_0017800 Elle vient d&apos; avoir un an et elle commence à marcher .
+ted_02102_0018320_0026030 Elle marche comme tous les autres enfants de son âge , en titubant , du genre : &quot; Mon corps bouge trop vite pour mes jambes &quot; .
+ted_02102_0026060_0027850 C&apos; est absolument magnifique .
+ted_02102_0028560_0033240 Et ce qu&apos; elle préfère faire en ce moment , c&apos; est de fixer son reflet dans le miroir .
+ted_02102_0033550_0036020 Elle adore son reflet .
+ted_02102_0036760_0054480 Elle rigole , elle crie , et se fait de gros bisous baveux . C&apos; est beau . Apparemment , ses amis le font et ma mère m&apos; a dit que je le faisais aussi , alors je me suis demandée : Quand est-ce que j&apos; ai arrêté de faire ça ?
+ted_02102_0055770_0060380 Quand cessons-nous soudainement d&apos; aimer notre apparence ?
+ted_02102_0061050_0062620 Parce qu&apos; apparemment , on n&apos; aime pas notre apparence .
+ted_02102_0063600_0070160 Tous les mois , dix mille personnes tapent sur Google : &quot; Est-ce que je suis laid ? &quot; Voici Faye .
+ted_02102_0070850_0073150 Faye a 13 ans et elle habite à Denver .
+ted_02102_0073750_0077260 Et comme toutes les adolescentes , elle veut être aimée et s&apos; intégrer .
+ted_02102_0077940_0078900 C&apos; est dimanche soir .
+ted_02102_0079610_0081540 Elle se prépare pour une semaine d&apos; école .
+ted_02102_0081980_0093670 Ça l&apos; angoisse un peu , et elle est troublée car , bien que sa mère lui dise tout le temps qu&apos; elle est belle , tous les jours à l&apos; école , quelqu&apos; un lui dit qu&apos; elle est laide .
+ted_02102_0095150_0103350 À cause de l&apos; écart entre ce que sa mère et ce que ses amis lui disent à l&apos; école , ou ce que ses camarades de classe lui disent , elle ne sait pas qui croire .
+ted_02102_0104090_0105790 Donc elle fait une vidéo d&apos; elle et elle la poste sur YouTube .
+ted_02102_0106120_0115780 Elle demande aux gens de laisser un commentaire : &quot; Suis-je belle ou laide ? &quot; Jusqu&apos; ici , Faye a reçu plus de 13 000 commentaires .
+ted_02102_0116350_0120040 Certains d&apos; entre eux sont si méchants que je ne veux même pas en parler .
+ted_02102_0121400_0130180 C&apos; est une jeune fille ordinaire et en bonne santé qui reçoit ces commentaires à un moment de sa vie où elle est le plus émotionnellement vulnérable .
+ted_02102_0131120_0137850 Des milliers de gens postent ce genre de vidéos , la plupart étant des jeunes filles , essayant d&apos; avoir une réponse .
+ted_02102_0138680_0140250 Qu&apos; est-ce qui les amène à faire ça ?
+ted_02102_0140800_0143920 Les jeunes d&apos; aujourd&apos; hui sont rarement seuls .
+ted_02102_0144560_0155090 On les pousse à être connectés et disponibles tout le temps , à parler , envoyer des messages , aimer , commenter , partager , poster - ça ne s&apos; arrête jamais .
+ted_02102_0155770_0163350 Nous n&apos; avons jamais été aussi connectés auparavant , de manière si continue , si instantanée et à un si jeune âge .
+ted_02102_0163940_0170420 Une mère m&apos; a dit : &quot; C&apos; est comme s&apos; il y avait tous les soirs une fête dans leur chambre . &quot; Il n&apos; y a tout simplement plus de vie privée .
+ted_02102_0171820_0175180 Une pression sociale sans relâche en résulte .
+ted_02102_0176160_0184970 Cet environnement entraîne nos enfants à mesurer leur valeur en fonction du nombre de &quot; J&apos; aime &quot; obtenus et du genre de commentaires reçus .
+ted_02102_0185900_0190080 Il n&apos; y a pas de frontière entre vie réelle et vie virtuelle .
+ted_02102_0190480_0195640 Il est difficile de différencier ce qui est vrai de ce qui ne l&apos; est pas .
+ted_02102_0196330_0201550 Et c&apos; est aussi compliqué de repérer ce qui est authentique et ce qui est retouché par ordinateur .
+ted_02102_0202300_0206860 Ce qui est normal dans la vie quotidienne et ce qui est extraordinaire .
+ted_02102_0207670_0209990 Et de qui s&apos; inspirent-ils ?
+ted_02102_0210940_0216030 Vous pouvez voir le genre d&apos; images qui remplissent le fil d&apos; actualité des filles aujourd&apos; hui .
+ted_02102_0216390_0218980 Les modèles de taille 0 dominent toujours nos défilés .
+ted_02102_0219650_0221270 Le photomontage fait partie de la routine .
+ted_02102_0222110_0223550 Et des hashtags comme # thinspiration , # thighgap , # bikinibridge et # proana .
+ted_02102_0223550_0229790 Pour ceux qui ne le savent pas , # proana signifie pro-anorexie .
+ted_02102_0230750_0237720 Ces modes s&apos; allient aux stéréotypes et à la flagrante objectivation des femmes dans la culture populaire actuelle .
+ted_02102_0237770_0242210 Il n&apos; est pas dur de voir à quoi les filles se comparent .
+ted_02102_0243570_0245390 Mais les garçons n&apos; en sont pas immunisés .
+ted_02102_0245900_0253120 Aspirant à des mâchoires carrées et des abdominaux ressemblant à ceux de leurs super-héros : les athlètes et les stars de la musique .
+ted_02102_0253870_0255530 Mais quel est le problème dans tout cela ?
+ted_02102_0255890_0262250 Nous voulons que nos enfants deviennent des adultes sains , en bonne santé .
+ted_02102_0263060_0275710 Mais dans une culture obsédée par l&apos; image , nous poussons nos enfants à passer plus de temps et à faire plus d&apos; efforts pour leur apparence aux dépens de tous les autres aspects de leur identité .
+ted_02102_0276110_0282640 Des choses comme leurs relations , le développement de leurs capacités physiques et leurs études commencent à en souffrir .
+ted_02102_0283990_0291230 Maintenant , 6 filles sur 10 choisissent de ne pas faire quelque chose parce qu&apos; elles pensent ne pas être assez jolies .
+ted_02102_0291600_0293480 Ce ne sont pas des activités banales .
+ted_02102_0293810_0301820 Ce sont des activités fondamentales à leur développement en tant qu&apos; humains et en tant que contributrices à la société et au monde du travail .
+ted_02102_0303160_0310350 31 % , presque un tiers des adolescents , s&apos; effacent lors des débats en classe .
+ted_02102_0310390_0316050 Ils ne s&apos; engagent pas dans ces débats car ils ne veulent pas attirer l&apos; attention sur ce à quoi ils ressemblent .
+ted_02102_0316090_0320790 Un ado sur cinq ne va pas du tout en cours les jours où il ne se sent pas bien .
+ted_02102_0321410_0333680 En ce qui concerne les examens , si vous ne vous trouvez pas assez beau , particulièrement si vous pensez ne pas être assez mince , vous aurez en moyenne un point de moins que vos camarades qui ne s&apos; en inquiètent pas .
+ted_02102_0334310_0343000 Et ceci est valable en Finlande , aux États-Unis , en Chine , et vrai quel que soit votre poids .
+ted_02102_0344090_0350400 Pour être vraiment clair , nous parlons de ce que vous pensez de votre allure et non de votre allure réelle .
+ted_02183_0013890_0018430 Je vais vous parler aujourd&apos; hui des 30 dernières années de l&apos; histoire architecturale .
+ted_02183_0019700_0022060 Ça fait beaucoup à faire tenir en 18 minutes .
+ted_02183_0022070_0028970 C&apos; est un sujet complexe , nous allons donc aller directement dans un endroit complexe : le New Jersey .
+ted_02183_0029490_0041140 J&apos; en suis , et il y a 30 ans , j&apos; avais 6 ans , je vivais dans la maison de mes parents , dans une ville appelée Livingston . Voici ma chambre à l&apos; époque .
+ted_02183_0041690_0046840 Juste à côté de ma chambre se trouvait la salle de bains que je partageais avec ma sœur .
+ted_02183_0047250_0052900 Entre ma chambre et la salle de bains se trouvait un balcon qui surplombait le salon .
+ted_02183_0053370_0067550 C&apos; était là où on traînait , où on regardait la télé , donc , à chaque fois que j&apos; allais de ma chambre à la salle de bains , tout le monde me regardait . A chaque fois que je prenais une douche et revenais avec ma serviette , tout le monde me regardait .
+ted_02183_0068140_0069470 Et je ressemblais à ça .
+ted_02183_0070700_0075840 Je me sentais bizarre , mal à l&apos; aise , et je détestais ça .
+ted_02183_0075860_0081950 Je détestais ce trajet , je détestais ce balcon , je détestais cette chambre , je détestais cette maison .
+ted_02183_0082930_0086490 Et c&apos; est de l&apos; architecture . ( Rires ) Ça , c&apos; est fait .
+ted_02183_0088140_0103830 Ces sentiments , ces émotions , c&apos; est la force de l&apos; architecture . L&apos; architecture , ce n&apos; est pas que des maths , ni que du zonage .
+ted_02183_0104690_0114190 Ce n&apos; est pas une surprise . Selon l&apos; Agence de Protection de l&apos; Environnement , les Américains passent 90 % de leur temps à l&apos; intérieur .
+ted_02183_0114570_0125040 90 % de notre temps entourés par l&apos; architecture . C&apos; est énorme . L&apos; architecture nous influence selon des manières insoupçonnées .
+ted_02183_0125920_0131050 Cela nous rend donc un peu crédules et très très prévisibles .
+ted_02183_0131540_0145080 Si je vous montre un bâtiment comme celui-ci , je sais ce que vous pensez : vous pensez &quot; puissance &quot; , &quot; stabilité &quot; et &quot; démocratie &quot; .
+ted_02183_0145080_0156340 Je sais que vous pensez ça parce qu&apos; il s&apos; inspire d&apos; un édifice qui a été construit par les Grecs il y a 2 500 ans .
+ted_02183_0157220_0163100 C&apos; est un truc que les architectes utilisent pour que vous créiez un lien émotionnel avec les formes que nous utilisons .
+ted_02183_0163620_0166560 C&apos; est un lien prévisible et nous l&apos; utilisons depuis très longtemps .
+ted_02183_0166760_0173680 Nous l&apos; avons utilisé il y a 200 ans pour construire des banques , au XIXe siècle pour construire des musées , et au XXe siècle , aux États-Unis , pour construire des maisons .
+ted_02183_0173910_0179420 Regardez ces petits soldats , solides et stables , face à l&apos; océan , repoussant les éléments .
+ted_02183_0180260_0185890 C&apos; est vraiment très utile , car construire est terrifiant .
+ted_02183_0186300_0190410 C&apos; est cher , ça prend du temps et c&apos; est très compliqué .
+ted_02183_0191240_0202250 Les gens qui construisent - les promoteurs et les gouvernements - ont naturellement peur de l&apos; innovation , ils préfèrent les formes auxquelles ils vous savent réceptifs .
+ted_02183_0203140_0205250 On finit donc avec des bâtiments comme ça .
+ted_02183_0206160_0207610 Il est pas mal .
+ted_02183_0207790_0226950 C&apos; est la bibliothèque municipale de Livingston qui a été achevée en 2004 . Elle a un dôme , et ce truc rond , des colonnes , de la brique rouge . Vous devinez que Livingston essaie de dire grâce à elle : enfants , propriété et histoire .
+ted_02183_0227750_0231360 Mais ça n&apos; a rien à voir avec ce qu&apos; est une bibliothèque de nos jours .
+ted_02183_0232250_0239590 La même année , à l&apos; autre bout du pays , on terminait une autre bibliothèque qui ressemblait à ça .
+ted_02183_0240100_0241140 C&apos; est à Seattle .
+ted_02183_0242210_0247560 Elle montre comment on consomme les médias dans une époque numérique .
+ted_02183_0247760_0253940 C&apos; est un nouveau type d&apos; espace public pour la ville , un lieu de réunion , de lecture et de partage .
+ted_02183_0255250_0264540 Comment est-il possible que la même année , dans le même pays , deux bâtiments , tous deux nommés bibliothèques , soient complètement différents ?
+ted_02183_0265610_0270840 Parce que l&apos; architecture fonctionne comme un balancier .
+ted_02183_0271470_0281690 D&apos; un côté , l&apos; innovation , les architectes poussant constamment vers de nouvelles technologies , de nouvelles typologies , de nouvelles solutions pour la vie d&apos; aujourd&apos; hui .
+ted_02183_0282060_0286480 On pousse , encore et encore , jusqu&apos; à perdre tout le monde .
+ted_02183_0286750_0294400 On broie du noir , on devient très déprimés , vous pensez qu&apos; on nous envie , mais nous sommes morts à l&apos; intérieur parce que nous n&apos; avons pas le choix .
+ted_02183_0294700_0299720 On doit passer de l&apos; autre côté et se réapproprier les symboles que nous savons que vous aimez .
+ted_02183_0300480_0313750 Donc , on fait comme ça et vous êtes contents . On a l&apos; impression d&apos; avoir capitulé , on recommence donc à expérimenter . Et le balancier va et vient , et recommence ... Ça vaut pour les 300 dernières années , et sûrement pour les 30 dernières .
+ted_02183_0314970_0318250 Il y a 30 ans , on sortait des années 70 .
+ted_02183_0318530_0322090 Les architectes s&apos; étaient essayés à ce qu&apos; on a appelé le brutalisme .
+ted_02183_0322490_0325990 C&apos; était béton . ( Rires ) Vous l&apos; aviez deviné .
+ted_02183_0326550_0329420 De petites fenêtres , une taille déshumanisante .
+ted_02183_0329700_0332130 C&apos; était vraiment brutal .
+ted_02183_0332290_0337490 En se rapprochant des années 80 , on commence à se réapproprier ces symboles .
+ted_02183_0337490_0340190 On lance le balancier dans l&apos; autre direction .
+ted_02183_0340470_0344720 On prend les formes que vous aimez et on les met au goût du jour .
+ted_02183_0345070_0351100 On ajoute les néons , les pastels , on utilise de nouveaux matériaux .
+ted_02183_0351130_0352290 Et vous aimez ça .
+ted_02183_0352630_0354340 On n&apos; arrive pas à vous en donner assez .
+ted_02183_0354530_0363880 On prend des armoires Chippendale qu&apos; on transforme en gratte-ciel , et les gratte-ciel peuvent être des châteaux médiévaux en verre .
+ted_02183_0364460_0368130 Les formes deviennent immenses , osées et colorées .
+ted_02183_0368460_0391890 Les 7 nains deviennent des colonnes . ( Rires ) Les cygnes prennent la taille des immeubles . C&apos; était fou . Mais c&apos; est les années 80 , c&apos; est funky . ( Rires ) On traînait dans les centres commerciaux , on déménageait tous en banlieue , et là-bas , en banlieue , on pouvait créer nos propres délires architecturaux .
+ted_02183_0392270_0402420 Ça pouvait être méditerranéen , ou français , ou italien . ( Rires ) Avec des gressins infinis .
+ted_02183_0402490_0406390 C&apos; est le problème avec le post-modernisme , avec les symboles : c&apos; est facile et pas cher .
+ted_02183_0406900_0414440 Au lieu de créer des lieux , on crée des réminiscences de lieux .
+ted_02183_0415100_0423000 Car je le sais , et vous le savez tous , ce n&apos; est pas la Toscane , c&apos; est l&apos; Ohio . ( Rires )
+ted_02183_0423020_0428170 Les architectes sont frustrés et recommencent à pousser le balancier dans l&apos; autre sens .
+ted_02183_0428490_0432690 A la fin des années 80 , début 90 , on s&apos; essaye au déconstructivisme .
+ted_02183_0434780_0445960 On se débarrasse des symboles historiques , on se sert des nouvelles techniques de conception assistée par ordinateur et on obtient de nouvelles compositions : des formes s&apos; encastrant dans d&apos; autres formes .
+ted_02183_0446200_0452600 C&apos; est académique et intellectuel , très impopulaire , on perd tout le monde .
+ted_02183_0452770_0456590 Normalement , le balancier repartirait dans l&apos; autre sens .
+ted_02183_0457120_0458800 Mais là , quelque chose d&apos; étonnant se passe .
+ted_02183_0460380_0463150 On inaugure cet immeuble en 1997 .
+ted_02183_0463920_0466630 C&apos; est le Musée Guggenheim , à Bilbao , par Frank Gehry .
+ted_02183_0468260_0473940 Et ce musée change fondamentalement la relation du monde à l&apos; architecture .
+ted_02183_0474660_0484570 Paul Goldberger a dit que Bilbao avait été un de ces rares moments où la critique , les universitaires et le grand public étaient tous tombés d&apos; accord .
+ted_02183_0485440_0488480 Le New York Times l&apos; a appelé un miracle .
+ted_02183_0489180_0495680 Le tourisme à Bilbao a augmenté de 2 500 % après sa construction .
+ted_02183_0495680_0514760 Et tout d&apos; un coup , tout le monde voulait un de ces bâtiments : Los Angeles , Seattle , Chicago , New York , Cleveland , Springfield . ( Rires ) Tout le monde en voulait un , Gehry était donc partout .
+ted_02183_0515970_0519980 Il est notre tout premier starchitecte .
+ted_02183_0519990_0530690 Mais comment est-il possible que ces formes - sauvages et radicales - soient devenues si omniprésentes dans le monde entier ?
+ted_02183_0531240_0542520 C&apos; est arrivé car les médias se sont si bien emparés du sujet qu&apos; ils nous ont vite appris que ces formes signifiaient culture et tourisme .
+ted_02183_0543020_0546210 Nous avons créé une réaction émotionnelle à ces formes .
+ted_02183_0546520_0548510 Tous les maires du monde l&apos; ont fait aussi .
+ted_02183_0548940_0554450 Chaque maire savait que si sa ville avait ces formes , elle aurait la culture et le tourisme .
+ted_02183_0555740_0580260 Ce phénomène , au changement de millénaire , s&apos; est déroulé pour quelques starchitectes . Zaha , Libeskind . Ce qui est arrivé à ces architectes hors du commun , au début du nouveau millénaire , pourrait arriver à l&apos; architecture tout entière , les médias numériques augmentant la vitesse de consommation de l&apos; information .
+ted_02183_0581100_0583970 Pensez à la manière dont vous consommez l&apos; architecture .
+ted_02183_0584450_0588820 Il y a mille ans , vous auriez dû marcher jusqu&apos; au village d&apos; à côté pour voir un bâtiment .
+ted_02183_0589200_0593280 Le transport s&apos; accélère : vous pouvez prendre un bateau , un avion , devenir un touriste .
+ted_02183_0594080_0605870 La technologie aussi : vous le voyez dans un journal , à la télé . Et finalement , nous sommes tous des photographes architecturaux : le bâtiment est décorrélé de son site .
+ted_02183_0606770_0616650 L&apos; architecture est partout de nos jours . La vitesse de communication a finalement rattrapé la vitesse de l&apos; architecture .
+ted_02183_0617360_0619760 L&apos; architecture évolue plutôt rapidement , en fait .
+ted_02183_0619940_0622430 Il faut peu de temps pour imaginer un bâtiment .
+ted_02183_0622660_0638550 Il en faut pour le construire - trois ou quatre ans - et pendant ce temps-là , un architecte va concevoir deux , huit ou cent autres bâtiments avant de savoir si celui conçu quatre ans auparavant sera un succès ou non .
+ted_02183_0639650_0643180 C&apos; est dû à l&apos; absence de boucle de retour en architecture .
