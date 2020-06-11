@@ -10,7 +10,7 @@ Ha Nguyen, Fethi Bougares, Natalia Tomashenko, Yannick Estève, Laurent Besacier
 
 *ON-TRAC Consortium is composed of researchers from three French academic laboratories: LIA (Avignon Université), LIG (Université Grenoble Alpes), and LIUM (Le Mans Université).
 
-## Updated Features
+## Updated features
 In this work , we made the following modifications to ESPnet v.0.6.3:
 ### ST: Speech Translation & MT: Machine Translation
 - [**_wav2vec_**](https://arxiv.org/abs/1904.05862) feature extraction
@@ -62,35 +62,6 @@ In this work , we made the following modifications to ESPnet v.0.6.3:
 ### ST demo
 Please navigate yourself to this [directory](https://github.com/mhn226/espnet/tree/interspeech2020/egs/interspeech2020/) for our detailed recipes.
 
-## References
-
-[1] Shinji Watanabe, Takaaki Hori, Shigeki Karita, Tomoki Hayashi, Jiro Nishitoba, Yuya Unno, Nelson Enrique Yalta Soplin, Jahn Heymann, Matthew Wiesner, Nanxin Chen, Adithya Renduchintala, and Tsubasa Ochiai, "ESPnet: End-to-End Speech Processing Toolkit," *Proc. Interspeech'18*, pp. 2207-2211 (2018)
-
-[2] Suyoun Kim, Takaaki Hori, and Shinji Watanabe, "Joint CTC-attention based end-to-end speech recognition using multi-task learning," *Proc. ICASSP'17*, pp. 4835--4839 (2017)
-
-[3] Shinji Watanabe, Takaaki Hori, Suyoun Kim, John R. Hershey and Tomoki Hayashi, "Hybrid CTC/Attention Architecture for End-to-End Speech Recognition," *IEEE Journal of Selected Topics in Signal Processing*, vol. 11, no. 8, pp. 1240-1253, Dec. 2017
-
-## Citations
-
-```
-@inproceedings{watanabe2018espnet,
-  author={Shinji Watanabe and Takaaki Hori and Shigeki Karita and Tomoki Hayashi and Jiro Nishitoba and Yuya Unno and Nelson {Enrique Yalta Soplin} and Jahn Heymann and Matthew Wiesner and Nanxin Chen and Adithya Renduchintala and Tsubasa Ochiai},
-  title={ESPnet: End-to-End Speech Processing Toolkit},
-  year=2018,
-  booktitle={Interspeech},
-  pages={2207--2211},
-  doi={10.21437/Interspeech.2018-1456},
-  url={http://dx.doi.org/10.21437/Interspeech.2018-1456}
-}
-@misc{hayashi2019espnettts,
-    title={ESPnet-TTS: Unified, Reproducible, and Integratable Open Source End-to-End Text-to-Speech Toolkit},
-    author={Tomoki Hayashi and Ryuichi Yamamoto and Katsuki Inoue and Takenori Yoshimura and Shinji Watanabe and Tomoki Toda and Kazuya Takeda and Yu Zhang and Xu Tan},
-    year={2019},
-    eprint={1910.10909},
-    archivePrefix={arXiv},
-    primaryClass={cs.CL}
-}
-```
 
 ## Acknowledgements
 This work was funded by the French Research Agency (ANR) through the ON-TRAC project under contract number ANR-18-CE23-0021.
