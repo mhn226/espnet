@@ -91,3 +91,6 @@ Please navigate yourself to this [directory](https://github.com/mhn226/espnet/tr
     primaryClass={cs.CL}
 }
 ```
+
+## Acknowledgements
+This work was funded by the French Research Agency (ANR) through the ON-TRAC project under contract number ANR-18-CE23-0021.
