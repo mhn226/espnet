@@ -4,7 +4,7 @@ run.sh is a complete recipe for:
 
 #### 1. Extracting features
 ##### Extracting raw features
-This recipe is design to extract either **_filter-bank_** or **_wav2vec_** features. This can be done by switching between `feature_type=wav2vec` and `feature_type=fbank`.
+This recipe is designed to extract either **_filter-bank_** or **_wav2vec_** features. This can be done by switching between `feature_type=wav2vec` and `feature_type=fbank`.
 
 **Note**: In order to extract **_wav2vec_** features, installing [_fairseq_](https://github.com/pytorch/fairseq/tree/master/examples/wav2vec) beforehand is mandatory.
 
@@ -23,7 +23,7 @@ Moreover, if the one's computational capacity is scarce, he/she would need to re
 #### 3. Decoding and scoring
 In addition to the ESPnet's default decoding mode (a.k.a decoding a single model), we implemented an ensembling mode.
 
-In order to ensemble models at decoding time, the decoding script (stage 5th in the run.sh) can be modify as following:
+In order to ensemble models at decoding time, the decoding script (stage 5th in run.sh) can be modify as following:
 
 ```shell script
 nj=8
