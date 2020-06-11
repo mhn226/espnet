@@ -21,3 +21,42 @@ Moreover, if the one's computational capacity is scarce, he/she would need to re
 <img align="center" src="speech_encoder_IS20.png" alt="speech_encoder" width="350"/>
 
 #### 3. Decoding and scoring
+In addition to the ESPnet's default decoding mode (a.k.a decoding a single model), we implemented an ensembling mode.
+
+In order to ensemble models at decoding time, the decoding script (stage 5th in the run.sh) can be modify as following:
+
+```shell script
+nj=8
+set=mustc-tst-COMMON.fr
+case=tc
+dict=/path/to/dictionary
+decode_config=conf/decode.yaml
+decode_dir=exp/decode_${set}_emsemble
+backend=pytorch
+
+model="/path/to/model1/model.acc.best /path/to/model2/model.acc.best" #input a list of models
+
+## split data files into smaller pieces
+# note that the data file can be different from each other in case one ensembles 
+# different models using different feature types, for example wav2vec and filter-bank
+splitjson.py /path/to/data/of/model1/data.tc.json
+splitjson.py /path/to/data/of/model2/data.tc.json
+
+#### use CPU for decoding
+ngpu=0
+
+${decode_cmd} JOB=1:${nj} ${decode_dir}/log/decode.JOB.log \
+    st_trans.py \
+    --config ${decode_config} \
+    --ngpu ${ngpu} \
+    --backend ${backend} \
+    --batchsize 0 \
+    --ensemble \
+    --api v2 \
+    --trans-json /path/to/data/of/model1/split${nj}utt/data.JOB.json \
+                 /path/to/data/of/model2/split${nj}utt/data.JOB.json \
+    --result-label ${decode_dir}/data.JOB.json \
+    --model $model
+
+score_bleu.sh --case ${case} ${decode_dir} de ${dict}
+```
