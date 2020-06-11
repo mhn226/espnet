@@ -2,11 +2,13 @@
 
 # ESPnet: end-to-end speech processing toolkit
 
-### This is a devopment branch of EPSnet, specifically dedicating to the work of the [ON-TRAC Consortium's](https://on-trac.univ-avignon.fr/on-trac-consortium/) submission to [INTERSPEECH 2020](http://www.interspeech2020.org/).
+### This is a devopment branch of EPSnet, specifically dedicating to the work of the [ON-TRAC Consortium*'s](https://on-trac.univ-avignon.fr/on-trac-consortium/) submission to [INTERSPEECH 2020](http://www.interspeech2020.org/).
 
-**Abstract:** Self-supervised learning from raw speech has been proven beneficial to improve automatic speech recognition (ASR). We investigate here its impact on end-to-end automatic speech translation (AST) performance. We use a contrastive predictive coding (CPC) model pre-trained from unlabeled speech as a feature extractor for a downstream AST task. We show that self-supervised pre-training is particularly efficient in low resource settings and that fine-tuning CPC models on the AST training data further improves performance. Even in higher resource settings, ensembling AST models trained with filter-bank and CPC representations leads to near state-of-the-art models without using any ASR pre-training. This might be particularly beneficial when one needs to develop a system that translates from speech in a language with poorly standardized orthography or even from speech in an unwritten language.
+## Investigating Self-supervised Pre-training for End-to-end Speech Translation
 
-#### ON-TRAC Consortium is composed of researchers from three French academic laboratories: LIA (Avignon Université), LIG (Université Grenoble Alpes), and LIUM (Le Mans Université).
+> **Abstract:** Self-supervised learning from raw speech has been proven beneficial to improve automatic speech recognition (ASR). We investigate here its impact on end-to-end automatic speech translation (AST) performance. We use a contrastive predictive coding (CPC) model pre-trained from unlabeled speech as a feature extractor for a downstream AST task. We show that self-supervised pre-training is particularly efficient in low resource settings and that fine-tuning CPC models on the AST training data further improves performance. Even in higher resource settings, ensembling AST models trained with filter-bank and CPC representations leads to near state-of-the-art models without using any ASR pre-training. This might be particularly beneficial when one needs to develop a system that translates from speech in a language with poorly standardized orthography or even from speech in an unwritten language.
+
+*ON-TRAC Consortium is composed of researchers from three French academic laboratories: LIA (Avignon Université), LIG (Université Grenoble Alpes), and LIUM (Le Mans Université).
 
 ## Updated Features
 In this work , we made the following modifications to ESPnet v.0.6.3:
