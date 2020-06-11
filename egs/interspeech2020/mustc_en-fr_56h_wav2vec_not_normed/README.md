@@ -1,9 +1,18 @@
 # Recipe for MuST-C en-fr 56 hours
 
-run.sh is a complete script for:
+run.sh is a complete recipe for:
 
-1. Extracting features
+#### 1. Extracting features
+##### Extracting raw features
+This recipe is design to extract either **_filter-bank_** or **_wav2vec_** features. This can be done by switching between `feature_type=wav2vec` and `feature_type=fbank`.
 
-2. Training model
+**Note**: In order to extract **_wav2vec_** features, installing [_fairseq_](https://github.com/pytorch/fairseq/tree/master/examples/wav2vec) is mandatory.
 
-3. Decoding and scoring
+##### Normalization 
+_Cepstral mean and variance normalization (cmvn)_ is optionally applied on the raw features. Setting `cmvn=true` will enable the _cmvn_ mode, otherwise, the raw features will be kept.
+
+
+
+#### 2. Training model
+
+#### 3. Decoding and scoring
