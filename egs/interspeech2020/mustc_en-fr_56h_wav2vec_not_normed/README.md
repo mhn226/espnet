@@ -18,6 +18,6 @@ In order to select **_wav2vec_** speech encoder, set `wav2vec=true`.
 
 Moreover, if the one's computational capacity is scarce, he/she would need to reduce the size of **_wav2vec_** features. The script makes this possible by setting `idim_reduction=true`. For the purposes mentioned in the paper, **_wav2vec_** features' size will be reduced from 512 to 83 (the size of **_filter-bank_** features).
 
-<img src="wav2vec-speech-encoder-IS20.png" alt="speech_encoder" width="200"/>
+<img align="center" src="wav2vec-speech-encoder-IS20.png" alt="speech_encoder" width="400"/>
 
 #### 3. Decoding and scoring
