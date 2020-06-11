@@ -2,7 +2,7 @@
 
 # ESPnet: end-to-end speech processing toolkit
 
-### This is a devopment branch of EPSnet, specifically dedicating to the work of the [ON-TRAC Consortium*'s](https://on-trac.univ-avignon.fr/on-trac-consortium/) submission to [INTERSPEECH 2020](http://www.interspeech2020.org/).
+### This is a development branch of EPSnet, specifically dedicating to the work of the [ON-TRAC Consortium*'s](https://on-trac.univ-avignon.fr/on-trac-consortium/) submission to [INTERSPEECH 2020](http://www.interspeech2020.org/).
 
 ## Investigating Self-supervised Pre-training for End-to-end Speech Translation
 Ha Nguyen, Fethi Bougares, Natalia Tomashenko, Yannick Estève, Laurent Besacier
