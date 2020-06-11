@@ -1,6 +1,6 @@
 ### This is a devopment branch of EPSnet, specifically dedicating to the work of the [ON-TRAC Consortium's](https://on-trac.univ-avignon.fr/on-trac-consortium/) submission to [INTERSPEECH 2020](http://www.interspeech2020.org/).
 
-#### ON-TRAC Consortium is composed of researchers from three French academic laboratories: LIA (Avignon Universit\'e), LIG (Universit\'e Grenoble Alpes), and LIUM (Le Mans Universit\'e).
+#### ON-TRAC Consortium is composed of researchers from three French academic laboratories: LIA (Avignon Université), LIG (Université Grenoble Alpes), and LIUM (Le Mans Université).
 
 #### Please navigate yourself to this [directory](https://github.com/mhn226/espnet/tree/interspeech2020/egs/interspeech2020/) for our detailed recipes.
 
