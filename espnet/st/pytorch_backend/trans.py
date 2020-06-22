@@ -195,7 +195,7 @@ def trans_waitk(args):
             g = 4 # 4 frames at a time
             feat = load_inputs_and_targets(batch)[0][0]
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
-            se2e = SimultaneousSTE2E(e2e=model, recog_args=args)
+            se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
             nbest_hyps = []
             for n in range(args.nbest):
