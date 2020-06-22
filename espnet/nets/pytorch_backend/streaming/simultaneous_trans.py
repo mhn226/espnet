@@ -57,8 +57,8 @@ class SimultaneousSTE2E(object):
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
-        assert "b" not in self._e2e.etype, \
-            "SegmentStreamingE2E works only with uni-directional encoders"
+        #assert "b" not in self._e2e.etype, \
+        #    "SegmentStreamingE2E works only with uni-directional encoders"
 
     def decision_from_states(self):
         #print('State\n|| Target:', ''.join(states['tokens']['tgt']), '\n|| ASR:', ''.join(states['tokens']['asr']))
