@@ -151,8 +151,10 @@ def main(args):
     if args.backend == "pytorch":
         # Experimental API that supports custom LMs
         if args.api == "v2":
-            from espnet.st.pytorch_backend.trans import trans
-            trans(args)
+            #from espnet.st.pytorch_backend.trans import trans
+            from espnet.st.pytorch_backend.trans import trans_waitk
+            #trans(args)
+            trans_waitk(args)
         else:
             if args.dtype != "float32":
                 raise NotImplementedError(f"`--dtype {args.dtype}` is only available with `--api v2`")
