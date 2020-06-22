@@ -150,7 +150,8 @@ class SimultaneousSTE2E(object):
         #self.hyp['yseq'].append(int(local_best_id[0]))
         print(type(self.hyp['yseq']), self.hyp['yseq'].size())
         print(type(local_best_id), local_best_id.size())
-        self.hyp['yseq'] = torch.cat(self.hyp['yseq'], torch.tensor([int(local_best_id[0])], dtype=self.hyp['yseq'].dtype, device=self.hyp['yseq'].device))
+        abc = torch.cat(self.hyp['yseq'], torch.tensor([int(local_best_id[0])], dtype=self.hyp['yseq'].dtype, device=self.hyp['yseq'].device))
+        djgddf
         #self.hyp['yseq'] = torch.cat(self.hyp['yseq'], local_best_id)
 
         #if rnnlm:
