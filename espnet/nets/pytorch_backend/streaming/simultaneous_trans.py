@@ -143,9 +143,11 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['a_prev'] = states['a_prev']
         self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
-        self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
-        self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
-        self.hyp['yseq'][len(self.hyp['yseq'])] = int(local_best_id[0])
+        #self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
+        #self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
+        #self.hyp['yseq'][len(self.hyp['yseq'])] = int(local_best_id[0])
+        self.hyp['yseq'].append(int(local_best_id[0]))
+
         #if rnnlm:
         #    self.hyp['rnnlm_prev'] = rnnlm_state
         # will be (2 x beam) hyps at most
