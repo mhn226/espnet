@@ -135,7 +135,7 @@ class SimultaneousSTE2E(object):
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
-        local_best_score, local_best_id = torch.topk(score, 1, dim=1)
+        local_best_score, local_best_id = torch.topk(score, 1)
 
         # [:] is needed!
         self.hyp['states']['z_prev'] = states['z_prev']
