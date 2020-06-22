@@ -49,7 +49,8 @@ class SimultaneousSTE2E(object):
         self.dtype = getattr(torch, self._trans_args.dtype)
 
         #yseq = torch.tensor([self.sos], device=x[0].device))
-        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': {'c_prev': [], 'z_prev': [], 'a_prev': []}}
+        #self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': {'c_prev': [], 'z_prev': [], 'a_prev': []}
+        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
         self.finished = False
         self.finish_read = False
         self.last_action = None
@@ -125,7 +126,8 @@ class SimultaneousSTE2E(object):
 
     def write_action(self):
         model_index = 0
-
+        if self.hyp['states'] is None:
+            self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         if self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos or len(self.hyp['yseq']) > self.max_len:
             # Finish this sentence is predict EOS
             self.finished = True
@@ -139,6 +141,7 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['z_prev'] = states['z_prev']
         self.hyp['states']['c_prev'] = states['c_prev']
         self.hyp['states']['a_prev'] = states['a_prev']
+        self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
         self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
         self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
