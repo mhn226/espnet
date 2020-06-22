@@ -134,7 +134,7 @@ def trans_waitk(args):
     #    raise NotImplementedError("word LM is not implemented")
 
     set_deterministic_pytorch(args)
-    model, train_args = load_trained_model(args.model)
+    model, train_args = load_trained_model(args.model[0])
     assert isinstance(model, STInterface)
     model.eval()
 
@@ -184,7 +184,7 @@ def trans_waitk(args):
     beam_search.to(device=device, dtype=dtype).eval()
 
     # read json data
-    with open(args.trans_json, 'rb') as f:
+    with open(args.trans_json[0], 'rb') as f:
         js = json.load(f)['utts']
     new_js = {}
     with torch.no_grad():
