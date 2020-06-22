@@ -155,22 +155,22 @@ def trans_waitk(args):
     else:
         lm = None
 
-    scorers = model.scorers()
-    scorers["lm"] = lm
-    scorers["length_bonus"] = LengthBonus(len(train_args.char_list))
-    weights = dict(
-        decoder=1.0,
-        lm=args.lm_weight,
-        length_bonus=args.penalty)
-    beam_search = BeamSearch(
-        beam_size=args.beam_size,
-        vocab_size=len(train_args.char_list),
-        weights=weights,
-        scorers=scorers,
-        sos=model.sos,
-        eos=model.eos,
-        token_list=train_args.char_list,
-    )
+    #scorers = model.scorers()
+    #scorers["lm"] = lm
+    #scorers["length_bonus"] = LengthBonus(len(train_args.char_list))
+    #weights = dict(
+    #    decoder=1.0,
+    #    lm=args.lm_weight,
+    #    length_bonus=args.penalty)
+    #beam_search = BeamSearch(
+    #    beam_size=args.beam_size,
+    #    vocab_size=len(train_args.char_list),
+    #    weights=weights,
+    #    scorers=scorers,
+    #    sos=model.sos,
+    #    eos=model.eos,
+    #    token_list=train_args.char_list,
+    #)
 
     if args.ngpu > 1:
         raise NotImplementedError("only single GPU decoding is supported")
@@ -181,7 +181,7 @@ def trans_waitk(args):
     dtype = getattr(torch, args.dtype)
     logging.info(f"Decoding device={device}, dtype={dtype}")
     model.to(device=device, dtype=dtype).eval()
-    beam_search.to(device=device, dtype=dtype).eval()
+    #beam_search.to(device=device, dtype=dtype).eval()
 
     # read json data
     with open(args.trans_json[0], 'rb') as f:
