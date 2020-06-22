@@ -49,7 +49,7 @@ class SimultaneousSTE2E(object):
         self.dtype = getattr(torch, self._trans_args.dtype)
 
         #yseq = torch.tensor([self.sos], device=x[0].device))
-        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'c_prev': [], 'z_prev': [], 'a_prev': []}
+        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': {'c_prev': [], 'z_prev': [], 'a_prev': []}}
         self.finished = False
         self.finish_read = False
         self.last_action = None
@@ -130,15 +130,15 @@ class SimultaneousSTE2E(object):
             # Finish this sentence is predict EOS
             self.finished = True
 
-        score, states = self._e2e.dec.score(self.hyp.yseq, self.hyp.states, self.enc_states)
+        score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1, dim=1)
 
         # [:] is needed!
-        self.hyp['z_prev'] = self.z_list[:]
-        self.hyp['c_prev'] = self.c_list[:]
-        self.hyp['a_prev'] = self.att_w[:]
+        self.hyp['states']['z_prev'] = states['z_prev']
+        self.hyp['states']['c_prev'] = states['c_prev']
+        self.hyp['states']['a_prev'] = states['a_prev']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
         self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
         self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
