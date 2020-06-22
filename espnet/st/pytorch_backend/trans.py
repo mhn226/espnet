@@ -219,6 +219,8 @@ def trans_waitk(args):
                     #    nbest_hyps[n]['yseq'].extend(action['value']['dec_hyp']['yseq'])
                     #    nbest_hyps[n]['score'] += action['value']['dec_hyp']['score']
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
+            print(action)
+            aaaaaaaaaaa
             nbest_hyps = [nbest_hyps]
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
 
