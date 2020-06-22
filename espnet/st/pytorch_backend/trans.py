@@ -210,8 +210,7 @@ def trans_waitk(args):
                     #new_states = session.get_src(sent_id, action["value"])
                     #states = self.update_states(states, new_states)
 
-                elif action['key'] == 'SEND':
-                    print('a')
+                #elif action['key'] == 'SEND':
                     #print(train_args.char_list[action['value']['dec_hyp']['yseq'][-1]])
                     #text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
                     #logging.info(text)
