@@ -211,8 +211,8 @@ def trans_waitk(args):
                     #states = self.update_states(states, new_states)
 
                 elif action['key'] == 'SEND':
+                    a = action['value']['dec_hyp']['yseq'][-1]
                     text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
-                    #                for x in action['value']['dec_hyp']['yseq'][-1] if int(x) != -1])
                     logging.info(text)
                     for n in range(args.nbest):
                         nbest_hyps[n]['yseq'].extend(action['value']['dec_hyp']['yseq'])
