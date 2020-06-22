@@ -211,12 +211,13 @@ def trans_waitk(args):
                     #states = self.update_states(states, new_states)
 
                 elif action['key'] == 'SEND':
-                    print(train_args.char_list[action['value']['dec_hyp']['yseq'][-1]])
-                    text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
-                    logging.info(text)
-                    for n in range(args.nbest):
-                        nbest_hyps[n]['yseq'].extend(action['value']['dec_hyp']['yseq'])
-                        nbest_hyps[n]['score'] += action['value']['dec_hyp']['score']
+                    print('a')
+                    #print(train_args.char_list[action['value']['dec_hyp']['yseq'][-1]])
+                    #text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
+                    #logging.info(text)
+                    #for n in range(args.nbest):
+                    #    nbest_hyps[n]['yseq'].extend(action['value']['dec_hyp']['yseq'])
+                    #    nbest_hyps[n]['score'] += action['value']['dec_hyp']['score']
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             nbest_hyps = [nbest_hyps]
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
