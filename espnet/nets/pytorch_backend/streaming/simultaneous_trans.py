@@ -50,7 +50,8 @@ class SimultaneousSTE2E(object):
 
         #yseq = torch.tensor([self.sos], device=x[0].device))
         #self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': {'c_prev': [], 'z_prev': [], 'a_prev': []}
-        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
+        #self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
+        self.hyp = {'score': 0.0, 'yseq': [self._e2e.dec.sos], 'states': None}
         self.finished = False
         self.finish_read = False
         self.last_action = None
