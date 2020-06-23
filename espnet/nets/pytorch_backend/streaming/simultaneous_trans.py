@@ -58,6 +58,7 @@ class SimultaneousSTE2E(object):
         self.finish_read = False
         self.last_action = None
         self.frame_count = 0
+        self.max_len = 100
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
@@ -84,6 +85,8 @@ class SimultaneousSTE2E(object):
 
         while action is None:
             if self.finished:
+                logging.info('finished ' + str(self.finished))
+                logging.info('max_len ' + str(self.max_len))
                 # Finish the hypo by sending eos to server
                 return self.finish_action()
 
