@@ -197,7 +197,7 @@ def trans_waitk(args):
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
-            nbest_hyps = {}
+            nbest_hyps = []
             for n in range(args.nbest):
                 nbest_hyps.append({"yseq": [], "score": 0.0})
 
@@ -221,8 +221,8 @@ def trans_waitk(args):
                     #text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
                     break
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
-            nbest_hyps['yseq'] = action['value']['dec_hyp']['yseq']
-            nbest_hyps['scrore'] = action['value']['dec_hyp']['score']
+            nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
+            nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             print(new_js[name])
 
