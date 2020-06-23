@@ -58,6 +58,7 @@ class SimultaneousSTE2E(object):
         self.finish_read = False
         self.last_action = None
         self.frame_count = 200
+        self.k = 5
         self.max_len = 400
 
         assert self._trans_args.batchsize <= 1, \
@@ -127,7 +128,7 @@ class SimultaneousSTE2E(object):
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
-        self.frame_count += 50
+        self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
         #    h.unsqueeze(0),
         #    ilen,
