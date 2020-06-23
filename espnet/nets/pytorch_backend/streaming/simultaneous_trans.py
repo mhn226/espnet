@@ -87,7 +87,7 @@ class SimultaneousSTE2E(object):
 
             # Model make decision given current states
             decision = self.decision_from_states()
-            print('decision: ' + decision)
+            print('decision: ' + str(decision))
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
