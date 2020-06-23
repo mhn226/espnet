@@ -205,8 +205,8 @@ def trans_waitk(args):
                 # take an action
                 action = se2e.policy(feat)
 
-                if action['key'] == 'GET':
-                    print('get')
+                #if action['key'] == 'GET':
+                #    print('get')
                     #new_states = session.get_src(sent_id, action["value"])
                     #states = self.update_states(states, new_states)
 
