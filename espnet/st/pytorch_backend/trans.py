@@ -181,6 +181,10 @@ def trans_waitk(args):
     dtype = getattr(torch, args.dtype)
     logging.info(f"Decoding device={device}, dtype={dtype}")
     model.to(device=device, dtype=dtype).eval()
+    print('sos: ' + str(model.dec.sos))
+    print('eos: ' + str(model.dec.eos))
+    if model.dec.sos == model.dec.eos:
+        ddddddddddddddddddddddd
     #beam_search.to(device=device, dtype=dtype).eval()
 
     # read json data
