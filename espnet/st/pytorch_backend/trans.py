@@ -221,7 +221,8 @@ def trans_waitk(args):
                     #text = ''.join(train_args.char_list[int(action['value']['dec_hyp']['yseq'][-1])])
                     break
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
-            nbest_hyps = action['value']['dec_hyp']['yseq']
+            nbest_hyps['yseq'] = action['value']['dec_hyp']['yseq']
+            nbest_hyps['scrore'] = action['value']['dec_hyp']['score']
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             print(new_js[name])
 
