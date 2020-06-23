@@ -58,7 +58,7 @@ class SimultaneousSTE2E(object):
         self.finish_read = False
         self.last_action = None
         self.frame_count = 200
-        self.max_len = 10
+        self.max_len = 400
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
