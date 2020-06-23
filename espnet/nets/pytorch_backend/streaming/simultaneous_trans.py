@@ -122,7 +122,7 @@ class SimultaneousSTE2E(object):
             self.finish_read = True
         else:
             x_ = x[:self.frame_count]
-        logging.info('len_feat=' + len(x_))
+        logging.info('len_feat=' + str(len(x_)))
         # if states["steps"]["src"] == 0:
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
