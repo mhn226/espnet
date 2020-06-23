@@ -217,6 +217,9 @@ def trans_waitk(args):
                     #for n in range(args.nbest):
                     #    nbest_hyps[n]['yseq'].extend(action['value']['dec_hyp']['yseq'])
                     #    nbest_hyps[n]['score'] += action['value']['dec_hyp']['score']
+                if action['key'] == 'SEND':
+                    print(action['value']['dec_hyp']['y_seq'])
+                    break
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             print(action)
             aaaaaaaaaaa

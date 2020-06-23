@@ -133,7 +133,7 @@ class SimultaneousSTE2E(object):
         #    ilen,
         #    self._previous_encoder_recurrent_state
         #)
-        return {'key': 'GET', 'value': {'enc_states': self.enc_states}}
+        #return {'key': 'GET', 'value': {'enc_states': self.enc_states}}
         # segment_size = 1000 * 3
         #return {'key': GET, 'value': {"segment_size": segment_size}}
 
@@ -167,11 +167,11 @@ class SimultaneousSTE2E(object):
         #    self.hyp['rnnlm_prev'] = rnnlm_state
         # will be (2 x beam) hyps at most
         #logging.info(self.hyp)
-        return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
+        #return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
 
     #def finish_read(self):
     #    return self.finish_read
 
     def finish_action(self):
-        return {'key': 'SEND', 'value': {'dec_hyp': self._e2e.dec.eos}}
+        return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
 
