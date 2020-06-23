@@ -197,7 +197,7 @@ def trans_waitk(args):
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
-            nbest_hyps = []
+            nbest_hyps = {}
             for n in range(args.nbest):
                 nbest_hyps.append({"yseq": [], "score": 0.0})
 
