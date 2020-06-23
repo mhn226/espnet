@@ -134,7 +134,7 @@ class SimultaneousSTE2E(object):
         model_index = 0
         if self.hyp['states'] is None:
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
-        if self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos or len(self.hyp['yseq']) > self.max_len:
+        if (self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos and self.hyp['yseq'] > 1) or len(self.hyp['yseq']) > self.max_len:
             # Finish this sentence is predict EOS
             logging.info(str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
             logging.info(self._e2e.dec.sos)
