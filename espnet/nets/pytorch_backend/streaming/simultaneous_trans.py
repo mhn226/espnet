@@ -58,7 +58,7 @@ class SimultaneousSTE2E(object):
         self.finish_read = False
         self.last_action = None
         self.frame_count = 0
-        self.max_len = 100
+        self.max_len = 10
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
@@ -136,10 +136,10 @@ class SimultaneousSTE2E(object):
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) > self.max_len):
             # Finish this sentence is predict EOS
-            logging.info(str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
-            logging.info(self._e2e.dec.sos)
-            logging.info(self._e2e.dec.eos)
-            logging.info(len(self.hyp['yseq']))
+            #logging.info(str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
+            #logging.info(self._e2e.dec.sos)
+            #logging.info(self._e2e.dec.eos)
+            #logging.info(len(self.hyp['yseq']))
             self.finished = True
 
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
@@ -163,7 +163,7 @@ class SimultaneousSTE2E(object):
         #if rnnlm:
         #    self.hyp['rnnlm_prev'] = rnnlm_state
         # will be (2 x beam) hyps at most
-        logging.info(self.hyp)
+        #logging.info(self.hyp)
         return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
 
     def finish_read(self):
