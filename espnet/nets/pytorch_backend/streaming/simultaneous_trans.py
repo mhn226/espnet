@@ -57,7 +57,7 @@ class SimultaneousSTE2E(object):
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.frame_count = 0
+        self.frame_count = 200
         self.max_len = 10
 
         assert self._trans_args.batchsize <= 1, \
@@ -115,10 +115,16 @@ class SimultaneousSTE2E(object):
 
     def read_action(self, x):
         # segment_size =  160000  # Wait-until-end
-        self.frame_count += 7000
+        logging.info('frame_count=' + str(self.frame_count))
+        logging.info('len_in=' + str(len(x)))
+        if self.frame_count > len(x):
+            x_ = x
+            self.finish_read = True
+        else:
+            x_ = x[:self.frame_count]
+        logging.info('len_feat=' + len(x_))
         # if states["steps"]["src"] == 0:
-        x = x[:self.frame_count]
-        h, ilen = self._e2e.subsample_frames(x)
+        h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
@@ -136,10 +142,6 @@ class SimultaneousSTE2E(object):
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) > self.max_len):
             # Finish this sentence is predict EOS
-            #logging.info(str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
-            #logging.info(self._e2e.dec.sos)
-            #logging.info(self._e2e.dec.eos)
-            #logging.info(len(self.hyp['yseq']))
             self.finished = True
 
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
@@ -166,8 +168,8 @@ class SimultaneousSTE2E(object):
         #logging.info(self.hyp)
         return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
 
-    def finish_read(self):
-        return self.finish_read
+    #def finish_read(self):
+    #    return self.finish_read
 
     def finish_action(self):
         return {'key': 'SEND', 'value': {'dec_hyp': self._e2e.dec.eos}}
