@@ -148,6 +148,7 @@ class SimultaneousSTE2E(object):
             # Finish this sentence is predict EOS
             logging.info('last ' + str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
             self.finished = True
+            return
 
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
         score = F.log_softmax(score, dim=1).squeeze()
