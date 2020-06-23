@@ -57,7 +57,8 @@ class SimultaneousSTE2E(object):
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.frame_count = 200
+        #self.frame_count = 200
+        self.frame_count = 100000 #offline
         self.k = 5
         self.max_len = 400
 
