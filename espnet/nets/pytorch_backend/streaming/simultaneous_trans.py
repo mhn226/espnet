@@ -87,7 +87,7 @@ class SimultaneousSTE2E(object):
 
             # Model make decision given current states
             decision = self.decision_from_states()
-            print(decision)
+            print('decision: ' + decision)
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
@@ -154,7 +154,7 @@ class SimultaneousSTE2E(object):
         #if rnnlm:
         #    self.hyp['rnnlm_prev'] = rnnlm_state
         # will be (2 x beam) hyps at most
-
+        print(self.hyp)
         return {'key': 'SEND', 'value': {'dec_hyp': self.hyp}}
 
     def finish_read(self):
