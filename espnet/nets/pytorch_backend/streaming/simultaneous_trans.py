@@ -156,24 +156,25 @@ class SimultaneousSTE2E(object):
         local_best_score, local_best_id = torch.topk(score, 1)
         logging.info(local_best_score)
         if not self.finish_read and int(local_best_id) == self._e2e.dec.eos:
-            tmp_scores, tmp_ids = torch.topk(score, 2)
-            local_best_score = [tmp_scores[1]]
-            local_best_id = [tmp_ids[1]]
+            local_best_score, local_best_id = torch.topk(score, 2)
+            #local_best_score = [tmp_scores[1]]
+            #local_best_id = [tmp_ids[1]]
             logging.info(local_best_score)
-            logging.info('EOS emits before reading all of source frames, choose the second best target token instead: ' + str(local_best_id) + ', ' + self._char_list[local_best_id])
+            logging.info(local_best_id)
+            logging.info('EOS emits before reading all of source frames, choose the second best target token instead: ' + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
 
         # [:] is needed!
         self.hyp['states']['z_prev'] = states['z_prev']
         self.hyp['states']['c_prev'] = states['c_prev']
         self.hyp['states']['a_prev'] = states['a_prev']
         self.hyp['states']['workspace'] = states['workspace']
-        self.hyp['score'] = self.hyp['score'] + local_best_score[0]
+        self.hyp['score'] = self.hyp['score'] + local_best_score[-1]
         #self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
         #self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
         #self.hyp['yseq'][len(self.hyp['yseq'])] = int(local_best_id[0])
         #self.hyp['yseq'].append(int(local_best_id[0]))
         #self.hyp['yseq'] = torch.cat(self.hyp['yseq'], torch.tensor([int(local_best_id[0])], dtype=self.hyp['yseq'].dtype, device=self.hyp['yseq'].device))
-        self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
+        self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id[-1]))
 
         #if rnnlm:
         #    self.hyp['rnnlm_prev'] = rnnlm_state
