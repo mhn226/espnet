@@ -159,7 +159,7 @@ class SimultaneousSTE2E(object):
             local_best_score, local_best_id = torch.topk(score, 2)
             #local_best_score = [tmp_scores[1]]
             #local_best_id = [tmp_ids[1]]
-            local_best_score = local_best_score[-1]
+            local_best_score = local_best_score[-1].view(1)
             local_best_id = local_best_id[-1]
             logging.info(local_best_score)
             logging.info(local_best_id)
