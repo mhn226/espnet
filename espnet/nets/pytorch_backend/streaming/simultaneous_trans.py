@@ -156,8 +156,8 @@ class SimultaneousSTE2E(object):
         local_best_score, local_best_id = torch.topk(score, 1)
         if not self.finish_read and int(local_best_id) == self._e2e.dec.eos:
             tmp_scores, tmp_ids = torch.topk(score, 2)
-            local_best_score = tmp_scores[1]
-            local_best_id = tmp_ids[1]
+            local_best_score = [tmp_scores[1]]
+            local_best_id = [tmp_ids[1]]
             logging.info('EOS emits before reading all of source frames, choose the second best target token instead: ' + str(local_best_id) + ', ' + self._char_list[local_best_id])
 
         # [:] is needed!
