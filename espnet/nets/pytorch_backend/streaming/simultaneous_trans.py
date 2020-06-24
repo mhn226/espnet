@@ -161,7 +161,7 @@ class SimultaneousSTE2E(object):
             #local_best_score = [tmp_scores[1]]
             #local_best_id = [tmp_ids[1]]
             local_best_score = local_best_score[-1].view(1)
-            local_best_id = local_best_id[-1]
+            local_best_id = local_best_id[-1].view(1)
             logging.info(local_best_score)
             logging.info(local_best_id)
             logging.info('EOS emits before reading all of source frames, choose the second best target token instead: ' + str(local_best_id) + ', ' + self._char_list[local_best_id])
