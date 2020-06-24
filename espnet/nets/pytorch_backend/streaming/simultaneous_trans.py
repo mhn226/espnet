@@ -155,6 +155,7 @@ class SimultaneousSTE2E(object):
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1)
         logging.info(local_best_score)
+        logging.info(local_best_id)
         if not self.finish_read and int(local_best_id) == self._e2e.dec.eos:
             local_best_score, local_best_id = torch.topk(score, 2)
             #local_best_score = [tmp_scores[1]]
