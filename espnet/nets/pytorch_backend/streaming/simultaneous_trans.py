@@ -151,10 +151,11 @@ class SimultaneousSTE2E(object):
         model_index = 0
         if self.hyp['states'] is None:
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
-        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len):
+        #if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len):
+        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
             # Finish this sentence is predict EOS
-            #if len(self.hyp['yseq']) == self.max_len - 1:
-            #    self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
+            if len(self.hyp['yseq']) == self.max_len - 1:
+                self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
             self.finished = True
             return
 
