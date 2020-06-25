@@ -154,7 +154,7 @@ class SimultaneousSTE2E(object):
         if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
             # Finish this sentence is predict EOS
             if len(self.hyp['yseq']) == self.max_len - 1:
-                self.hyp['yseq'].append(self._e2e.dec.eos)
+                self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
             self.finished = True
             return
 
