@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
+import math
 
 import logging
 
@@ -59,6 +60,7 @@ class SimultaneousSTE2E(object):
         self.last_action = None
         self.frame_count = 200
         #self.frame_count = 1000000 #offline
+        self.frame_count = math.inf
         self.k = 5
         self.max_len = 400
         #self.max_len = 1000
@@ -130,10 +132,11 @@ class SimultaneousSTE2E(object):
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
-        if self.frame_count == 1000000 and len(self.hyp['yseq']) == 1:
+        if self.frame_count == math.inf and len(self.hyp['yseq']) == 1:
             # offline mode
             self.max_len = max(1, int(self.trans_args.maxlenratio * self.enc_states.size(0)))
             logging.info('Offline mode, maxlen=' + str(self.max_len))
+            aaaaaaaaaaaaaaaa
             #self.min_len = int(self.trans_args.minlenratio * self.enc_states.size(0))
         self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
