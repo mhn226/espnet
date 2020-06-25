@@ -136,7 +136,6 @@ class SimultaneousSTE2E(object):
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             logging.info('Offline mode, maxlen=' + str(self.max_len))
-            aaaaaaaaaaaaaaaa
             #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
         self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
