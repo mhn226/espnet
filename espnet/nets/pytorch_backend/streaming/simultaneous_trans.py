@@ -58,7 +58,7 @@ class SimultaneousSTE2E(object):
         self.finish_read = False
         self.last_action = None
         self.frame_count = 200
-        #self.frame_count = 100000 #offline
+        #self.frame_count = 1000000 #offline
         self.k = 5
         self.max_len = 400
         #self.max_len = 1000
@@ -130,6 +130,10 @@ class SimultaneousSTE2E(object):
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
+        if self.frame_count == 1000000:
+            # offline mode
+            self.max_len = max(1, int(self.trans_args.maxlenratio * self.enc_states.size(0)))
+            #self.min_len = int(self.trans_args.minlenratio * self.enc_states.size(0))
         self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
         #    h.unsqueeze(0),
@@ -144,9 +148,10 @@ class SimultaneousSTE2E(object):
         model_index = 0
         if self.hyp['states'] is None:
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
-        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) > self.max_len):
+        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
             # Finish this sentence is predict EOS
-            #logging.info('last ' + str(self.hyp['yseq'][len(self.hyp['yseq'])-1]))
+            if len(self.hyp['yseq']) == self.max_len - 1:
+                self.hyp['yseq'].append(self._e2e.dec.eos)
             self.finished = True
             return
 
