@@ -134,10 +134,10 @@ class SimultaneousSTE2E(object):
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
         if self.frame_count == math.inf and len(self.hyp['yseq']) == 1:
             # offline mode
-            self.max_len = max(1, int(self.trans_args.maxlenratio * self.enc_states.size(0)))
+            self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             logging.info('Offline mode, maxlen=' + str(self.max_len))
             aaaaaaaaaaaaaaaa
-            #self.min_len = int(self.trans_args.minlenratio * self.enc_states.size(0))
+            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
         self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
         #    h.unsqueeze(0),
