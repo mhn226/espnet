@@ -130,9 +130,10 @@ class SimultaneousSTE2E(object):
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
-        if self.frame_count == 1000000:
+        if self.frame_count == 1000000 and len(self.hyp['yseq']) == 1:
             # offline mode
             self.max_len = max(1, int(self.trans_args.maxlenratio * self.enc_states.size(0)))
+            logging.info('Offline mode, maxlen=' + str(self.max_len))
             #self.min_len = int(self.trans_args.minlenratio * self.enc_states.size(0))
         self.frame_count += self.k
         #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
