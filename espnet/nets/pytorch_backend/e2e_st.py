@@ -277,6 +277,11 @@ class E2E(STInterface, torch.nn.Module):
         self.loss = None
         self.acc = None
 
+        # simultaneous training
+        self.k = 200
+        self.g = self.k
+        self.s = 100
+
     def init_like_chainer(self):
         """Initialize weight like chainer.
 
@@ -312,13 +317,10 @@ class E2E(STInterface, torch.nn.Module):
             tgt_lang_ids = None
 
         # 1. Encoder
-        k = 200
-        s = 100
-        g = k
         while (self.g < torch.max(ilens)):
-            xs_pad_ = xs_pad[:g]
+            xs_pad_ = xs_pad[:self.g]
             _ilens = torch.zeros(ilens.size(), ilens.dtype)
-            _ilens.new_full(_ilens.size(), g)
+            _ilens.new_full(_ilens.size(), self.g)
             print(ilens)
             print(_ilens)
             aaaaaaaaaaaaaaaaaaa
