@@ -315,15 +315,22 @@ class E2E(STInterface, torch.nn.Module):
         self.k = 200
         self.s = 100
         self.g = self.k
-        print('ilens')
-        print(ilens)
-        print('xs_pad')
-        print(xs_pad.size())
-        hs_pad, hlens, _ = self.enc(xs_pad, ilens)
-        aaaaaaaaaaaaaaaaaa
+        while (self.g < torch.max(ilens)):
+            xs_pad_ = xs_pad[:self.g]
+            _ilens = torch.zero_()
+            _ilens.new_full(_ilens.size(), self.g)
+            print(ilens)
+            print(_ilens)
+            aaaaaaaaaaaaaaaaaaa
+            hs_pad, hlens, _ = self.enc(xs_pad_, ilens)
+            self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
+            self.acc = acc
+            self.g += self.s
+
+        #hs_pad, hlens, _ = self.enc(xs_pad, ilens)
         # 2. ST attention loss
-        self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
-        self.acc = acc
+        #self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
+        #self.acc = acc
 
         # 2. ASR CTC loss
         if self.asr_weight == 0 or self.mtlalpha == 0:
