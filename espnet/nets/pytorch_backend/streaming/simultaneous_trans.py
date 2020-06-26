@@ -43,6 +43,7 @@ class SimultaneousSTE2E(object):
         #self.s = 5
         self.s = 50
         self.max_len = 400
+        self.min_len = 0
         #self.max_len = 1000
 
         assert self._trans_args.batchsize <= 1, \
@@ -105,6 +106,7 @@ class SimultaneousSTE2E(object):
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
 
     def write_action(self):
@@ -136,7 +138,7 @@ class SimultaneousSTE2E(object):
                 logging.info('EOS emits before reading all of source frames, choose the second best target token instead: '
                              + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
             else:
-                logging.info('EOS emits before reach minlen, choose the second best target token instead: '
+                logging.info('EOS emits before reaching minlen, choose the second best target token instead: '
                              + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
 
         # [:] is needed!
