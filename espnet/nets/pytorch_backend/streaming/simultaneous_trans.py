@@ -128,7 +128,7 @@ class SimultaneousSTE2E(object):
         logging.info(local_best_score)
         logging.info(local_best_id)
         if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
-                (self.finish_read and len(self.hyp['yseq'] < self.min_len) and int(local_best_id) == self._e2e.dec.eos):
+                (self.finish_read and len(self.hyp['yseq']) < self.min_len and int(local_best_id) == self._e2e.dec.eos):
             local_best_score, local_best_id = torch.topk(score, 2)
             local_best_score = local_best_score[-1].view(1)
             local_best_id = local_best_id[-1].view(1)
