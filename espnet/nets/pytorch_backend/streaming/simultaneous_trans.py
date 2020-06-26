@@ -100,11 +100,11 @@ class SimultaneousSTE2E(object):
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
-        if self.g == math.inf and len(self.hyp['yseq']) == 1:
+        #if self.g == math.inf and len(self.hyp['yseq']) == 1:
+        if self.finish_read:
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
-            logging.info('Offline mode, max_output_len=' + str(self.max_len))
-            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
         self.g += self.s
 
     def write_action(self):
@@ -125,13 +125,19 @@ class SimultaneousSTE2E(object):
         local_best_score, local_best_id = torch.topk(score, 1)
         logging.info(local_best_score)
         logging.info(local_best_id)
-        if not self.finish_read and int(local_best_id) == self._e2e.dec.eos:
+        if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
+                (self.finish_read and len(self.hyp['yseq'] < self.min_len) and int(local_best_id) == self._e2e.dec.eos):
             local_best_score, local_best_id = torch.topk(score, 2)
             local_best_score = local_best_score[-1].view(1)
             local_best_id = local_best_id[-1].view(1)
             logging.info(local_best_score)
             logging.info(local_best_id)
-            logging.info('EOS emits before reading all of source frames, choose the second best target token instead: ' + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+            if not self.finish_read:
+                logging.info('EOS emits before reading all of source frames, choose the second best target token instead: '
+                             + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+            else:
+                logging.info('EOS emits before reach minlen, choose the second best target token instead: '
+                             + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
 
         # [:] is needed!
         self.hyp['states']['z_prev'] = states['z_prev']

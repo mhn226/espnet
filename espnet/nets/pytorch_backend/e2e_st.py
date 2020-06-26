@@ -350,6 +350,7 @@ class E2E(STInterface, torch.nn.Module):
         if (self.asr_weight == 0 or self.mtlalpha == 0) or self.char_list is None:
             cer_ctc = None
         else:
+            aaaaaaaaaaaaaaaaaaa
             cers = []
 
             y_hats = self.ctc.argmax(hs_pad).data
