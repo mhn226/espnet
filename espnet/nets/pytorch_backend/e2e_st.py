@@ -315,10 +315,10 @@ class E2E(STInterface, torch.nn.Module):
         self.k = 200
         self.s = 100
         self.g = self.k
-        print('ilens', ilens)
-        aaaaaaaaaaaaaaaaaa
+        logging.info('ilens')
+        logging.info(ilens)
         hs_pad, hlens, _ = self.enc(xs_pad, ilens)
-
+        aaaaaaaaaaaaaaaaaa
         # 2. ST attention loss
         self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
         self.acc = acc
