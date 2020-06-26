@@ -356,8 +356,8 @@ class E2E(STInterface, torch.nn.Module):
         olength = ys_out_pad.size(1)
 
         # initialization
-        c_list = [None]
-        z_list = [None]
+        #c_list = [None]
+        #z_list = [None]
 
         z_all = []
         if self.dec.num_encs == 1:
@@ -386,15 +386,15 @@ class E2E(STInterface, torch.nn.Module):
             if self.g == self.k:
                 c_list = [self.dec.zero_state(hs_pad[0])]
                 z_list = [self.dec.zero_state(hs_pad[0])]
-                print(hs_pad[0].size())
-                print(hs_pad.size())
-                aaaaaaaaaaaaaaa
+                print(self.dec.zero_state(hs_pad[0]).transpose(0, 1))
+                aaaaaaaaaaaaaaaaaaaaaa
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
                     z_list.append(self.dec.zero_state(hs_pad[0]))
-            #else:
-            #    # change z_list, c_list, att_w shape
-            #    c_list_extend = torch.tensor((), dtype=hs_pad[0])
+            else:
+                # change z_list, c_list, att_w shape
+                c_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
+                z_list_extend = self.dec.zero_state(hs_pad[0])
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
             z_all.append(z_)
             self.g += self.s
