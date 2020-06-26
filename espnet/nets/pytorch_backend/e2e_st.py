@@ -340,7 +340,7 @@ class E2E(STInterface, torch.nn.Module):
         self.dec.loss = None
         lang_ids = tgt_lang_ids
 
-        if self.replace_sos:
+        if self.dec.replace_sos:
             ys_in = [torch.cat([idx, y], dim=0) for idx, y in zip(lang_ids, ys)]
         else:
             ys_in = [torch.cat([sos, y], dim=0) for y in ys]
@@ -354,6 +354,8 @@ class E2E(STInterface, torch.nn.Module):
         # get dim, length info
         batch = ys_out_pad.size(0)
         olength = ys_out_pad.size(1)
+        print(olength)
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
         # initialization
         c_list = [None]
