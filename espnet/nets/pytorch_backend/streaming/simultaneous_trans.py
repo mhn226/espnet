@@ -22,26 +22,7 @@ class SimultaneousSTE2E(object):
 
         self._e2e.eval()
 
-        self._blank_idx_in_char_list = -1
-        for idx in range(len(self._char_list)):
-            if self._char_list[idx] == self._e2e.blank:
-                self._blank_idx_in_char_list = idx
-                break
-
-        self._subsampling_factor = np.prod(e2e.subsample)
-        self._activates = 0
-        self._blank_dur = 0
-
-        self._previous_input = []
-        self._previous_encoder_recurrent_state = None
-        self._encoder_states = []
-        self._ctc_posteriors = []
-
         self.enc_states = []
-        #self.c_list = []
-        #self.z_list = []
-        #self.a = []
-        #self.y = self._e2e.dec.sos
 
         if self._trans_args.ngpu > 1:
             raise NotImplementedError("only single GPU decoding is supported")
@@ -51,27 +32,23 @@ class SimultaneousSTE2E(object):
             self.device = "cpu"
         self.dtype = getattr(torch, self._trans_args.dtype)
 
-        #yseq = torch.tensor([self.sos], device=x[0].device))
-        #self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': {'c_prev': [], 'z_prev': [], 'a_prev': []}
         self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
-        #self.hyp = {'score': 0.0, 'yseq': [self._e2e.dec.sos], 'states': None}
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.frame_count = 200
-        #self.frame_count = 1000000 #offline
-        self.frame_count = math.inf
-        self.k = 5
+        self.k = 200
+        self.g = self.k
+        #self.g = 1000000 #offline
+        #self.g = math.inf
+        #self.s = 5
+        self.s = 50
         self.max_len = 400
         #self.max_len = 1000
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
-        #assert "b" not in self._e2e.etype, \
-        #    "SegmentStreamingE2E works only with uni-directional encoders"
 
     def decision_from_states(self):
-        #print('State\n|| Target:', ''.join(states['tokens']['tgt']), '\n|| ASR:', ''.join(states['tokens']['asr']))
 
         if len(self.enc_states) == 0:
             return READ
@@ -82,7 +59,6 @@ class SimultaneousSTE2E(object):
         else:
             return READ
 
-        #return READ
 
     def policy(self, x):
         # Read and Write policy
@@ -103,49 +79,33 @@ class SimultaneousSTE2E(object):
                 self.last_action = decision
                 action = self.read_action(x)
 
-            #elif decision == TRANSCRIBE and not self.finish_transcription(states):
-            #    # TRANSCRIBE
-            #    states['last_action'] = decision
-            #    action = self.transcribe_action(states)
-
             else:
                 # WRITE
                 self.last_action = WRITE
                 action = self.write_action()
 
-            # None means we make decision again but not sending server anything
-            # This happened when read a bufffered token
-            # Or predict a subword
         return action
 
     def read_action(self, x):
         # segment_size =  160000  # Wait-until-end
-        logging.info('frame_count=' + str(self.frame_count))
+        logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
-        if self.frame_count > len(x):
+        if self.g > len(x):
             x_ = x
             self.finish_read = True
         else:
-            x_ = x[:self.frame_count]
+            x_ = x[:self.g]
         logging.info('len_feat=' + str(len(x_)))
         # if states["steps"]["src"] == 0:
         h, ilen = self._e2e.subsample_frames(x_)
         # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
-        if self.frame_count == math.inf and len(self.hyp['yseq']) == 1:
+        if self.g == math.inf and len(self.hyp['yseq']) == 1:
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             logging.info('Offline mode, max_output_len=' + str(self.max_len))
             #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
-        self.frame_count += self.k
-        #h, _, self._previous_encoder_recurrent_state = self._e2e.enc(
-        #    h.unsqueeze(0),
-        #    ilen,
-        #    self._previous_encoder_recurrent_state
-        #)
-        #return {'key': 'GET', 'value': {'enc_states': self.enc_states}}
-        # segment_size = 1000 * 3
-        #return {'key': GET, 'value': {"segment_size": segment_size}}
+        self.g += self.s
 
     def write_action(self):
         model_index = 0
@@ -167,8 +127,6 @@ class SimultaneousSTE2E(object):
         logging.info(local_best_id)
         if not self.finish_read and int(local_best_id) == self._e2e.dec.eos:
             local_best_score, local_best_id = torch.topk(score, 2)
-            #local_best_score = [tmp_scores[1]]
-            #local_best_id = [tmp_ids[1]]
             local_best_score = local_best_score[-1].view(1)
             local_best_id = local_best_id[-1].view(1)
             logging.info(local_best_score)
@@ -181,11 +139,6 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['a_prev'] = states['a_prev']
         self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
-        #self.hyp['yseq'] = [0] * (1 + len(self.hyp['yseq']))
-        #self.hyp['yseq'][:len(self.hyp['yseq'])] = self.hyp['yseq']
-        #self.hyp['yseq'][len(self.hyp['yseq'])] = int(local_best_id[0])
-        #self.hyp['yseq'].append(int(local_best_id[0]))
-        #self.hyp['yseq'] = torch.cat(self.hyp['yseq'], torch.tensor([int(local_best_id[0])], dtype=self.hyp['yseq'].dtype, device=self.hyp['yseq'].device))
         self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
 
         #if rnnlm:
