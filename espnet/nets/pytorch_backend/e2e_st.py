@@ -379,7 +379,8 @@ class E2E(STInterface, torch.nn.Module):
                 xs_pad_ = xs_pad
                 ilens_ = ilens
             else:
-                xs_pad_ = xs_pad[:self.g]
+                xs_pad_ = xs_pad[::self.g]
+                xs_pad_ = xs_pad.transpose(1, 2)
                 print(xs_pad.size())
                 print(xs_pad_.size())
                 aaaaaaaaaaaaaaaaaaaa
