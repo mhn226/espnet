@@ -319,7 +319,7 @@ class E2E(STInterface, torch.nn.Module):
         # 1. Encoder
         while (self.g < torch.max(ilens)):
             xs_pad_ = xs_pad[:self.g]
-            _ilens = torch.zeros(ilens.size(), ilens.dtype)
+            _ilens = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
             _ilens.new_full(_ilens.size(), self.g)
             print(ilens)
             print(_ilens)
