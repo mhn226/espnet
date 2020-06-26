@@ -382,6 +382,7 @@ class E2E(STInterface, torch.nn.Module):
                 xs_pad_ = xs_pad[:self.g]
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens_.size(), fill_value=self.g)
+            print(ilens_.size())
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
             if self.g == self.k:
                 c_list = [self.dec.zero_state(hs_pad[0])]
