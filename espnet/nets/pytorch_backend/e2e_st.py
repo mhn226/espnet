@@ -312,6 +312,10 @@ class E2E(STInterface, torch.nn.Module):
             tgt_lang_ids = None
 
         # 1. Encoder
+        self.k = 200
+        self.s = 100
+        self.g = self.k
+        print(xs_pad.size(), print(ilens))
         hs_pad, hlens, _ = self.enc(xs_pad, ilens)
 
         # 2. ST attention loss
@@ -350,7 +354,6 @@ class E2E(STInterface, torch.nn.Module):
         if (self.asr_weight == 0 or self.mtlalpha == 0) or self.char_list is None:
             cer_ctc = None
         else:
-            aaaaaaaaaaaaaaaaaa
             cers = []
 
             y_hats = self.ctc.argmax(hs_pad).data
@@ -373,7 +376,6 @@ class E2E(STInterface, torch.nn.Module):
 
         # 5. compute cer/wer
         if self.training or (self.asr_weight == 0 or self.mtlalpha == 1 or not (self.report_cer or self.report_wer)):
-            bbbbbbbbbbbbbb
             cer, wer = 0.0, 0.0
             # oracle_cer, oracle_wer = 0.0, 0.0
         else:
