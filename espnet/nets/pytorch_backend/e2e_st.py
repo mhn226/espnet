@@ -383,12 +383,18 @@ class E2E(STInterface, torch.nn.Module):
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens_.size(), fill_value=self.g)
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-            print(hs_pad.size())
-            print(self.dec.zero_state(hs_pad[0]), self.dec.zero_state(hs_pad[0]).size())
-            aaaaaaaaaaaaaaaaaaaaa
-            for _ in six.moves.range(1, self.dec.dlayers):
-                c_list.append(self.dec.zero_state(hs_pad[0]))
-                z_list.append(self.dec.zero_state(hs_pad[0]))
+            if self.g == self.k:
+                c_list = [self.zero_state(hs_pad[0])]
+                z_list = [self.zero_state(hs_pad[0])]
+                print(hs_pad[0].size())
+                print(hs_pad.size())
+                aaaaaaaaaaaaaaa
+                for _ in six.moves.range(1, self.dec.dlayers):
+                    c_list.append(self.dec.zero_state(hs_pad[0]))
+                    z_list.append(self.dec.zero_state(hs_pad[0]))
+            #else:
+            #    # change z_list, c_list, att_w shape
+            #    c_list_extend = torch.tensor((), dtype=hs_pad[0])
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
             z_all.append(z_)
             self.g += self.s
