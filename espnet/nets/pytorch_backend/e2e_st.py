@@ -316,6 +316,8 @@ class E2E(STInterface, torch.nn.Module):
 
         # 2. ST attention loss
         self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
+        print(self.loss_st, acc)
+        aaaaaaaaaaaaaaaaaaaaaaaaaa
         self.acc = acc
 
         # 2. ASR CTC loss
@@ -350,7 +352,6 @@ class E2E(STInterface, torch.nn.Module):
         if (self.asr_weight == 0 or self.mtlalpha == 0) or self.char_list is None:
             cer_ctc = None
         else:
-            aaaaaaaaaaaaaaaaaaa
             cers = []
 
             y_hats = self.ctc.argmax(hs_pad).data
