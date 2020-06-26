@@ -312,13 +312,13 @@ class E2E(STInterface, torch.nn.Module):
             tgt_lang_ids = None
 
         # 1. Encoder
-        self.k = 200
-        self.s = 100
-        self.g = self.k
+        k = 200
+        s = 100
+        g = k
         while (self.g < torch.max(ilens)):
-            xs_pad_ = xs_pad[:self.g]
-            _ilens = torch.zeros(ilens.size())
-            _ilens.new_full(_ilens.size(), self.g)
+            xs_pad_ = xs_pad[:g]
+            _ilens = torch.zeros(ilens.size(), ilens.dtype)
+            _ilens.new_full(_ilens.size(), g)
             print(ilens)
             print(_ilens)
             aaaaaaaaaaaaaaaaaaa
