@@ -354,8 +354,6 @@ class E2E(STInterface, torch.nn.Module):
         # get dim, length info
         batch = ys_out_pad.size(0)
         olength = ys_out_pad.size(1)
-        print(olength)
-        aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
         # initialization
         c_list = [None]
@@ -385,6 +383,8 @@ class E2E(STInterface, torch.nn.Module):
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens_.size(), fill_value=self.g)
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+            print(hs_pad.size())
+            aaaaaaaaaaaaaaaaaaaaa
             for _ in six.moves.range(1, self.dec.dlayers):
                 c_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list.append(self.dec.zero_state(hs_pad[0]))
