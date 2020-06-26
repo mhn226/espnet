@@ -13,6 +13,7 @@ import copy
 import logging
 import math
 import os
+from distutils.version import LooseVersion
 
 import editdistance
 import nltk
@@ -21,6 +22,7 @@ import chainer
 import numpy as np
 import six
 import torch
+import torch.nn.functional as F
 
 from itertools import groupby
 
@@ -36,9 +38,13 @@ from espnet.nets.pytorch_backend.nets_utils import to_device
 from espnet.nets.pytorch_backend.nets_utils import to_torch_tensor
 from espnet.nets.pytorch_backend.rnn.attentions import att_for
 from espnet.nets.pytorch_backend.rnn.decoders import decoder_for
+from espnet.nets.pytorch_backend.rnn.simultaneous_decoders import simultaneous_decoder_for
 from espnet.nets.pytorch_backend.rnn.encoders import encoder_for
 from espnet.nets.pytorch_backend.rnn.wav2vec_encoder import wav2vec_encoder_for
 from espnet.nets.st_interface import STInterface
+
+from espnet.nets.pytorch_backend.nets_utils import th_accuracy
+
 
 CTC_LOSS_THRESHOLD = 10000
 
@@ -217,7 +223,8 @@ class E2E(STInterface, torch.nn.Module):
         # attention (ST)
         self.att = att_for(args)
         # decoder (ST)
-        self.dec = decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
+        #self.dec = decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
+        self.dec = simultaneous_decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
 
         # submodule for ASR task
         self.ctc = None
@@ -281,6 +288,7 @@ class E2E(STInterface, torch.nn.Module):
         self.k = 200
         self.g = self.k
         self.s = 100
+        self.finished_read = False
 
     def init_like_chainer(self):
         """Initialize weight like chainer.
@@ -316,19 +324,116 @@ class E2E(STInterface, torch.nn.Module):
         else:
             tgt_lang_ids = None
 
+        self.loss_st = 0.0
+        acc = 0.0
+
+        ys = [y[y != self.dec.ignore_id] for y in ys_pad]  # parse padded ys
+        # attention index for the attention module
+        # in SPA (speaker parallel attention), att_idx is used to select attention module. In other cases, it is 0.
+        strm_idx = 0
+        att_idx = min(strm_idx, len(self.dec.att) - 1)
+
+        # prepare input and output word sequences with sos/eos IDs
+        eos = ys[0].new([self.eos])
+        sos = ys[0].new([self.sos])
+
+        self.dec.loss = None
+        lang_ids = tgt_lang_ids
+
+        if self.replace_sos:
+            ys_in = [torch.cat([idx, y], dim=0) for idx, y in zip(lang_ids, ys)]
+        else:
+            ys_in = [torch.cat([sos, y], dim=0) for y in ys]
+        ys_out = [torch.cat([y, eos], dim=0) for y in ys]
+
+        # padding for ys with -1
+        # pys: utt x olen
+        ys_in_pad = pad_list(ys_in, self.eos)
+        ys_out_pad = pad_list(ys_out, self.dec.ignore_id)
+
+        # get dim, length info
+        batch = ys_out_pad.size(0)
+        olength = ys_out_pad.size(1)
+
+        # initialization
+        c_list = [None]
+        z_list = [None]
+
+        z_all = []
+        if self.dec.num_encs == 1:
+            att_w = None
+            self.dec.att[att_idx].reset()  # reset pre-computation of h
+        else:
+            att_w_list = [None] * (self.dec.num_encs + 1)  # atts + han
+            att_c_list = [None] * (self.dec.num_encs)  # atts
+            for idx in range(self.dec.num_encs + 1):
+                self.dec.att[idx].reset()  # reset pre-computation of h in atts and han
+
+        # pre-computation of embedding
+        eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
+
         # 1. Encoder
-        while (self.g < torch.max(ilens)):
-            xs_pad_ = xs_pad[:self.g]
-            _ilens = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-            _ilens = _ilens.new_full(_ilens.size(), fill_value=self.g)
-            print(ilens)
-            print(_ilens)
-            print(self.g)
-            aaaaaaaaaaaaaaaaaaa
-            hs_pad, hlens, _ = self.enc(xs_pad_, ilens)
-            self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
-            self.acc = acc
+        #while (self.g < torch.max(ilens)):
+        for i in six.moves.range(olength):
+            if self.g > torch.max(ilens):
+                xs_pad_ = xs_pad
+                ilens_ = ilens
+            else:
+                xs_pad_ = xs_pad[:self.g]
+                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                ilens_ = ilens_.new_full(ilens_.size(), fill_value=self.g)
+            hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+            for _ in six.moves.range(1, self.dec.dlayers):
+                c_list.append(self.dec.zero_state(hs_pad[0]))
+                z_list.append(self.dec.zero_state(hs_pad[0]))
+            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+            z_all.append(z_)
             self.g += self.s
+
+        z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+        # compute loss
+        y_all = self.dec.output(z_all)
+
+        if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            reduction_str = 'elementwise_mean'
+        else:
+            reduction_str = 'mean'
+        self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+                                    ignore_index=self.dec.ignore_id,
+                                    reduction=reduction_str)
+
+        # compute perplexity
+        ppl = math.exp(self.dec.loss.item())
+        # -1: eos, which is removed in the loss computation
+        self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+        acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+        logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+
+        # show predicted character sequence for debug
+        #if self.verbose > 0 and self.char_list is not None:
+        #    ys_hat = y_all.view(batch, olength, -1)
+        #    ys_true = ys_out_pad
+        #    for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+        #                                  ys_true.detach().cpu().numpy()):
+        #        if i == MAX_DECODER_OUTPUT:
+        #            break
+        #        idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+        #        idx_true = y_true[y_true != self.ignore_id]
+        #        seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+        #        seq_true = [self.char_list[int(idx)] for idx in idx_true]
+        #        seq_hat = "".join(seq_hat)
+        #        seq_true = "".join(seq_true)
+        #        logging.info("groundtruth[%d]: " % i + seq_true)
+        #        logging.info("prediction [%d]: " % i + seq_hat)
+
+        if self.dec.labeldist is not None:
+            if self.dec.vlabeldist is None:
+                self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+            loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+            self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+
+        self.acc = acc
+        self.loss_st = self.dec.loss
 
         #hs_pad, hlens, _ = self.enc(xs_pad, ilens)
         # 2. ST attention loss
