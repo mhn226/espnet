@@ -317,7 +317,7 @@ class E2E(STInterface, torch.nn.Module):
         self.g = self.k
         while (self.g < torch.max(ilens)):
             xs_pad_ = xs_pad[:self.g]
-            _ilens = torch.zero_()
+            _ilens = torch.zeros()
             _ilens.new_full(_ilens.size(), self.g)
             print(ilens)
             print(_ilens)
