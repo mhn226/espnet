@@ -320,9 +320,10 @@ class E2E(STInterface, torch.nn.Module):
         while (self.g < torch.max(ilens)):
             xs_pad_ = xs_pad[:self.g]
             _ilens = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-            _ilens.new_full(_ilens.size(), self.g)
+            _ilens.new_full(_ilens.size(), fill_value=self.g)
             print(ilens)
             print(_ilens)
+            print(self.g)
             aaaaaaaaaaaaaaaaaaa
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens)
             self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
