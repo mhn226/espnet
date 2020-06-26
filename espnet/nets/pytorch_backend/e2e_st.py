@@ -316,6 +316,7 @@ class E2E(STInterface, torch.nn.Module):
         self.s = 100
         self.g = self.k
         print(xs_pad.size(), print(ilens))
+        aaaaaaaaaaaaaaa
         hs_pad, hlens, _ = self.enc(xs_pad, ilens)
 
         # 2. ST attention loss
