@@ -386,7 +386,7 @@ class E2E(STInterface, torch.nn.Module):
             if self.g == self.k:
                 c_list = [self.dec.zero_state(hs_pad[0])]
                 z_list = [self.dec.zero_state(hs_pad[0])]
-                print(self.dec.zero_state(hs_pad[0]).transpose(0, 1))
+                print(self.dec.zero_state(hs_pad[0]).transpose(0, 1).size())
                 aaaaaaaaaaaaaaaaaaaaaa
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
