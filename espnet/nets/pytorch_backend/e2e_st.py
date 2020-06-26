@@ -384,6 +384,7 @@ class E2E(STInterface, torch.nn.Module):
                 ilens_ = ilens_.new_full(ilens_.size(), fill_value=self.g)
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
             print(hs_pad.size())
+            print(self.dec.zero_state(hs_pad[0]), self.dec.zero_state(hs_pad[0]).size())
             aaaaaaaaaaaaaaaaaaaaa
             for _ in six.moves.range(1, self.dec.dlayers):
                 c_list.append(self.dec.zero_state(hs_pad[0]))
