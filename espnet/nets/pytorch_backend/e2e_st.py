@@ -385,6 +385,7 @@ class E2E(STInterface, torch.nn.Module):
                 print(ilens_)
             print(ilens_)
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+            print(hlens)
             if self.g == self.k:
                 c_list = [self.dec.zero_state(hs_pad[0])]
                 z_list = [self.dec.zero_state(hs_pad[0])]
