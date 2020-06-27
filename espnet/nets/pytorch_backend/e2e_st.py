@@ -394,6 +394,7 @@ class E2E(STInterface, torch.nn.Module):
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
                     z_list.append(self.dec.zero_state(hs_pad[0]))
+                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             #else:
                 # change z_list, c_list, att_w shape
                 #c_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
