@@ -357,8 +357,8 @@ class E2E(STInterface, torch.nn.Module):
         olength = ys_out_pad.size(1)
 
         # initialization
-        c_list = [None]
-        z_list = [None]
+        c_list = torch.Tensor()
+        z_list = torch.Tensor()
 
         z_all = []
         if self.dec.num_encs == 1:
