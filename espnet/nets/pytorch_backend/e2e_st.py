@@ -379,7 +379,7 @@ class E2E(STInterface, torch.nn.Module):
                 xs_pad_ = xs_pad
                 ilens_ = ilens
             else:
-                xs_pad_ = xs_pad[::self.g]
+                #xs_pad_ = xs_pad[::self.g]
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=self.g)
@@ -551,13 +551,45 @@ class E2E(STInterface, torch.nn.Module):
             lpz = None
 
             bleus = []
-            nbest_hyps = self.dec.recognize_beam_batch(
-                hs_pad, torch.tensor(hlens), lpz,
-                self.trans_args, self.char_list,
-                self.rnnlm,
-                lang_ids=tgt_lang_ids.squeeze(1).tolist() if self.multilingual else None)
+            #nbest_hyps = self.dec.recognize_beam_batch(
+            #    hs_pad, torch.tensor(hlens), lpz,
+            #    self.trans_args, self.char_list,
+            #    self.rnnlm,
+            #    lang_ids=tgt_lang_ids.squeeze(1).tolist() if self.multilingual else None)
+
+            hs_pad = None
+            hlens = None
+            finished_read = False
+            while (self.g < torch.max(ilens)):
+                if self.g > torch.max(ilens):
+                    xs_pad_ = xs_pad
+                    ilens_ = ilens
+                else:
+                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g].transpose(1, 2)
+                    ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                    ilens_ = ilens_.new_full(ilens.size(), fill_value=self.g)
+                if not finished_read:
+                    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                    if xs_pad_ == xs_pad:
+                        finished_read = True
+                if self.dec.num_encs == 1:
+                    hs_pad = [hs_pad]
+                    hlens = [hlens]
+                hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+                if self.g == self.k:
+                    c_list = [self.dec.zero_state(hs_pad[0])]
+                    z_list = [self.dec.zero_state(hs_pad[0])]
+                    for _ in six.moves.range(1, self.dec.dlayers):
+                        c_list.append(self.dec.zero_state(hs_pad[0]))
+                        z_list.append(self.dec.zero_state(hs_pad[0]))
+                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                z_all.append(z_)
+                self.g += self.s
+            z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
+            y_hats = self.dec.output(z_all)
+
             # remove <sos> and <eos>
-            y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
+            #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
 
