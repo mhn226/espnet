@@ -409,6 +409,7 @@ class E2E(STInterface, torch.nn.Module):
             z_all.append(z_)
             self.g += self.s
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+        print('z_all ', z_all)
         # compute loss
         y_all = self.dec.output(z_all)
 
