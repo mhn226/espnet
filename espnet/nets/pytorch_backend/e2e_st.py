@@ -523,9 +523,9 @@ class E2E(STInterface, torch.nn.Module):
         # 5. compute cer/wer
         if self.training or (self.asr_weight == 0 or self.mtlalpha == 1 or not (self.report_cer or self.report_wer)):
             cer, wer = 0.0, 0.0
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             # oracle_cer, oracle_wer = 0.0, 0.0
         else:
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             if (self.asr_weight > 0 and self.mtlalpha > 0) and self.recog_args.ctc_weight > 0.0:
                 lpz = self.ctc.log_softmax(hs_pad).data
             else:
