@@ -137,12 +137,12 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         :rtype: float
         """
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
-        if self.num_encs == 1:
-            hs_pad = [hs_pad]
-            hlens = [hlens]
+        #if self.num_encs == 1:
+        #    hs_pad = [hs_pad]
+        #    hlens = [hlens]
 
         # hlens should be list of list of integer
-        hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
+        #hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
         print('hlens: ', hlens)
         print('hs_pad: ', len(hs_pad), hs_pad[0].size())
         print('z_list: ', len(z_list), z_list[0].size())
