@@ -360,6 +360,7 @@ class E2E(STInterface, torch.nn.Module):
         c_list = torch.Tensor()
         z_list = torch.Tensor()
 
+
         z_all = []
         if self.dec.num_encs == 1:
             att_w = None
