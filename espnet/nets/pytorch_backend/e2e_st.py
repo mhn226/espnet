@@ -386,85 +386,87 @@ class E2E(STInterface, torch.nn.Module):
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
         # 1. Encoder
-        #while (g < torch.max(ilens)):
-        for i in six.moves.range(olength):
-            if g > torch.max(ilens):
-                xs_pad_ = xs_pad
-                ilens_ = ilens
-            else:
-                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
-                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
-            hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-            if self.dec.num_encs == 1:
-                hs_pad = [hs_pad]
-                hlens = [hlens]
-            hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-            if g == k:
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-            #else:
+        if self.training:
+            # while (g < torch.max(ilens)):
+            for i in six.moves.range(olength):
+                if g > torch.max(ilens):
+                    xs_pad_ = xs_pad
+                    ilens_ = ilens
+                else:
+                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+                    ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                    ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+                hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                if self.dec.num_encs == 1:
+                    hs_pad = [hs_pad]
+                    hlens = [hlens]
+                hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+                if g == k:
+                    c_list = [self.dec.zero_state(hs_pad[0])]
+                    z_list = [self.dec.zero_state(hs_pad[0])]
+                    for _ in six.moves.range(1, self.dec.dlayers):
+                        c_list.append(self.dec.zero_state(hs_pad[0]))
+                        z_list.append(self.dec.zero_state(hs_pad[0]))
+                # else:
                 # change z_list, c_list, att_w shape
-                #c_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
-                #z_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
-                #print(c_list_extend.size())
-                #aaaaaaaaaaaaaaaaaaaaaaa
-            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-            z_all.append(z_)
-            g += s
-        z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-        print('z_all ', z_all)
-        # compute loss
-        y_all = self.dec.output(z_all)
+                # c_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
+                # z_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
+                # print(c_list_extend.size())
+                # aaaaaaaaaaaaaaaaaaaaaaa
+                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                z_all.append(z_)
+                g += s
+            z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+            print('z_all ', z_all)
+            # compute loss
+            y_all = self.dec.output(z_all)
 
-        if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-            reduction_str = 'elementwise_mean'
-        else:
-            reduction_str = 'mean'
-        self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
-                                    ignore_index=self.dec.ignore_id,
-                                    reduction=reduction_str)
+            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+                reduction_str = 'elementwise_mean'
+            else:
+                reduction_str = 'mean'
+            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+                                            ignore_index=self.dec.ignore_id,
+                                            reduction=reduction_str)
 
-        # compute perplexity
-        ppl = math.exp(self.dec.loss.item())
-        # -1: eos, which is removed in the loss computation
-        self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-        acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
-        logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+            # compute perplexity
+            ppl = math.exp(self.dec.loss.item())
+            # -1: eos, which is removed in the loss computation
+            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
 
-        # show predicted character sequence for debug
-        if self.verbose > 0 and self.char_list is not None:
-            ys_hat = y_all.view(batch, olength, -1)
-            ys_true = ys_out_pad
-            for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
-                                          ys_true.detach().cpu().numpy()):
-                if i == self.dec.MAX_DECODER_OUTPUT:
-                    break
-                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
-                idx_true = y_true[y_true != self.ignore_id]
-                seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
-                seq_true = [self.char_list[int(idx)] for idx in idx_true]
-                seq_hat = "".join(seq_hat)
-                seq_true = "".join(seq_true)
-                logging.info("groundtruth[%d]: " % i + seq_true)
-                logging.info("prediction [%d]: " % i + seq_hat)
+            # show predicted character sequence for debug
+            if self.verbose > 0 and self.char_list is not None:
+                ys_hat = y_all.view(batch, olength, -1)
+                ys_true = ys_out_pad
+                for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+                                              ys_true.detach().cpu().numpy()):
+                    if i == self.dec.MAX_DECODER_OUTPUT:
+                        break
+                    idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                    idx_true = y_true[y_true != self.ignore_id]
+                    seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                    seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                    seq_hat = "".join(seq_hat)
+                    seq_true = "".join(seq_true)
+                    logging.info("groundtruth[%d]: " % i + seq_true)
+                    logging.info("prediction [%d]: " % i + seq_hat)
 
-        if self.dec.labeldist is not None:
-            if self.dec.vlabeldist is None:
-                self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-            loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
-            self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+            if self.dec.labeldist is not None:
+                if self.dec.vlabeldist is None:
+                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
 
-        self.acc = acc
-        self.loss_st = self.dec.loss
+            self.acc = acc
+            self.loss_st = self.dec.loss
 
-        #hs_pad, hlens, _ = self.enc(xs_pad, ilens)
-        # 2. ST attention loss
-        #self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
-        #self.acc = acc
+
+            #hs_pad, hlens, _ = self.enc(xs_pad, ilens)
+            # 2. ST attention loss
+            #self.loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, lang_ids=tgt_lang_ids)
+            #self.acc = acc
 
         # 2. ASR CTC loss
         if self.asr_weight == 0 or self.mtlalpha == 0:
@@ -521,6 +523,7 @@ class E2E(STInterface, torch.nn.Module):
         # 5. compute cer/wer
         if self.training or (self.asr_weight == 0 or self.mtlalpha == 1 or not (self.report_cer or self.report_wer)):
             cer, wer = 0.0, 0.0
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             # oracle_cer, oracle_wer = 0.0, 0.0
         else:
             if (self.asr_weight > 0 and self.mtlalpha > 0) and self.recog_args.ctc_weight > 0.0:
