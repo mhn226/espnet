@@ -403,7 +403,7 @@ class E2E(STInterface, torch.nn.Module):
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
             z_all.append(z_)
             self.g += self.s
-        print('z_all ', z_all)
+        print('z_all ', len(z_all), z_all[0].size())
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         # compute loss
         y_all = self.dec.output(z_all)
@@ -560,7 +560,7 @@ class E2E(STInterface, torch.nn.Module):
             hs_pad = None
             hlens = None
             finished_read = False
-            while (self.g < torch.max(ilens)):
+            while (z_all[-1] != self.dec.eos):
                 if self.g > torch.max(ilens):
                     xs_pad_ = xs_pad
                     ilens_ = ilens
@@ -571,6 +571,7 @@ class E2E(STInterface, torch.nn.Module):
                 if not finished_read:
                     hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
                     if xs_pad_ == xs_pad:
+                        maxlen = max(1, int(self.trans_args.maxlenratio * hs_pad.size(0)))
                         finished_read = True
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
@@ -585,7 +586,9 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
                 self.g += self.s
-            print('z_all ', z_all, z_all.size())
+                if len(z_all) >= maxlen:
+                    break
+            print('z_all ', len(z_all), z_all.size())
             z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
             y_hats = self.dec.output(z_all)
 
