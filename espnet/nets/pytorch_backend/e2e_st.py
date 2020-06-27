@@ -360,7 +360,10 @@ class E2E(STInterface, torch.nn.Module):
         # initialization
         c_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
         z_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
-        print(c_list[0].size(), z_list[0].size())
+        for _ in six.moves.range(1, self.dec.dlayers):
+            c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
+            z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
+        print(xs_pad.size(), c_list[0].size(), z_list[0].size())
 
         z_all = []
         if self.dec.num_encs == 1:
