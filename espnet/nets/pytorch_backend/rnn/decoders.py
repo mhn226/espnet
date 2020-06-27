@@ -174,8 +174,8 @@ class Decoder(torch.nn.Module, ScorerInterface):
         for _ in six.moves.range(1, self.dlayers):
             c_list.append(self.zero_state(hs_pad[0]))
             z_list.append(self.zero_state(hs_pad[0]))
-        print('c_list init ', c_list)
-        print('z_list init ', c_list)
+        print('c_list init ', c_list.size())
+        print('z_list init ', c_list.size())
         z_all = []
         if self.num_encs == 1:
             att_w = None
