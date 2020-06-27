@@ -214,6 +214,7 @@ class AttAdd(torch.nn.Module):
         if dec_z is None:
             dec_z = enc_hs_pad.new_zeros(batch, self.dunits)
         else:
+            print(dec_z.size())
             dec_z = dec_z.view(batch, self.dunits)
 
         # dec_z_tiled: utt x frame x att_dim

@@ -193,7 +193,6 @@ class Decoder(torch.nn.Module, ScorerInterface):
                 print(hs_pad[0].size())
                 print(hlens[0])
                 print(z_list[0].size())
-                print(att_w.size())
                 print(self.dropout_dec[0](z_list[0]).size())
                 aaaaaaaaaaaaaaaa
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
