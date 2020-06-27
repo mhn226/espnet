@@ -587,6 +587,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_all.append(z_)
                 self.g += self.s
                 if len(z_all) >= maxlen:
+                    print(len(z_all), maxlen)
                     break
             print('z_all ', len(z_all), z_all.size())
             z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
