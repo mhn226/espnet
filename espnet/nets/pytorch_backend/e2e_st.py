@@ -371,11 +371,11 @@ class E2E(STInterface, torch.nn.Module):
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
-
+        print('self.g ', self.g)
+        print('ilens ', ilens)
         # 1. Encoder
         #while (self.g < torch.max(ilens)):
         for i in six.moves.range(olength):
-            print('self.g ', self.g)
             if self.g > torch.max(ilens):
                 xs_pad_ = xs_pad
                 ilens_ = ilens
