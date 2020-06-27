@@ -320,6 +320,11 @@ class E2E(STInterface, torch.nn.Module):
         :rtype: torch.Tensor
         """
         # 0. Extract target language ID
+
+        k = self.k
+        g = self.g
+        s = self.s
+
         if self.multilingual:
             tgt_lang_ids = ys_pad[:, 0:1]
             ys_pad = ys_pad[:, 1:]  # remove target language ID in the beggining
@@ -364,7 +369,7 @@ class E2E(STInterface, torch.nn.Module):
             c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
             z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
         print(xs_pad.size(), c_list[0].size(), z_list[0].size())
-        print('g, k, s ', self.g, self.k, self.s)
+        print('g, k, s ', self.g, self.k, self.s, g, s)
         print('olength ', olength)
 
         z_all = []
@@ -380,22 +385,21 @@ class E2E(STInterface, torch.nn.Module):
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
         # 1. Encoder
-        #while (self.g < torch.max(ilens)):
+        #while (g < torch.max(ilens)):
         for i in six.moves.range(olength):
-            if self.g > torch.max(ilens):
+            if g > torch.max(ilens):
                 xs_pad_ = xs_pad
                 ilens_ = ilens
             else:
-                #xs_pad_ = xs_pad[::self.g]
-                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g].transpose(1, 2)
+                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                ilens_ = ilens_.new_full(ilens.size(), fill_value=self.g)
+                ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
             hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
             if self.dec.num_encs == 1:
                 hs_pad = [hs_pad]
                 hlens = [hlens]
             hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-            if self.g == self.k:
+            if g == k:
                 c_list = [self.dec.zero_state(hs_pad[0])]
                 z_list = [self.dec.zero_state(hs_pad[0])]
                 for _ in six.moves.range(1, self.dec.dlayers):
@@ -409,7 +413,7 @@ class E2E(STInterface, torch.nn.Module):
                 #aaaaaaaaaaaaaaaaaaaaaaa
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
             z_all.append(z_)
-            self.g += self.s
+            g += s
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         print('z_all ', z_all)
         # compute loss
@@ -570,13 +574,13 @@ class E2E(STInterface, torch.nn.Module):
             step = 0
             print('len z_all ', len(z_all))
             while (z_all[-1] != self.dec.eos):
-                if self.g > torch.max(ilens):
+                if g > torch.max(ilens):
                     xs_pad_ = xs_pad
                     ilens_ = ilens
                 else:
-                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g].transpose(1, 2)
+                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                     ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                    ilens_ = ilens_.new_full(ilens.size(), fill_value=self.g)
+                    ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
                 if not finished_read:
                     hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
                     if xs_pad_ == xs_pad:
@@ -586,7 +590,7 @@ class E2E(STInterface, torch.nn.Module):
                     hs_pad = [hs_pad]
                     hlens = [hlens]
                 hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-                if self.g == self.k:
+                if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
                     for _ in six.moves.range(1, self.dec.dlayers):
@@ -595,7 +599,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
                 step += 1
-                self.g += self.s
+                g += s
                 if len(z_all) >= maxlen:
                     print(len(z_all), maxlen)
                     break
