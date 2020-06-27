@@ -174,8 +174,6 @@ class Decoder(torch.nn.Module, ScorerInterface):
         for _ in six.moves.range(1, self.dlayers):
             c_list.append(self.zero_state(hs_pad[0]))
             z_list.append(self.zero_state(hs_pad[0]))
-        print('c_list init ', c_list[0].size())
-        print('z_list init ', z_list[0].size())
         z_all = []
         if self.num_encs == 1:
             att_w = None
@@ -185,17 +183,13 @@ class Decoder(torch.nn.Module, ScorerInterface):
             att_c_list = [None] * (self.num_encs)  # atts
             for idx in range(self.num_encs + 1):
                 self.att[idx].reset()  # reset pre-computation of h in atts and han
-        print('att_w init ', att_w)
+
         # pre-computation of embedding
         eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
 
         # loop for an output sequence
         for i in six.moves.range(olength):
             if self.num_encs == 1:
-                print('hs_pad ', hs_pad[0].size())
-                print('hlens ', hlens[0])
-                print('z_list ', z_list[0].size())
-                print('dropout ', self.dropout_dec[0](z_list[0]).size())
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
             else:
                 for idx in range(self.num_encs):
