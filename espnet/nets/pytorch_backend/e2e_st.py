@@ -358,7 +358,7 @@ class E2E(STInterface, torch.nn.Module):
 
         # initialization
         c_list = [torch.zeros(batch, self.enc.eunits)]
-        z_list = [torch.Tensor(batch, self.enc.eunits)]
+        z_list = [torch.zeros(batch, self.enc.eunits)]
 
 
         z_all = []
