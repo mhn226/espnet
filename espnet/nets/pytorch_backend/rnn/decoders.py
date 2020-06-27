@@ -185,7 +185,7 @@ class Decoder(torch.nn.Module, ScorerInterface):
             att_c_list = [None] * (self.num_encs)  # atts
             for idx in range(self.num_encs + 1):
                 self.att[idx].reset()  # reset pre-computation of h in atts and han
-
+        print('att_w init ', att_w)
         # pre-computation of embedding
         eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
 
