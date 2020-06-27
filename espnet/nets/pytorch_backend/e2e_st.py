@@ -375,6 +375,7 @@ class E2E(STInterface, torch.nn.Module):
         # 1. Encoder
         #while (self.g < torch.max(ilens)):
         for i in six.moves.range(olength):
+            print('self.g ', self.g)
             if self.g > torch.max(ilens):
                 xs_pad_ = xs_pad
                 ilens_ = ilens
@@ -403,7 +404,6 @@ class E2E(STInterface, torch.nn.Module):
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
             z_all.append(z_)
             self.g += self.s
-        print('z_all ', len(z_all), z_all[0].size())
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         # compute loss
         y_all = self.dec.output(z_all)
@@ -560,6 +560,8 @@ class E2E(STInterface, torch.nn.Module):
             hs_pad = None
             hlens = None
             finished_read = False
+            step = 0
+            print('len z_all ', len(z_all))
             while (z_all[-1] != self.dec.eos):
                 if self.g > torch.max(ilens):
                     xs_pad_ = xs_pad
@@ -583,8 +585,9 @@ class E2E(STInterface, torch.nn.Module):
                     for _ in six.moves.range(1, self.dec.dlayers):
                         c_list.append(self.dec.zero_state(hs_pad[0]))
                         z_list.append(self.dec.zero_state(hs_pad[0]))
-                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
+                step += 1
                 self.g += self.s
                 if len(z_all) >= maxlen:
                     print(len(z_all), maxlen)
