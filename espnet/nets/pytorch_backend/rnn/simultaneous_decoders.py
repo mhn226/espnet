@@ -143,9 +143,9 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
 
         # hlens should be list of list of integer
         #hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
-        print('hlens: ', hlens)
-        print('hs_pad: ', len(hs_pad), hs_pad[0].size())
-        print('z_list: ', len(z_list), z_list[0].size())
+        print('hlens: ', step, hlens)
+        print('hs_pad: ', step, len(hs_pad), hs_pad[0].size())
+        print('z_list: ', step, len(z_list), z_list[0].size())
         att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
         if step > 0 and random.random() < self.sampling_probability:
                 logging.info(' scheduled sampling ')
