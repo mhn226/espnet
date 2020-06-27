@@ -204,6 +204,7 @@ class AttAdd(torch.nn.Module):
         """
 
         batch = len(enc_hs_pad)
+        print(batch)
         # pre-compute all h outside the decoder loop
         if self.pre_compute_enc_h is None or self.han_mode:
             self.enc_h = enc_hs_pad  # utt x frame x hdim
@@ -212,8 +213,10 @@ class AttAdd(torch.nn.Module):
             self.pre_compute_enc_h = self.mlp_enc(self.enc_h)
 
         if dec_z is None:
+            cccccccccccccccccc
             dec_z = enc_hs_pad.new_zeros(batch, self.dunits)
         else:
+            print(dec_z.size())
             dec_z = dec_z.view(batch, self.dunits)
 
         # dec_z_tiled: utt x frame x att_dim
