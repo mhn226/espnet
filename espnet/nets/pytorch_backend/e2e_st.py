@@ -285,7 +285,7 @@ class E2E(STInterface, torch.nn.Module):
         self.acc = None
 
         # simultaneous training
-        self.k = 100000
+        self.k = 200
         self.g = self.k
         self.s = 100
         self.finished_read = False
