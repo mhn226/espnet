@@ -358,8 +358,8 @@ class E2E(STInterface, torch.nn.Module):
         olength = ys_out_pad.size(1)
 
         # initialization
-        c_list = [torch.zeros(batch, self.args.eunits)]
-        z_list = [torch.zeros(batch, self.args.eunits)]
+        c_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
+        z_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
 
 
         z_all = []
