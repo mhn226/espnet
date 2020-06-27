@@ -380,7 +380,7 @@ class E2E(STInterface, torch.nn.Module):
                 ilens_ = ilens
             else:
                 xs_pad_ = xs_pad[::self.g]
-                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g]
+                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :self.g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=self.g)
             print(xs_pad_.size())
