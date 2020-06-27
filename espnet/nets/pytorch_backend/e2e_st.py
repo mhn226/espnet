@@ -288,6 +288,7 @@ class E2E(STInterface, torch.nn.Module):
         self.k = 200
         self.g = self.k
         self.s = 100
+        print('k, g, s: ', self.k, self.g, self.s)
         self.finished_read = False
 
     def init_like_chainer(self):
@@ -371,8 +372,6 @@ class E2E(STInterface, torch.nn.Module):
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
-        print('self.g ', self.g)
-        print('ilens ', ilens)
         # 1. Encoder
         #while (self.g < torch.max(ilens)):
         for i in six.moves.range(olength):
