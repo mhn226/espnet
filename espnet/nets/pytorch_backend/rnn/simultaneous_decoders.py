@@ -146,6 +146,8 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         else:
             ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
         z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
+        logging.info(z_list)
+        logging.info(c_list)
         if self.context_residual:
             z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
         else:
