@@ -408,6 +408,8 @@ class E2E(STInterface, torch.nn.Module):
         # compute loss
         y_all = self.dec.output(z_all)
 
+        logging.info(y_all)
+
         if LooseVersion(torch.__version__) < LooseVersion('1.0'):
             reduction_str = 'elementwise_mean'
         else:
