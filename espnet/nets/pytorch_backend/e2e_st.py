@@ -290,6 +290,7 @@ class E2E(STInterface, torch.nn.Module):
         self.s = 100
         print('k, g, s: ', self.k, self.g, self.s)
         self.finished_read = False
+        self.args = args
 
     def init_like_chainer(self):
         """Initialize weight like chainer.
@@ -357,8 +358,8 @@ class E2E(STInterface, torch.nn.Module):
         olength = ys_out_pad.size(1)
 
         # initialization
-        c_list = [torch.zeros(batch, self.enc.eunits)]
-        z_list = [torch.zeros(batch, self.enc.eunits)]
+        c_list = [torch.zeros(batch, self.args.eunits)]
+        z_list = [torch.zeros(batch, self.args.eunits)]
 
 
         z_all = []
