@@ -371,6 +371,7 @@ class E2E(STInterface, torch.nn.Module):
         print(xs_pad.size(), c_list[0].size(), z_list[0].size())
         print('g, k, s ', self.g, self.k, self.s, g, s)
         print('olength ', olength)
+        print('training ', self.training)
 
         z_all = []
         if self.dec.num_encs == 1:
@@ -572,7 +573,9 @@ class E2E(STInterface, torch.nn.Module):
             hlens = None
             finished_read = False
             step = 0
+
             print('len z_all ', len(z_all))
+            print('training ', self.training)
             while (z_all[-1] != self.dec.eos):
                 if g > torch.max(ilens):
                     xs_pad_ = xs_pad
@@ -603,7 +606,7 @@ class E2E(STInterface, torch.nn.Module):
                 if len(z_all) >= maxlen:
                     print(len(z_all), maxlen)
                     break
-            print('z_all ', len(z_all), z_all.size())
+            #print('z_all ', len(z_all), z_all.size())
             z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
             y_hats = self.dec.output(z_all)
 
