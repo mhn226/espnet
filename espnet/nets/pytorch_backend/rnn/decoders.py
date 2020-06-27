@@ -190,11 +190,10 @@ class Decoder(torch.nn.Module, ScorerInterface):
         # loop for an output sequence
         for i in six.moves.range(olength):
             if self.num_encs == 1:
-                print(hs_pad[0].size())
-                print(hlens[0])
-                print(z_list[0].size())
-                print(self.dropout_dec[0](z_list[0]).size())
-                aaaaaaaaaaaaaaaa
+                print('hs_pad ', hs_pad[0].size())
+                print('hlens ', hlens[0])
+                print('z_list ', z_list[0].size())
+                print('dropout ', self.dropout_dec[0](z_list[0]).size())
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
             else:
                 for idx in range(self.num_encs):
