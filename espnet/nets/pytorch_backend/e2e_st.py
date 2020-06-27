@@ -364,6 +364,8 @@ class E2E(STInterface, torch.nn.Module):
             c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
             z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
         print(xs_pad.size(), c_list[0].size(), z_list[0].size())
+        print('g, k, s ', self.g, self.k, self.s)
+        print('olength ', olength)
 
         z_all = []
         if self.dec.num_encs == 1:
