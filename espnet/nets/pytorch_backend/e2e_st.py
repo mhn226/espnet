@@ -607,11 +607,15 @@ class E2E(STInterface, torch.nn.Module):
                         c_list.append(self.dec.zero_state(hs_pad[0]))
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
+                z_ = self.dec.output(z_)
+                print('z_: ', z_)
+                bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
                 z_all.append(z_)
                 step += 1
                 g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
-                if len(z_all) >= self.maxlen:
+                #if len(z_all) >= self.maxlen:
+                if z_all[-1] == self.eos:
                     #print(len(z_all), maxlen)
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())
