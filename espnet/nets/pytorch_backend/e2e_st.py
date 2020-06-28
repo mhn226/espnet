@@ -609,6 +609,7 @@ class E2E(STInterface, torch.nn.Module):
                 yseq = self.dec.output(z_)
                 yseq = F.log_softmax(yseq, dim=1).squeeze()
                 _, best_id = torch.topk(yseq, 1)
+                print('best_id: ', best_id)
                 y_hats.append(int(best_id))
                 step += 1
                 g += s
