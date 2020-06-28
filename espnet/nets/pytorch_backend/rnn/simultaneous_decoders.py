@@ -150,7 +150,7 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
             if step == 0:
                 z_out = torch.zeros((len(hs_pad)), device=hs_pad[0].device)
                 #z_out = z_all[-1].new_zeros(hs_pad.size(0))
-                z_out = z_out.new_full(z_out.size(), fill_value=torch.tensor([self.sos], device=hs_pad[0].device))
+                z_out = z_out.new_full(z_out.size(), fill_value=self.sos, device=hs_pad[0].device, dtype=torch.long)
                 #print(z_all[-1].size())
                 print('z_out init eos: ', z_out.size(), z_out)
             else:
