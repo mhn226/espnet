@@ -631,7 +631,7 @@ class E2E(STInterface, torch.nn.Module):
                 y_hats = torch.tensor([y_hats], device=ys_pad.device)
                 print('y_hats: ', len(y_hats), y_hats)
             else:
-                y_hats = torch.stack([y_hats], dim=1)
+                y_hats = torch.stack(y_hats, dim=1)
                 print('y_hats stacked: ', len(y_hats), y_hats)
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
