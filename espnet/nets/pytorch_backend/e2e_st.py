@@ -627,12 +627,12 @@ class E2E(STInterface, torch.nn.Module):
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
             ################ tmp: yhats = [yhats]
             print('y_hats: ', y_hats)
-            y_hats = torch.tensor([y_hats], device=ys_pad.device)
-            print('y_hats: ', len(y_hats), y_hats)
-            if batch > 1:
+            if batch == 1:
+                y_hats = torch.tensor([y_hats], device=ys_pad.device)
+                print('y_hats: ', len(y_hats), y_hats)
+            else:
                 y_hats = torch.stack([y_hats], dim=1)
                 print('y_hats stacked: ', len(y_hats), y_hats)
-            print('len ys_pad: ', len(ys_pad), ys_pad)
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
                 print('y_hat: ', y_hat)
