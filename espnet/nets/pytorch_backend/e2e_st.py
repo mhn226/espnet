@@ -615,7 +615,7 @@ class E2E(STInterface, torch.nn.Module):
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
                 if len(y_hats) >= self.maxlen:
-                    print('len y_hats: ', len(y_hats), y_hats)
+                    #print('len y_hats: ', len(y_hats), y_hats)
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())
             #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
@@ -625,6 +625,7 @@ class E2E(STInterface, torch.nn.Module):
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
             ################ tmp: yhats = [yhats]
             y_hats = torch.tensor([y_hats])
+            print('y_hats: ', y_hats)
             y_hats = torch.stack(y_hats, dim=1)
             print('len ys_pad: ', len(ys_pad), ys_pad)
             for i, y_hat in enumerate(y_hats):
