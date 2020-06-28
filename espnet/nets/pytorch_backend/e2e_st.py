@@ -620,7 +620,7 @@ class E2E(STInterface, torch.nn.Module):
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
                 if len(y_hats) >= self.maxlen:
-                    print('len y_hats: ', len(y_hats))
+                    print('len y_hats: ', len(y_hats), y_hats)
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())
             #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
