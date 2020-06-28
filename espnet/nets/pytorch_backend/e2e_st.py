@@ -385,6 +385,7 @@ class E2E(STInterface, torch.nn.Module):
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
+        print('eys ', eys.size())
         # 1. Encoder
         if self.training:
             # while (g < torch.max(ilens)):
