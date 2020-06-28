@@ -421,6 +421,8 @@ class E2E(STInterface, torch.nn.Module):
             #print('z_all ', z_all)
             # compute loss
             y_all = self.dec.output(z_all)
+            print('y_all: ', y_all)
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
