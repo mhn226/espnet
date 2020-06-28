@@ -631,6 +631,8 @@ class E2E(STInterface, torch.nn.Module):
             print('len ys_pad: ', len(ys_pad), ys_pad)
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
+                print('y_hat: ', y_hat)
+                print('y_true: ', y_true)
 
                 seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
                 seq_true = [self.char_list[int(idx)] for idx in y_true if int(idx) != -1]
