@@ -628,7 +628,7 @@ class E2E(STInterface, torch.nn.Module):
 
             # remove <sos> and <eos>
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
-            print('len ys_pad: ', len(ys_pad))
+            print('len ys_pad: ', len(ys_pad), ys_pad)
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
 
