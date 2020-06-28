@@ -370,10 +370,10 @@ class E2E(STInterface, torch.nn.Module):
             c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
             z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
         print('batch ', batch)
-        print(xs_pad.size(), c_list[0].size(), z_list[0].size())
+        #print(xs_pad.size(), c_list[0].size(), z_list[0].size())
         print('g, k, s ', self.g, self.k, self.s, g, s)
         print('olength ', olength)
-        print('training ', self.training)
+        #print('training ', self.training)
 
         z_all = []
         if self.dec.num_encs == 1:
@@ -399,7 +399,7 @@ class E2E(STInterface, torch.nn.Module):
                     ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                     ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
                 hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-                print('hs_pad: ', len(hs_pad), hs_pad[0].size())
+                #print('hs_pad: ', len(hs_pad), hs_pad[0].size())
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
                     hlens = [hlens]
@@ -419,9 +419,9 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
                 g += s
-            print('z_all before stack: ', z_all)
+            #print('z_all before stack: ', z_all)
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-            print('z_all after stack: ', z_all)
+            #print('z_all after stack: ', z_all)
             # compute loss
             y_all = self.dec.output(z_all)
 
@@ -626,13 +626,13 @@ class E2E(STInterface, torch.nn.Module):
             # remove <sos> and <eos>
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
             ################ tmp: yhats = [yhats]
-            print('y_hats: ', y_hats)
+            #print('y_hats: ', y_hats)
             if batch == 1:
                 y_hats = torch.tensor([y_hats], device=ys_pad.device)
-                print('y_hats: ', len(y_hats), y_hats)
+                #print('y_hats: ', len(y_hats), y_hats)
             else:
                 y_hats = torch.stack(y_hats, dim=1)
-                print('y_hats stacked: ', len(y_hats), y_hats)
+                #print('y_hats stacked: ', len(y_hats), y_hats)
             for i, y_hat in enumerate(y_hats):
                 y_true = ys_pad[i]
                 print('y_hat: ', y_hat)
