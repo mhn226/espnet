@@ -399,6 +399,7 @@ class E2E(STInterface, torch.nn.Module):
                     ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                     ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
                 hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                print('hs_pad: ', len(hs_pad), hs_pad[0].size())
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
                     hlens = [hlens]
