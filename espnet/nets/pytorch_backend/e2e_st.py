@@ -385,7 +385,6 @@ class E2E(STInterface, torch.nn.Module):
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
-        print('eys ', eys.size())
         # 1. Encoder
         if self.training:
             # while (g < torch.max(ilens)):
@@ -603,7 +602,7 @@ class E2E(STInterface, torch.nn.Module):
                     for _ in six.moves.range(1, self.dec.dlayers):
                         c_list.append(self.dec.zero_state(hs_pad[0]))
                         z_list.append(self.dec.zero_state(hs_pad[0]))
-                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys)
+                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
                 step += 1
                 g += s

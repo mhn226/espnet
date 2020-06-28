@@ -120,7 +120,7 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         return z_list, c_list
 
     #def forward(self, hs_pad, hlens, ys_pad, strm_idx=0, lang_ids=None):
-    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys):
+    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
         """Decoder forward
 
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
@@ -137,14 +137,22 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         :rtype: float
         """
         att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-        if step > 0 and random.random() < self.sampling_probability:
-            logging.info(' scheduled sampling ')
-            z_out = self.output(z_all[-1])
-            z_out = np.argmax(z_out.detach().cpu(), axis=1)
-            z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-            ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
+        if eys is not None:
+            if step > 0 and random.random() < self.sampling_probability:
+                logging.info(' scheduled sampling ')
+                z_out = self.output(z_all[-1])
+                z_out = np.argmax(z_out.detach().cpu(), axis=1)
+                z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
+                ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
+            else:
+                ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
         else:
-            ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
+            if step == 0:
+                z_out = torch.tensor([self._e2e.dec.sos], device=self.device)
+            else:
+                z_out = self.output(z_all[-1])
+                z_out = np.argmax(z_out.detach().cpu(), axis=1)
+            z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
         #print(z_list[0].size())
         #print(c_list[0].size())
         z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
