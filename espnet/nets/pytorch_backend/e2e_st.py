@@ -583,7 +583,7 @@ class E2E(STInterface, torch.nn.Module):
             print('training ', self.training)
 
             y_hats = []
-
+            self.maxlen = olength
             while (not finished_write):
                 if g > torch.max(ilens):
                     xs_pad_ = xs_pad
@@ -619,8 +619,8 @@ class E2E(STInterface, torch.nn.Module):
                 g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
-                if y_hats[-1] == self.eos or len(y_hats) >= self.maxlen:
-                    #print(len(z_all), maxlen)
+                if len(y_hats) >= self.maxlen:
+                    print('len y_hats: ', len(y_hats))
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())
             #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
