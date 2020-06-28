@@ -419,8 +419,9 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
                 g += s
+            print('z_all before stack: ', z_all)
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-            #print('z_all ', z_all)
+
             # compute loss
             y_all = self.dec.output(z_all)
 
@@ -568,14 +569,6 @@ class E2E(STInterface, torch.nn.Module):
             lpz = None
 
             bleus = []
-            #nbest_hyps = self.dec.recognize_beam_batch(
-            #    hs_pad, torch.tensor(hlens), lpz,
-            #    self.trans_args, self.char_list,
-            #    self.rnnlm,
-            #    lang_ids=tgt_lang_ids.squeeze(1).tolist() if self.multilingual else None)
-
-            #hs_pad = None
-            #hlens = None
 
             finished_read = False
             step = 0
