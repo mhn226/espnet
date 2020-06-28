@@ -625,8 +625,6 @@ class E2E(STInterface, torch.nn.Module):
             #print('z_all ', len(z_all), z_all.size())
             #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
             #y_hats = self.dec.output(z_all)
-            print(y_hats)
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
             # remove <sos> and <eos>
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
@@ -641,6 +639,7 @@ class E2E(STInterface, torch.nn.Module):
 
                 bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
                 bleus.append(bleu)
+                print('blues: ', bleus)
 
             bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
 
