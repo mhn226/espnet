@@ -148,7 +148,11 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
                 ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
         else:
             if step == 0:
-                z_out = torch.tensor([self.sos])
+                z_out = z_all[-1].new_zeros(hs_pad.size(0))
+                z_out = z_out.new_full(hs_pad.size(), fill_value=self.sos)
+                print(z_all[-1].size())
+                print(z_out.size())
+                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             else:
                 z_out = self.output(z_all[-1])
                 z_out = np.argmax(z_out.detach().cpu(), axis=1)
