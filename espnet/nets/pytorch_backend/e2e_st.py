@@ -610,11 +610,11 @@ class E2E(STInterface, torch.nn.Module):
                         c_list.append(self.dec.zero_state(hs_pad[0]))
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
-                z_ = self.dec.output(z_)
-                z_ = F.log_softmax(z_, dim=1).squeeze()
-                _, best_id = torch.topk(z_, 1)
+                z_all.append(z_)
+                yseq = self.dec.output(z_)
+                yseq = F.log_softmax(yseq, dim=1).squeeze()
+                _, best_id = torch.topk(yseq, 1)
                 y_hats.append(best_id)
-                #z_all.append(z_)
                 step += 1
                 g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
