@@ -421,8 +421,6 @@ class E2E(STInterface, torch.nn.Module):
             #print('z_all ', z_all)
             # compute loss
             y_all = self.dec.output(z_all)
-            print('y_all: ', y_all)
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
@@ -583,6 +581,9 @@ class E2E(STInterface, torch.nn.Module):
 
             print('len z_all ', len(z_all))
             print('training ', self.training)
+
+            y_hats = []
+
             while (not finished_write):
                 if g > torch.max(ilens):
                     xs_pad_ = xs_pad
@@ -610,19 +611,22 @@ class E2E(STInterface, torch.nn.Module):
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_ = self.dec.output(z_)
-                print('z_: ', z_)
-                bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-                z_all.append(z_)
+                z_ = F.log_softmax(z_, dim=1).squeeze()
+                _, best_id = torch.topk(z_, 1)
+                y_hats.append(best_id)
+                #z_all.append(z_)
                 step += 1
                 g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
-                if z_all[-1] == self.eos:
+                if y_hats[-1] == self.eos or len(y_hats) >= self.maxlen:
                     #print(len(z_all), maxlen)
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())
-            z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
-            y_hats = self.dec.output(z_all)
+            #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
+            #y_hats = self.dec.output(z_all)
+            print(y_hats)
+            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
             # remove <sos> and <eos>
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
