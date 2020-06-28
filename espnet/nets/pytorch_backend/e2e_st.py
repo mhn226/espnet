@@ -289,7 +289,8 @@ class E2E(STInterface, torch.nn.Module):
         self.g = self.k
         self.s = 100
         print('k, g, s: ', self.k, self.g, self.s)
-        self.finished_read = False
+        #self.finished_read = False
+        self.maxlen = 400
         self.args = args
 
     def init_like_chainer(self):
@@ -571,8 +572,9 @@ class E2E(STInterface, torch.nn.Module):
             #    self.rnnlm,
             #    lang_ids=tgt_lang_ids.squeeze(1).tolist() if self.multilingual else None)
 
-            hs_pad = None
-            hlens = None
+            #hs_pad = None
+            #hlens = None
+
             finished_read = False
             step = 0
             finished_write = False
@@ -583,15 +585,17 @@ class E2E(STInterface, torch.nn.Module):
                 if g > torch.max(ilens):
                     xs_pad_ = xs_pad
                     ilens_ = ilens
+                    finished_read = True
                 else:
                     xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                     ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                     ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
-                if not finished_read:
-                    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-                    if xs_pad_ == xs_pad:
-                        maxlen = max(1, int(self.trans_args.maxlenratio * hs_pad.size(0)))
-                        finished_read = True
+                hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                #if not finished_read:
+                #    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                    #if xs_pad_ == xs_pad:
+                    #    maxlen = max(1, int(self.trans_args.maxlenratio * hs_pad.size(0)))
+                    #    finished_read = True
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
                     hlens = [hlens]
@@ -606,7 +610,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_all.append(z_)
                 step += 1
                 g += s
-                if len(z_all) >= maxlen or z_all[-1] == self.dec.eos:
+                if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                     #print(len(z_all), maxlen)
                     finished_write = True
             #print('z_all ', len(z_all), z_all.size())

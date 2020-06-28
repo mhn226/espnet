@@ -153,6 +153,7 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
                 z_out = self.output(z_all[-1])
                 z_out = np.argmax(z_out.detach().cpu(), axis=1)
             z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
+            ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
         #print(z_list[0].size())
         #print(c_list[0].size())
         z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
