@@ -609,7 +609,7 @@ class E2E(STInterface, torch.nn.Module):
                 yseq = self.dec.output(z_)
                 yseq = F.log_softmax(yseq, dim=1).squeeze()
                 _, best_id = torch.topk(yseq, 1)
-                print('best_id: ', best_id)
+                #print('best_id: ', best_id)
                 #y_hats.append(int(best_id))
                 y_hats.append(best_id)
                 step += 1
@@ -628,7 +628,8 @@ class E2E(STInterface, torch.nn.Module):
             ################ tmp: yhats = [yhats]
             y_hats = torch.tensor([y_hats], device=ys_pad.device)
             print('y_hats: ', len(y_hats), y_hats)
-            #y_hats = torch.stack([y_hats], dim=1)
+            if batch > 1:
+                y_hats = torch.stack([y_hats], dim=1)
             #print('y_hats: ', len(y_hats), y_hats)
             print('len ys_pad: ', len(ys_pad), ys_pad)
             for i, y_hat in enumerate(y_hats):
