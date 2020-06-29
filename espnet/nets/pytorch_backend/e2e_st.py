@@ -425,6 +425,8 @@ class E2E(STInterface, torch.nn.Module):
             # compute loss
             y_all = self.dec.output(z_all)
 
+            print('y_all train: ', y_all, y_all.size())
+
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
             else:
@@ -647,7 +649,6 @@ class E2E(STInterface, torch.nn.Module):
             self.loss_st = self.dec.loss
 
             print('y_all: ', y_all, y_all.size())
-            aaaaaaaaaaaaaaaa
             #print('z_all ', len(z_all), z_all.size())
             #y_hats = self.dec.output(z_all)
 
