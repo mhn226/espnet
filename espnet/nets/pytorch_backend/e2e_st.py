@@ -632,7 +632,6 @@ class E2E(STInterface, torch.nn.Module):
                 reduction_str = 'elementwise_mean'
             else:
                 reduction_str = 'mean'
-            print('y_all view: ', y_all.view(batch * len(z_all), -1), ys_out_pad.view(-1))
             self.dec.loss = F.cross_entropy(y_all.view(batch * len(z_all), -1), ys_out_pad.view(-1),
                                             ignore_index=self.dec.ignore_id,
                                             reduction=reduction_str)
@@ -701,7 +700,7 @@ class E2E(STInterface, torch.nn.Module):
         else:
             logging.warning('loss (=%f) is not correct', loss_data)
 
-            return self.loss
+        return self.loss
 
     def scorers(self):
         """Scorers."""
