@@ -627,25 +627,24 @@ class E2E(STInterface, torch.nn.Module):
             y_all = self.dec.output(z_all)
 
             print('y_all: ', y_all, y_all.size())
-            aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
             else:
                 reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+            self.dec.loss = F.cross_entropy(y_all.view(batch * len(z_all), -1), ys_out_pad.view(-1),
                                             ignore_index=self.dec.ignore_id,
                                             reduction=reduction_str)
             # compute perplexity
             ppl = math.exp(self.dec.loss.item())
             # -1: eos, which is removed in the loss computation
             self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            acc = th_accuracy(y_all.view(batch * len(z_all), -1), ys_out_pad, ignore_label=self.dec.ignore_id)
             logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
             if self.dec.labeldist is not None:
                 if self.dec.vlabeldist is None:
                     self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+                loss_reg = - torch.sum((F.log_softmax(y_all.view(batch * len(z_all), -1), dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
                 self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
 
             self.acc = acc
@@ -659,26 +658,30 @@ class E2E(STInterface, torch.nn.Module):
             #y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps]
             ################ tmp: yhats = [yhats]
             #print('y_hats: ', y_hats)
-            if batch == 1:
-                y_hats = torch.tensor([y_hats], device=ys_pad.device)
-                #print('y_hats: ', len(y_hats), y_hats)
-            else:
-                y_hats = torch.stack(y_hats, dim=1)
-                #print('y_hats stacked: ', len(y_hats), y_hats)
-            for i, y_hat in enumerate(y_hats):
+            #if batch == 1:
+            #    y_hats = torch.tensor([y_hats], device=ys_pad.device)
+            #    #print('y_hats: ', len(y_hats), y_hats)
+            #else:
+            #    y_hats = torch.stack(y_hats, dim=1)
+            #    #print('y_hats stacked: ', len(y_hats), y_hats)
+            for i, y_hat in enumerate(y_all):
                 y_true = ys_pad[i]
-                print('y_hat: ', y_hat)
-                print('y_true: ', y_true)
+                #print('y_hat: ', y_hat)
+                #print('y_true: ', y_true)
 
-                seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
-                seq_true = [self.char_list[int(idx)] for idx in y_true if int(idx) != -1]
+                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.ignore_id]
+                seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                #seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
+                #seq_true = [self.char_list[int(idx)] for idx in y_true if int(idx) != -1]
                 seq_hat_text = "".join(seq_hat).replace(self.trans_args.space, ' ')
                 seq_hat_text = seq_hat_text.replace(self.trans_args.blank, '')
                 seq_true_text = "".join(seq_true).replace(self.trans_args.space, ' ')
 
                 bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
                 bleus.append(bleu)
-                print('blues: ', bleus)
+                print('bleus: ', bleus)
 
             bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
 
@@ -696,7 +699,7 @@ class E2E(STInterface, torch.nn.Module):
                                  cer_ctc, cer, wer, bleu, loss_data)
         else:
             logging.warning('loss (=%f) is not correct', loss_data)
-        print('########### loss:  ', self.loss)
+
         return self.loss
 
     def scorers(self):
