@@ -606,18 +606,19 @@ class E2E(STInterface, torch.nn.Module):
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
-                yseq = self.dec.output(z_)
-                yseq = F.log_softmax(yseq, dim=1).squeeze()
+                #yseq = self.dec.output(z_)
+                #yseq = F.log_softmax(yseq, dim=1).squeeze()
 
-                _, best_id = torch.topk(yseq, 1)
+                #_, best_id = torch.topk(yseq, 1)
                 #print('best_id: ', best_id)
                 #y_hats.append(int(best_id))
-                y_hats.append(best_id)
+                #y_hats.append(best_id)
                 step += 1
                 g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
-                if len(y_hats) >= self.maxlen:
+                #if len(y_hats) >= self.maxlen:
+                if len(z_all) >= self.maxlen:
                     #print('len y_hats: ', len(y_hats), y_hats)
                     finished_write = True
 
@@ -645,6 +646,8 @@ class E2E(STInterface, torch.nn.Module):
             self.acc = acc
             self.loss_st = self.dec.loss
 
+            print('y_all: ', y_all, y_all.size())
+            aaaaaaaaaaaaaaaa
             #print('z_all ', len(z_all), z_all.size())
             #y_hats = self.dec.output(z_all)
 
