@@ -630,6 +630,21 @@ class E2E(STInterface, torch.nn.Module):
             self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
                                             ignore_index=self.dec.ignore_id,
                                             reduction=reduction_str)
+            # compute perplexity
+            ppl = math.exp(self.dec.loss.item())
+            # -1: eos, which is removed in the loss computation
+            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+            if self.dec.labeldist is not None:
+                if self.dec.vlabeldist is None:
+                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+
+            self.acc = acc
+            self.loss_st = self.dec.loss
+
             #print('z_all ', len(z_all), z_all.size())
             #y_hats = self.dec.output(z_all)
 
