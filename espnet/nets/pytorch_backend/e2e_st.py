@@ -607,8 +607,16 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
                 yseq = self.dec.output(z_)
-                yseq = F.log_softmax(yseq, dim=1).squeeze()
-                _, best_id = torch.topk(yseq, 1)
+                if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+                    reduction_str = 'elementwise_mean'
+                else:
+                    reduction_str = 'mean'
+                self.dec.loss = F.cross_entropy(yseq, ys_out_pad.view(-1),
+                                                ignore_index=self.dec.ignore_id,
+                                                reduction=reduction_str)
+                #yseq = F.log_softmax(yseq, dim=1).squeeze()
+                #_, best_id = torch.topk(yseq, 1)
+                _, best_id = torch.topk(self.dec.loss, 1)
                 #print('best_id: ', best_id)
                 #y_hats.append(int(best_id))
                 y_hats.append(best_id)
