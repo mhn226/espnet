@@ -664,6 +664,8 @@ class E2E(STInterface, torch.nn.Module):
                                  cer_ctc, cer, wer, bleu, loss_data)
         else:
             logging.warning('loss (=%f) is not correct', loss_data)
+        print('########### loss:  ', self.loss)
+        print('########### mean loss: ', self.loss.mean())
         return self.loss
 
     def scorers(self):
