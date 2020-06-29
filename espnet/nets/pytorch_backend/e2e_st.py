@@ -387,19 +387,30 @@ class E2E(STInterface, torch.nn.Module):
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
+
+        finished_read = False
+        print('finished_read init: ', finished_read)
+        finished_write = False
+        hs_pad = None
+        hlens = None
+
         # 1. Encoder
         if self.training:
             # while (g < torch.max(ilens)):
             for i in six.moves.range(olength):
-                if g > torch.max(ilens):
-                    xs_pad_ = xs_pad
-                    ilens_ = ilens
-                else:
-                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
-                    ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                    ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
-                hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                if not finished_read:
+                    if g > torch.max(ilens):
+                        xs_pad_ = xs_pad
+                        ilens_ = ilens
+                        finished_read = True
+                        print('finished_read done: ', finished_read)
+                    else:
+                        xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+                        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                        ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+                    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
                 #print('hs_pad: ', len(hs_pad), hs_pad[0].size())
+                print('free write: ', i)
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
                     hlens = [hlens]
@@ -571,31 +582,22 @@ class E2E(STInterface, torch.nn.Module):
             lpz = None
 
             bleus = []
-
-            finished_read = False
             step = 0
-            finished_write = False
-
-            #print('len z_all ', len(z_all))
-            #print('training ', self.training)
-
             y_hats = []
             self.maxlen = olength
             while (not finished_write):
-                if g > torch.max(ilens):
-                    xs_pad_ = xs_pad
-                    ilens_ = ilens
-                    finished_read = True
-                else:
-                    xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
-                    ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                    ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
-                hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-                #if not finished_read:
-                #    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-                    #if xs_pad_ == xs_pad:
-                    #    maxlen = max(1, int(self.trans_args.maxlenratio * hs_pad.size(0)))
-                    #    finished_read = True
+                if not finished_read:
+                    if g > torch.max(ilens):
+                        xs_pad_ = xs_pad
+                        ilens_ = ilens
+                        print('finished_read done: ', finished_read)
+                        finished_read = True
+                    else:
+                        xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+                        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                        ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+                    hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+                print('free write: ', step)
                 if self.dec.num_encs == 1:
                     hs_pad = [hs_pad]
                     hlens = [hlens]
@@ -621,7 +623,6 @@ class E2E(STInterface, torch.nn.Module):
                 #if len(z_all) >= self.maxlen:
                 #if len(y_hats) >= self.maxlen:
                 if len(z_all) >= self.maxlen:
-                    #print('len y_hats: ', len(y_hats), y_hats)
                     finished_write = True
 
             #z_all = torch.stack(z_all, dim=1).view(batch * len(z_all), -1)
