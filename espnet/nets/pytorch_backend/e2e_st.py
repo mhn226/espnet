@@ -671,8 +671,8 @@ class E2E(STInterface, torch.nn.Module):
                 #print('y_hat: ', y_hat)
                 #print('y_true: ', y_true)
 
-                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
-                idx_true = y_true[y_true != self.ignore_id]
+                idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.dec.ignore_id]
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
                 seq_true = [self.char_list[int(idx)] for idx in idx_true]
                 #seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
