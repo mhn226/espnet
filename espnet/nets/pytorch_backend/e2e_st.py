@@ -425,7 +425,7 @@ class E2E(STInterface, torch.nn.Module):
             # compute loss
             y_all = self.dec.output(z_all)
 
-            print('y_all train: ', y_all.size(), ys_out_pad.view(-1).size(), z_all.size())
+            #print('y_all train: ', y_all.size(), ys_out_pad.view(-1).size(), z_all.size())
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
@@ -576,7 +576,7 @@ class E2E(STInterface, torch.nn.Module):
             step = 0
             finished_write = False
 
-            print('len z_all ', len(z_all))
+            #print('len z_all ', len(z_all))
             print('training ', self.training)
 
             y_hats = []
@@ -628,7 +628,7 @@ class E2E(STInterface, torch.nn.Module):
             z_all = torch.stack(z_all, dim=1)
             y_all = self.dec.output(z_all)
 
-            print('y_all: ', y_all, y_all.size(), y_all.view(batch * olength, -1).size(), ys_out_pad.view(-1).size())
+            #print('y_all: ', y_all, y_all.size(), y_all.view(batch * olength, -1).size(), ys_out_pad.view(-1).size())
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
@@ -652,7 +652,7 @@ class E2E(STInterface, torch.nn.Module):
             self.acc = acc
             self.loss_st = self.dec.loss
 
-            print('y_all: ', y_all, y_all.size())
+            #print('y_all: ', y_all, y_all.size())
             #print('z_all ', len(z_all), z_all.size())
             #y_hats = self.dec.output(z_all)
 
@@ -668,15 +668,17 @@ class E2E(STInterface, torch.nn.Module):
             #    #print('y_hats stacked: ', len(y_hats), y_hats)
             for i, y_hat in enumerate(y_all):
                 #y_true = ys_pad[i]
-                print('y_hat: ', y_hat, y_hat.size())
+                #print('y_hat: ', y_hat, y_hat.size())
                 #print('y_true: ', y_true)
                 y_hat = y_hat.detach().cpu().numpy()
                 y_true = ys_out_pad[i]
-                print('y_true: ', y_true.size())
+                #print('y_true: ', y_true.size())
                 y_true = y_true.detach().cpu().numpy()
 
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]
+                print('idx_hat: ', idx_hat)
+                print('idx_true: ', idx_true)
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
                 seq_true = [self.char_list[int(idx)] for idx in idx_true]
                 #seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
