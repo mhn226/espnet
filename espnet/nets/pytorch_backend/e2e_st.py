@@ -403,7 +403,7 @@ class E2E(STInterface, torch.nn.Module):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
                         finished_read = True
-                        print('finished read done: ', finished_read)
+                        print('finished read done: ', finished_read, ilens)
                     else:
                         xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -592,7 +592,7 @@ class E2E(STInterface, torch.nn.Module):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
                         finished_read = True
-                        print('finished read: ', finished_read)
+                        print('finished read: ', finished_read, ilens)
                     else:
                         xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
