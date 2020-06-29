@@ -403,7 +403,7 @@ class E2E(STInterface, torch.nn.Module):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
                         finished_read = True
-                        print('finished read done: ', i)
+                        print('finished read done: ', finished_read)
                     else:
                         xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -414,7 +414,8 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-                print('free write: ', i)
+                if finished_read:
+                    print('free write: ', i)
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
@@ -606,7 +607,8 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-                print('free write: ', step)
+                if finished_read:
+                    print('free write: ', step)
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
