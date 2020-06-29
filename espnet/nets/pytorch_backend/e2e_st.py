@@ -628,13 +628,13 @@ class E2E(STInterface, torch.nn.Module):
             z_all = torch.stack(z_all, dim=1)
             y_all = self.dec.output(z_all)
 
-            print('y_all: ', y_all, y_all.size(), y_all.view(batch * len(y_all), -1).size(), ys_out_pad.view(-1).size(), len(z_all), batch, len(y_all), batch * len(y_all))
+            print('y_all: ', y_all, y_all.size(), y_all.view(batch * olength, -1).size(), ys_out_pad.view(-1).size(), len(z_all), batch, len(y_all), batch * len(y_all))
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
             else:
                 reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all.view(batch * len(y_all), -1), ys_out_pad.view(-1),
+            self.dec.loss = F.cross_entropy(y_all.view(batch * olength, -1), ys_out_pad.view(-1),
                                             ignore_index=self.dec.ignore_id,
                                             reduction=reduction_str)
             # compute perplexity
