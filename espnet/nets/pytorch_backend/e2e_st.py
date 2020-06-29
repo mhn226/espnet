@@ -668,7 +668,7 @@ class E2E(STInterface, torch.nn.Module):
             #    #print('y_hats stacked: ', len(y_hats), y_hats)
             for i, y_hat in enumerate(y_all):
                 y_true = ys_pad[i]
-                #print('y_hat: ', y_hat)
+                print('y_hat: ', y_hat, y_hat.size())
                 #print('y_true: ', y_true)
 
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
