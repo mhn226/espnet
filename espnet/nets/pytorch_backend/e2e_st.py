@@ -389,7 +389,6 @@ class E2E(STInterface, torch.nn.Module):
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
 
         finished_read = False
-        print('finished read init: ', finished_read)
         finished_write = False
         hs_pad = None
         hlens = None
@@ -403,7 +402,6 @@ class E2E(STInterface, torch.nn.Module):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
                         finished_read = True
-                        print('finished read done: ', finished_read, g, ilens)
                     else:
                         xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -415,7 +413,6 @@ class E2E(STInterface, torch.nn.Module):
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
                 if finished_read:
-                    print('free write: ', i)
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
@@ -592,7 +589,6 @@ class E2E(STInterface, torch.nn.Module):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
                         finished_read = True
-                        print('finished read: ', finished_read, g, ilens)
                     else:
                         xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -608,7 +604,6 @@ class E2E(STInterface, torch.nn.Module):
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
                 if finished_read:
-                    print('free write: ', step)
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
