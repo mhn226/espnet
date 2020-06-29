@@ -412,7 +412,6 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-                if finished_read:
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
@@ -603,7 +602,6 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-                if finished_read:
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
