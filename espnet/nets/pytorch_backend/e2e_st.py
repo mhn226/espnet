@@ -605,7 +605,7 @@ class E2E(STInterface, torch.nn.Module):
 
             bleus = []
             step = 0
-            y_hats = []
+            #y_hats = []
             self.maxlen = olength
             while (not finished_write):
                 if not finished_read:
