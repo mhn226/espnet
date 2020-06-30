@@ -311,6 +311,34 @@ class E2E(STInterface, torch.nn.Module):
         for l in six.moves.range(len(self.dec.decoder)):
             set_forget_bias_to_one(self.dec.decoder[l].bias_ih)
 
+    def action_read(self, xs_pad, ilens, g, finished_read):
+        if g > torch.max(ilens):
+            xs_pad_ = xs_pad
+            ilens_ = ilens
+            finished_read = True
+        else:
+            xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+        hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
+        # print('hs_pad: ', len(hs_pad), hs_pad[0].size())
+        if self.dec.num_encs == 1:
+            hs_pad = [hs_pad]
+            hlens = [hlens]
+        hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+        return hs_pad, hlens, finished_read
+
+    def action_write(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys, g):
+        if g == self.k:
+            c_list = [self.dec.zero_state(hs_pad[0])]
+            z_list = [self.dec.zero_state(hs_pad[0])]
+            for _ in six.moves.range(1, self.dec.dlayers):
+                c_list.append(self.dec.zero_state(hs_pad[0]))
+                z_list.append(self.dec.zero_state(hs_pad[0]))
+        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys)
+        z_all.append(z_)
+        return z_list, c_list, att_w, z_all
+
     def forward(self, xs_pad, ilens, ys_pad, ys_pad_src):
         """E2E forward.
 
@@ -398,6 +426,8 @@ class E2E(STInterface, torch.nn.Module):
             # while (g < torch.max(ilens)):
             for i in six.moves.range(olength):
                 if not finished_read:
+                    """
+                    # Old process
                     if g > torch.max(ilens):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
@@ -407,33 +437,28 @@ class E2E(STInterface, torch.nn.Module):
                         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                         ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
                     hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
-                    #print('hs_pad: ', len(hs_pad), hs_pad[0].size())
                     if self.dec.num_encs == 1:
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+                    """
+                    hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                """
+                # Old process
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
                     for _ in six.moves.range(1, self.dec.dlayers):
                         c_list.append(self.dec.zero_state(hs_pad[0]))
                         z_list.append(self.dec.zero_state(hs_pad[0]))
-                # else:
-                # change z_list, c_list, att_w shape
-                # c_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
-                # z_list_extend = self.dec.zero_state(hs_pad[0]).transpose(0, 1)
-                # print(c_list_extend.size())
-                # aaaaaaaaaaaaaaaaaaaaaaa
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
+                """
+                z_list, c_list, att_w, z_all = self.action_write(self, hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
                 g += s
-            #print('z_all before stack: ', z_all)
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-            #print('z_all after stack: ', z_all)
             # compute loss
             y_all = self.dec.output(z_all)
-
-            #print('y_all train: ', y_all.size(), ys_out_pad.view(-1).size(), z_all.size())
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
@@ -584,6 +609,8 @@ class E2E(STInterface, torch.nn.Module):
             self.maxlen = olength
             while (not finished_write):
                 if not finished_read:
+                    """
+                    # Old process
                     if g > torch.max(ilens):
                         xs_pad_ = xs_pad
                         ilens_ = ilens
@@ -602,6 +629,10 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+                    """
+                    hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                """
+                # Old process
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
                     z_list = [self.dec.zero_state(hs_pad[0])]
@@ -610,6 +641,9 @@ class E2E(STInterface, torch.nn.Module):
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
+                """
+                z_list, c_list, att_w, z_all = self.action_write(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w,
+                                                                 z_all, eys, g)
                 #yseq = self.dec.output(z_)
                 #yseq = F.log_softmax(yseq, dim=1).squeeze()
 
