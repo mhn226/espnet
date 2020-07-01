@@ -691,7 +691,7 @@ class E2E(STInterface, torch.nn.Module):
                             # hlens[idx] = hlens[idx] + hlens_[idx]
                             hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
                             print('5: ', hlens)
-                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, i, finished_read)
+                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, step, finished_read)
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
