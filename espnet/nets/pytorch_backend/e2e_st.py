@@ -445,6 +445,7 @@ class E2E(STInterface, torch.nn.Module):
         #hlens = [torch.Tensor(device=xs_pad.device)] * self.dec.num_encs
         hs_pad = [torch.empty((1, 0, self.args.eunits), device=xs_pad.device)] * self.dec.num_encs
         hlens = [[0] * batch] * self.dec.num_encs
+        print('0: ', hlens)
         last_enc_states = None
         offset = 0
         print('#################### new sentence ###################')
