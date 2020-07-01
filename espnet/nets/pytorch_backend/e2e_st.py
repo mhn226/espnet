@@ -480,7 +480,8 @@ class E2E(STInterface, torch.nn.Module):
                         for idx in range(self.dec.num_encs):
                             hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
                             print('4: ', hs_pad[idx].size())
-                            hlens[idx] = hlens[idx] + hlens_[idx]
+                            #hlens[idx] = hlens[idx] + hlens_[idx]
+                            hlens = map(lambda x, y : x + y, hlens, hlens_)
                             print('5: ', hlens)
                         print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, i, finished_read)
                         offset = g
