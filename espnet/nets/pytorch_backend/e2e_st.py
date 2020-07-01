@@ -440,8 +440,8 @@ class E2E(STInterface, torch.nn.Module):
         finished_write = False
         #hs_pad = None
         #hlens = None
-        hs_pad = torch.Tensor()
-        hlens = torch.Tensor()
+        hs_pad = [torch.Tensor()] * self.dec.num_encs
+        hlens = [torch.Tensor()] * self.dec.num_encs
         last_enc_states = None
         offset = 0
         print('#################### new sentence ###################')
@@ -470,8 +470,9 @@ class E2E(STInterface, torch.nn.Module):
                     ##########################################################
                     if "b" not in self.etype:
                         hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                        hs_pad = torch.cat((hs_pad, hs_pad_))
-                        hlens = torch.cat((hlens, hlens_))
+                        for idx in range(self.dec.num_encs):
+                            hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]))
+                            hlens[idx] = torch.cat((hlens[idx], hlens_[idx]))
                         print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, i, finished_read)
                         offset = g
                     else:
