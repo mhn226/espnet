@@ -339,7 +339,7 @@ class E2E(STInterface, torch.nn.Module):
         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         ilens_ = ilens_.new_full(ilens.size(), fill_value=(g-offset))
         hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states)
-        print('xs_pad_: ', xs_pad_.size(), ilens_.size(), ilens.size())
+        print('xs_pad_: ', xs_pad_.size(), ilens_, ilens)
 
         if self.dec.num_encs == 1:
             hs_pad = [hs_pad]
@@ -467,8 +467,10 @@ class E2E(STInterface, torch.nn.Module):
 
                     ##########################################################
                     if "b" not in self.etype:
-                        hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), ilens, i, finished_read)
+                        hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        hs_pad.extend(hs_pad_)
+                        hlens.extend(hlens_)
+                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, i, finished_read)
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
