@@ -312,7 +312,7 @@ class E2E(STInterface, torch.nn.Module):
             set_forget_bias_to_one(self.dec.decoder[l].bias_ih)
 
     def action_read(self, xs_pad, ilens, g, finished_read):
-        if g > torch.max(ilens):
+        if g >= torch.max(ilens):
             xs_pad_ = xs_pad
             ilens_ = ilens
             finished_read = True
@@ -327,6 +327,25 @@ class E2E(STInterface, torch.nn.Module):
             hlens = [hlens]
         hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
         return hs_pad, hlens, finished_read
+
+    def action_read_ulstm(self, xs_pad, ilens, last_enc_states, offset, g, finished_read):
+        # uni-direction lstm
+        if g >= torch.max(ilens):
+            g = max(ilens)
+            finished_read = True
+
+        xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
+        #xs_pad_, ilens_ = self.subsample_frames(xs_pad_)
+        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        ilens_ = ilens_.new_full(ilens.size(), fill_value=(g-offset))
+        hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states)
+
+        if self.dec.num_encs == 1:
+            hs_pad = [hs_pad]
+            hlens = [hlens]
+        hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+
+        return hs_pad, hlens, last_enc_states, finished_read
 
     def action_write(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys, g):
         if g == self.k:
@@ -420,6 +439,8 @@ class E2E(STInterface, torch.nn.Module):
         finished_write = False
         hs_pad = None
         hlens = None
+        last_enc_states = None
+        offset = 0
 
         # 1. Encoder
         if self.training:
@@ -442,7 +463,12 @@ class E2E(STInterface, torch.nn.Module):
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
                     """
-                    hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                    if "b" not in self.etype:
+                        hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        offset = g
+                    else:
+                        hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                    g += s
                 """
                 # Old process
                 if g == k:
@@ -455,7 +481,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_all.append(z_)
                 """
                 z_list, c_list, att_w, z_all = self.action_write(self, hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
-                g += s
+                #g += s
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
             y_all = self.dec.output(z_all)
@@ -630,7 +656,12 @@ class E2E(STInterface, torch.nn.Module):
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
                     """
-                    hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                    if "b" not in self.etype:
+                        hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        offset = g
+                    else:
+                        hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
+                    g += s
                 """
                 # Old process
                 if g == k:
@@ -652,7 +683,7 @@ class E2E(STInterface, torch.nn.Module):
                 #y_hats.append(int(best_id))
                 #y_hats.append(best_id)
                 step += 1
-                g += s
+                #g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
                 #if len(y_hats) >= self.maxlen:
