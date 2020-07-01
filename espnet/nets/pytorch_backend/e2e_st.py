@@ -468,7 +468,7 @@ class E2E(STInterface, torch.nn.Module):
                         print('hs_pad :', len(hs_pad), hs_pad[0].size())
                         offset = g
                     else:
-                        hs_pad, hlens = self.action_read(xs_pad, ilens, g, finished_read)
+                        hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                     g += s
                 """
                 # Old process
@@ -661,7 +661,7 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
                         offset = g
                     else:
-                        hs_pad, hlens = self.action_read(xs_pad, ilens, g, finished_read)
+                        hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                     g += s
                 """
                 # Old process
