@@ -442,7 +442,7 @@ class E2E(STInterface, torch.nn.Module):
         #hlens = None
         print(xs_pad.device)
         ddddddddddddddddddddddddddddddddd
-        hs_pad = [torch.Tensor(device=)] * self.dec.num_encs
+        hs_pad = [torch.Tensor()] * self.dec.num_encs
         hlens = [torch.Tensor()] * self.dec.num_encs
         last_enc_states = None
         offset = 0
