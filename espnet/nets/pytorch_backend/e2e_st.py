@@ -465,6 +465,7 @@ class E2E(STInterface, torch.nn.Module):
                     """
                     if "b" not in self.etype:
                         hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        print('hs_pad :', len(hs_pad), hs_pad[0].size())
                         offset = g
                     else:
                         hs_pad, hlens = self.action_read(self, xs_pad, ilens, g, finished_read)
