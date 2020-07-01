@@ -441,7 +441,7 @@ class E2E(STInterface, torch.nn.Module):
         hlens = None
         last_enc_states = None
         offset = 0
-
+        print('#################### new sentence ###################')
         # 1. Encoder
         if self.training:
             # while (g < torch.max(ilens)):
@@ -467,7 +467,7 @@ class E2E(STInterface, torch.nn.Module):
                     ##########################################################
                     if "b" not in self.etype:
                         hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                        print('hs_pad :', len(hs_pad), hs_pad[0].size())
+                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), ilens, i, finished_read)
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
