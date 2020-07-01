@@ -469,7 +469,7 @@ class E2E(STInterface, torch.nn.Module):
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-                    g += s
+                    #g += s
                 """
                 # Old process
                 if g == k:
@@ -482,7 +482,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_all.append(z_)
                 """
                 z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
-                #g += s
+                g += s
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
             y_all = self.dec.output(z_all)
@@ -662,7 +662,7 @@ class E2E(STInterface, torch.nn.Module):
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-                    g += s
+                    #g += s
                 """
                 # Old process
                 if g == k:
@@ -684,7 +684,7 @@ class E2E(STInterface, torch.nn.Module):
                 #y_hats.append(int(best_id))
                 #y_hats.append(best_id)
                 step += 1
-                #g += s
+                g += s
                 #if len(z_all) >= self.maxlen or z_all[-1] == self.dec.eos:
                 #if len(z_all) >= self.maxlen:
                 #if len(y_hats) >= self.maxlen:
