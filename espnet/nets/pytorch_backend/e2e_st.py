@@ -681,7 +681,7 @@ class E2E(STInterface, torch.nn.Module):
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
                     """
                     if "b" not in self.etype:
-                        hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
                         print('1: ', hlens_)
                         print('2: ', hs_pad_[0].size())
                         print('3: ', hs_pad[0].size())
