@@ -481,7 +481,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
                 """
-                z_list, c_list, att_w, z_all = self.action_write(self, hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
+                z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
                 #g += s
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
@@ -674,7 +674,7 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
                 """
-                z_list, c_list, att_w, z_all = self.action_write(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w,
+                z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, step, att_idx, z_list, c_list, att_w,
                                                                  z_all, eys, g)
                 #yseq = self.dec.output(z_)
                 #yseq = F.log_softmax(yseq, dim=1).squeeze()
