@@ -447,7 +447,7 @@ class E2E(STInterface, torch.nn.Module):
             # while (g < torch.max(ilens)):
             for i in six.moves.range(olength):
                 if not finished_read:
-
+                    """
                     # Old process
                     if g > torch.max(ilens):
                         xs_pad_ = xs_pad
@@ -462,19 +462,19 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad = [hs_pad]
                         hlens = [hlens]
                     hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-
+                    """
 
                     ##########################################################
-                    #if "b" not in self.etype:
-                    #    hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                    #    print('hs_pad :', len(hs_pad), hs_pad[0].size())
-                    #    offset = g
-                    #else:
-                    #    hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+                    if "b" not in self.etype:
+                        hs_pad, hlens, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
+                        print('hs_pad :', len(hs_pad), hs_pad[0].size())
+                        offset = g
+                    else:
+                        hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                     #g += s
                     ############################################################
 
-
+                """ 
                 # Old process
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
@@ -484,10 +484,10 @@ class E2E(STInterface, torch.nn.Module):
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 z_all.append(z_)
-
+                """
 
                 ##########################################
-                #z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
+                z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys, g)
                 ##########################################
                 g += s
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
@@ -671,6 +671,7 @@ class E2E(STInterface, torch.nn.Module):
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                     #g += s
 
+                """
                 # Old process
                 if g == k:
                     c_list = [self.dec.zero_state(hs_pad[0])]
@@ -680,11 +681,11 @@ class E2E(STInterface, torch.nn.Module):
                         z_list.append(self.dec.zero_state(hs_pad[0]))
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all)
                 z_all.append(z_)
-
+                """
 
                 #########################################################
-                #z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, step, att_idx, z_list, c_list, att_w,
-                #                                                 z_all, eys, g)
+                z_list, c_list, att_w, z_all = self.action_write(hs_pad, hlens, step, att_idx, z_list, c_list, att_w,
+                                                                 z_all, eys, g)
                 #########################################################
 
                 #yseq = self.dec.output(z_)
