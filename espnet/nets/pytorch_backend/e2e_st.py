@@ -440,7 +440,9 @@ class E2E(STInterface, torch.nn.Module):
         finished_write = False
         #hs_pad = None
         #hlens = None
-        hs_pad = [torch.Tensor()] * self.dec.num_encs
+        print(xs_pad.device)
+        ddddddddddddddddddddddddddddddddd
+        hs_pad = [torch.Tensor(device=)] * self.dec.num_encs
         hlens = [torch.Tensor()] * self.dec.num_encs
         last_enc_states = None
         offset = 0
