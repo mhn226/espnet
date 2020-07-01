@@ -339,13 +339,11 @@ class E2E(STInterface, torch.nn.Module):
         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         ilens_ = ilens_.new_full(ilens.size(), fill_value=(g-offset))
         hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states)
-        print('xs_pad_: ', xs_pad_.size(), ilens_, ilens)
 
         if self.dec.num_encs == 1:
             hs_pad = [hs_pad]
             hlens = [hlens]
         hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-        print(hlens)
 
         return hs_pad, hlens, last_enc_states, finished_read
 
@@ -445,10 +443,8 @@ class E2E(STInterface, torch.nn.Module):
         #hlens = [torch.Tensor(device=xs_pad.device)] * self.dec.num_encs
         hs_pad = [torch.empty((batch, 0, self.args.eunits), device=xs_pad.device)] * self.dec.num_encs
         hlens = [[0] * batch] * self.dec.num_encs
-        print('0: ', hlens)
         last_enc_states = None
         offset = 0
-        print('#################### new sentence ###################')
         # 1. Encoder
         if self.training:
             # while (g < torch.max(ilens)):
@@ -474,16 +470,10 @@ class E2E(STInterface, torch.nn.Module):
                     ##########################################################
                     if "b" not in self.etype:
                         hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                        print('1: ', hlens_)
-                        print('2: ', hs_pad_[0].size())
-                        print('3: ', hs_pad[0].size())
                         for idx in range(self.dec.num_encs):
                             hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
-                            print('4: ', hs_pad[idx].size())
                             #hlens[idx] = hlens[idx] + hlens_[idx]
                             hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                            print('5: ', hlens)
-                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, i, finished_read)
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
@@ -682,16 +672,10 @@ class E2E(STInterface, torch.nn.Module):
                     """
                     if "b" not in self.etype:
                         hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states, offset, g, finished_read)
-                        print('1: ', hlens_)
-                        print('2: ', hs_pad_[0].size())
-                        print('3: ', hs_pad[0].size())
                         for idx in range(self.dec.num_encs):
                             hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
-                            print('4: ', hs_pad[idx].size())
                             # hlens[idx] = hlens[idx] + hlens_[idx]
                             hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                            print('5: ', hlens)
-                        print('hs_pad :', len(hs_pad), hs_pad[0].size(), hlens, step, finished_read)
                         offset = g
                     else:
                         hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
