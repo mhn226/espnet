@@ -125,7 +125,7 @@ class SimultaneousSTE2E(object):
 
         #x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
         x_ = x[self.offset:self.g]
-        h, ilens = self.subsample_frames(x_)
+        h, ilens = self._e2e.subsample_frames(x_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         #ilens_ = ilens_.new_full(ilens.size(), fill_value=(self.g-offset))
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
