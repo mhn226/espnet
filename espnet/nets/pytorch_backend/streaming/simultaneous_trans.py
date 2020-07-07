@@ -121,7 +121,7 @@ class SimultaneousSTE2E(object):
         logging.info('len_in=' + str(len(x)))
         if self.g > len(x):
             self.g = len(x)
-            self.finished_read = True
+            self.finish_read = True
 
         #x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
         x_ = x[self.offset:self.g]
@@ -142,7 +142,7 @@ class SimultaneousSTE2E(object):
         self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
         print(self.enc_states.size())
         print(h.squeeze(0).size())
-        print(self.finished_read)
+        print(self.finish_read)
 
         #return hs_pad, hlens, last_enc_states, finished_read
 
