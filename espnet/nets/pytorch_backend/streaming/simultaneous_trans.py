@@ -123,28 +123,20 @@ class SimultaneousSTE2E(object):
             self.g = len(x)
             self.finish_read = True
 
-        #x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
         x_ = x[self.offset:self.g]
         h, ilens = self._e2e.subsample_frames(x_)
-        #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-        #ilens_ = ilens_.new_full(ilens.size(), fill_value=(self.g-offset))
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         self.offset = self.g
         self.g += self.s
         if self.enc_states is None:
             self.enc_states = torch.empty((0, h.size(2)), device=self.device)
-        #if self.dec.num_encs == 1:
-        #    hs_pad = [hs_pad]
-        #    hlens = [hlens]
-        #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
-
-        #self.enc_states.append(h)
         self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
-        print(self.enc_states.size())
-        print(h.squeeze(0).size())
-        print(self.finish_read)
 
-        #return hs_pad, hlens, last_enc_states, finished_read
+        if self.finish_read:
+            # offline mode
+            self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
+            self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            logging.info('min_len: ' + str(self.min_len))
 
     def write_action(self):
         model_index = 0
