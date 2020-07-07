@@ -140,7 +140,7 @@ class SimultaneousSTE2E(object):
         #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
 
         #self.enc_states.append(h)
-        self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=1)
+        self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
         print(self.enc_states.size())
         print(h.squeeze(0).size())
 
