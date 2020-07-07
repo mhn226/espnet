@@ -97,7 +97,7 @@ class SimultaneousSTE2E(object):
         # segment_size =  160000  # Wait-until-end
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
-        if self.g > len(x):
+        if self.g >= len(x):
             x_ = x
             self.finish_read = True
         else:
@@ -119,7 +119,7 @@ class SimultaneousSTE2E(object):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
-        if self.g > len(x):
+        if self.g >= len(x):
             self.g = len(x)
             self.finish_read = True
 
