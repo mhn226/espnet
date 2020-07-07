@@ -123,7 +123,8 @@ class SimultaneousSTE2E(object):
             self.g = len(x)
             self.finished_read = True
 
-        x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
+        #x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
+        x_ = x[self.offset:self.g]
         h, ilens = self.subsample_frames(x_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         #ilens_ = ilens_.new_full(ilens.size(), fill_value=(self.g-offset))
