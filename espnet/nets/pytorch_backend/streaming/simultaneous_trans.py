@@ -32,7 +32,7 @@ class SimultaneousSTE2E(object):
             self.device = "cpu"
         self.dtype = getattr(torch, self._trans_args.dtype)
 
-        self.enc_states = None
+        self.enc_states = []
 
         self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
         self.finished = False
@@ -123,9 +123,6 @@ class SimultaneousSTE2E(object):
             self.g = len(x)
             self.finished_read = True
 
-        #if self.enc_states == None:
-        #    self.enc_states = torch.empty((1, 0, self.args.eunits), device=self.device)
-
         x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
         h, ilens = self.subsample_frames(x_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -133,6 +130,10 @@ class SimultaneousSTE2E(object):
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         self.offset = self.g
         self.g += self.s
+        print(h.size())
+        aaaaaaaaaaaaaaaaaaaaaaaaaa
+        if len(self.enc_states) == 0:
+            self.enc_states = torch.empty((1, 0, h.size()), device=self.device)
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
         #    hlens = [hlens]
