@@ -132,7 +132,7 @@ class SimultaneousSTE2E(object):
         self.offset = self.g
         self.g += self.s
         if len(self.enc_states) == 0:
-            self.enc_states = torch.empty((1, 0, h.size(3)), device=self.device)
+            self.enc_states = torch.empty((1, 0, h.size(2)), device=self.device)
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
         #    hlens = [hlens]
