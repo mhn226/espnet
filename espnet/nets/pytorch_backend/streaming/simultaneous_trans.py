@@ -140,11 +140,6 @@ class SimultaneousSTE2E(object):
 
         #self.enc_states.append(h)
         self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
-        print(self.enc_states.size())
-        print(h.squeeze(0).size())
-        print(self.finish_read)
-
-        #return hs_pad, hlens, last_enc_states, finished_read
 
     def write_action(self):
         model_index = 0
