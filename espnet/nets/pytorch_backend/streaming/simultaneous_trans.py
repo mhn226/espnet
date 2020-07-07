@@ -22,6 +22,8 @@ class SimultaneousSTE2E(object):
 
         self._e2e.eval()
 
+        self.previous_encoder_recurrent_state = None
+
         self.enc_states = []
 
         if self._trans_args.ngpu > 1:
@@ -44,6 +46,7 @@ class SimultaneousSTE2E(object):
         self.s = 50
         self.max_len = 400
         self.min_len = 0
+        self.offset = 0
         #self.max_len = 1000
 
         assert self._trans_args.batchsize <= 1, \
@@ -78,7 +81,10 @@ class SimultaneousSTE2E(object):
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
-                action = self.read_action(x)
+                if "b" in self._e2e.etype:
+                    action = self.read_action_blstm(x)
+                else:
+                    action = self.read_action_ulstm(x)
 
             else:
                 # WRITE
@@ -87,7 +93,7 @@ class SimultaneousSTE2E(object):
 
         return action
 
-    def read_action(self, x):
+    def read_action_blstm(self, x):
         # segment_size =  160000  # Wait-until-end
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
@@ -108,6 +114,30 @@ class SimultaneousSTE2E(object):
             self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
+
+    def read_action_ulstm(self, x):
+        # uni-direction lstm
+        logging.info('frame_count=' + str(self.g))
+        logging.info('len_in=' + str(len(x)))
+        if self.g > len(x):
+            self.g = len(x)
+            self.finished_read = True
+
+        x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
+        h, ilens = self.subsample_frames(x_)
+        #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        #ilens_ = ilens_.new_full(ilens.size(), fill_value=(self.g-offset))
+        h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
+        self.offset = self.g
+        self.g += self.s
+        #if self.dec.num_encs == 1:
+        #    hs_pad = [hs_pad]
+        #    hlens = [hlens]
+        #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
+
+        self.enc_states.append(h)
+
+        #return hs_pad, hlens, last_enc_states, finished_read
 
     def write_action(self):
         model_index = 0
