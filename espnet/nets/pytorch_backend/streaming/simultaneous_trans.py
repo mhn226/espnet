@@ -114,8 +114,6 @@ class SimultaneousSTE2E(object):
             self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
-        print(self.enc_states.size())
-        aaaaaaaaaaaaaaaaaaaaaaaaaaa
 
     def read_action_ulstm(self, x):
         # uni-direction lstm
@@ -134,7 +132,7 @@ class SimultaneousSTE2E(object):
         self.offset = self.g
         self.g += self.s
         if self.enc_states is None:
-            self.enc_states = torch.empty((1, 0, h.size(2)), device=self.device)
+            self.enc_states = torch.empty((0, h.size(2)), device=self.device)
             print(self.enc_states.size())
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
@@ -142,9 +140,9 @@ class SimultaneousSTE2E(object):
         #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
 
         #self.enc_states.append(h)
-        self.enc_states = torch.cat((self.enc_states, h), dim=1)
+        self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=1)
         print(self.enc_states.size())
-        print(h.size())
+        print(h.squeeze(0).size())
 
         #return hs_pad, hlens, last_enc_states, finished_read
 
