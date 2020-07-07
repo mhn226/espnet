@@ -114,6 +114,7 @@ class SimultaneousSTE2E(object):
             self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
+        print(self.enc_states.size())
 
     def read_action_ulstm(self, x):
         # uni-direction lstm
