@@ -131,10 +131,8 @@ class SimultaneousSTE2E(object):
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         self.offset = self.g
         self.g += self.s
-        print(h.size())
-        aaaaaaaaaaaaaaaaaaaaaaaaaa
         if len(self.enc_states) == 0:
-            self.enc_states = torch.empty((1, 0, h.size()), device=self.device)
+            self.enc_states = torch.empty((1, 0, h.size(3)), device=self.device)
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
         #    hlens = [hlens]
