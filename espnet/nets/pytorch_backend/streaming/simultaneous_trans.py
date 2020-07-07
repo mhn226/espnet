@@ -32,7 +32,7 @@ class SimultaneousSTE2E(object):
             self.device = "cpu"
         self.dtype = getattr(torch, self._trans_args.dtype)
 
-        self.enc_states = []
+        self.enc_states = None
 
         self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
         self.finished = False
@@ -54,7 +54,8 @@ class SimultaneousSTE2E(object):
 
     def decision_from_states(self):
 
-        if len(self.enc_states) == 0:
+        #if len(self.enc_states) == 0:
+        if self.enc_states is None:
             return READ
 
         # follow every read with a transcription:
@@ -67,7 +68,6 @@ class SimultaneousSTE2E(object):
     def policy(self, x):
         # Read and Write policy
         action = None
-        print('############## ', self._e2e.etype)
         while action is None:
             if self.finished:
                 logging.info('finished ' + str(self.finished))
@@ -131,15 +131,15 @@ class SimultaneousSTE2E(object):
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         self.offset = self.g
         self.g += self.s
-        if len(self.enc_states) == 0:
-            self.enc_states = [torch.empty((1, 0, h.size(2)), device=self.device)]
+        if self.enc_states is None:
+            self.enc_states = torch.empty((1, 0, h.size(2)), device=self.device)
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
         #    hlens = [hlens]
         #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
 
         #self.enc_states.append(h)
-        self.enc_states[0] = torch.cat((self.enc_states[0], h), dim=1)
+        self.enc_states = torch.cat((self.enc_states, h), dim=1)
 
         #return hs_pad, hlens, last_enc_states, finished_read
 
