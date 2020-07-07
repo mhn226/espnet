@@ -115,6 +115,7 @@ class SimultaneousSTE2E(object):
             logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
         print(self.enc_states.size())
+        aaaaaaaaaaaaaaaaaaaaaaaaaaa
 
     def read_action_ulstm(self, x):
         # uni-direction lstm
