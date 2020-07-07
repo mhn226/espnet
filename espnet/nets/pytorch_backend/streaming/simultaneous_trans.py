@@ -24,8 +24,6 @@ class SimultaneousSTE2E(object):
 
         self.previous_encoder_recurrent_state = None
 
-        self.enc_states = []
-
         if self._trans_args.ngpu > 1:
             raise NotImplementedError("only single GPU decoding is supported")
         if self._trans_args.ngpu == 1:
@@ -33,6 +31,8 @@ class SimultaneousSTE2E(object):
         else:
             self.device = "cpu"
         self.dtype = getattr(torch, self._trans_args.dtype)
+
+        self.enc_states = None
 
         self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
         self.finished = False
@@ -68,7 +68,6 @@ class SimultaneousSTE2E(object):
         # Read and Write policy
         action = None
         print('############## ', self._e2e.etype)
-        aaaaaaaaaaaaaaaaaaaaa
         while action is None:
             if self.finished:
                 logging.info('finished ' + str(self.finished))
@@ -124,6 +123,9 @@ class SimultaneousSTE2E(object):
             self.g = len(x)
             self.finished_read = True
 
+        #if self.enc_states == None:
+        #    self.enc_states = torch.empty((1, 0, self.args.eunits), device=self.device)
+
         x_ = x.transpose(1, 2)[:, :, self.offset:self.g].transpose(1, 2)
         h, ilens = self.subsample_frames(x_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -136,7 +138,8 @@ class SimultaneousSTE2E(object):
         #    hlens = [hlens]
         #hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
 
-        self.enc_states.append(h)
+        #self.enc_states.append(h)
+        self.enc_states = torch.cat((self.enc_states, h), dim=1)
 
         #return hs_pad, hlens, last_enc_states, finished_read
 
