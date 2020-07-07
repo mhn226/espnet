@@ -133,6 +133,7 @@ class SimultaneousSTE2E(object):
         self.g += self.s
         if self.enc_states is None:
             self.enc_states = torch.empty((1, 0, h.size(2)), device=self.device)
+            print(self.enc_states.size())
         #if self.dec.num_encs == 1:
         #    hs_pad = [hs_pad]
         #    hlens = [hlens]
@@ -140,6 +141,8 @@ class SimultaneousSTE2E(object):
 
         #self.enc_states.append(h)
         self.enc_states = torch.cat((self.enc_states, h), dim=1)
+        print(self.enc_states.size())
+        print(h.size())
 
         #return hs_pad, hlens, last_enc_states, finished_read
 
