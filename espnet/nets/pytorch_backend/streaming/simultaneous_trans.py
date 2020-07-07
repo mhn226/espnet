@@ -43,7 +43,7 @@ class SimultaneousSTE2E(object):
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
-        self.s = 50
+        self.s = 100
         self.max_len = 400
         self.min_len = 0
         self.offset = 0
@@ -67,7 +67,8 @@ class SimultaneousSTE2E(object):
     def policy(self, x):
         # Read and Write policy
         action = None
-
+        print('############## ', self._e2e.etype)
+        aaaaaaaaaaaaaaaaaaaaa
         while action is None:
             if self.finished:
                 logging.info('finished ' + str(self.finished))
