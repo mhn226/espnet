@@ -194,6 +194,7 @@ def trans_waitk(args):
             k = 100 # 100 frames = 1s
             g = 4 # 4 frames at a time
             feat = load_inputs_and_targets(batch)[0][0]
+            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
@@ -203,7 +204,8 @@ def trans_waitk(args):
 
             while action.get('value', None) != model.dec.eos:
                 # take an action
-                action = se2e.policy(feat)
+                #action = se2e.policy(feat)
+                action = se2e.predefined_policy(feat, textgrid_file)
 
                 #if action['key'] == 'GET':
                 #    print('get')

@@ -2,11 +2,33 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import math
+import textgrids
 
 import logging
 
 READ=0
 WRITE=1
+
+def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
+    re = int(round((len_ - frame_len) / frame_shift + 1))
+    if re < 0:
+        re = 0
+    return re
+
+def read_textgrid(segment_file):
+    # If a TextGrid file is available, read it
+    grid = textgrids.TextGrid(segment_file)
+    segments = []
+    offset = 0.0
+    for i, w in enumerate(grid['words']):
+        # Convert Praat to Unicode in the label
+        label = w.text.transcode()
+        if label == '' and i == 0:  # space
+            pass
+        #segments.append([offset, w.xmax])
+        segments.append([len2numframes(offset), len2numframes(w.xmax)])
+        offset = w.xmax
+    return segments
 
 class SimultaneousSTE2E(object):
     """SimultaneousSTE2E constructor.
@@ -64,6 +86,41 @@ class SimultaneousSTE2E(object):
         else:
             return READ
 
+    def predefined_policy(self, x, segment_file=None):
+        """
+        If a forced-aligment file is available, one could use it
+        """
+        segments = read_textgrid(segment_file)
+        self.g = segments[0][1]
+        segment_step = 0
+        # Read and Write policy
+        action = None
+        while action is None:
+            if self.finished:
+                logging.info('finished ' + str(self.finished))
+                logging.info('max_len ' + str(self.max_len))
+                # Finish the hypo by sending eos to server
+                return self.finish_action()
+
+            # Model make decision given current states
+            decision = self.decision_from_states()
+            logging.info('decision: ' + str(decision))
+            if decision == READ and not self.finish_read:
+                # READ
+                self.last_action = decision
+                if "b" in self._e2e.etype:
+                    action = self.read_action_blstm(x)
+                else:
+                    action = self.read_action_ulstm(x, segments, segment_step)
+                    segment_step += 1
+
+            else:
+                # WRITE
+                self.last_action = WRITE
+                action = self.write_action()
+
+        return action
+
 
     def policy(self, x):
         # Read and Write policy
@@ -115,7 +172,7 @@ class SimultaneousSTE2E(object):
             logging.info('min_len: ' + str(self.min_len))
         self.g += self.s
 
-    def read_action_ulstm(self, x):
+    def read_action_ulstm(self, x, segments=None, segment_step=0):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
@@ -127,7 +184,10 @@ class SimultaneousSTE2E(object):
         h, ilens = self._e2e.subsample_frames(x_)
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         self.offset = self.g
-        self.g += self.s
+        if segments == None:
+            self.g += self.s
+        elif segment_step < (len(segments)-1):
+            self.g += segments[segment_step + 1]
         if self.enc_states is None:
             self.enc_states = torch.empty((0, h.size(2)), device=self.device)
         self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
