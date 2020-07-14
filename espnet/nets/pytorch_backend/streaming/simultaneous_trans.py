@@ -23,8 +23,10 @@ def read_textgrid(segment_file):
     for i, w in enumerate(grid['words']):
         # Convert Praat to Unicode in the label
         label = w.text.transcode()
-        if label == '' and i == 0:  # space
-            pass
+        #if label == '' and i == 0:  # space
+        #    pass
+        if label == '':  # space
+            continue
         #segments.append([offset, w.xmax])
         segments.append([len2numframes(offset), len2numframes(w.xmax)])
         offset = w.xmax

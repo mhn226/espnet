@@ -204,8 +204,8 @@ def trans_waitk(args):
 
             while action.get('value', None) != model.dec.eos:
                 # take an action
-                action = se2e.policy(feat)
-                #action = se2e.predefined_policy(feat, textgrid_file)
+                #action = se2e.policy(feat)
+                action = se2e.predefined_policy(feat, textgrid_file)
 
                 #if action['key'] == 'GET':
                 #    print('get')
