@@ -27,8 +27,12 @@ def read_textgrid(segment_file):
         #    pass
         if label == '':  # space
             continue
+        if i == len(grid['words']) - 2 and grid['words'][i + 1].text.transcode() == '':
+            segments.append([len2numframes(offset), len2numframes(grid['words'][i + 1].xmax)])
+        else:
+            segments.append([len2numframes(offset), len2numframes(w.xmax)])
         #segments.append([offset, w.xmax])
-        segments.append([len2numframes(offset), len2numframes(w.xmax)])
+        #segments.append([len2numframes(offset), len2numframes(w.xmax)])
         offset = w.xmax
     return segments
 
