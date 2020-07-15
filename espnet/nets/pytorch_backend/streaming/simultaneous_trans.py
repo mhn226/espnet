@@ -196,7 +196,7 @@ class SimultaneousSTE2E(object):
         if segments == None:
             self.g += self.s
         elif segment_step < (len(segments)-1):
-            self.g += segments[segment_step + 1][1]
+            self.g = segments[segment_step + 1][1]
         #self.g += self.s
 
     def read_action_ulstm(self, x, segments=None, segment_step=0):
@@ -214,7 +214,7 @@ class SimultaneousSTE2E(object):
         if segments == None:
             self.g += self.s
         elif segment_step < (len(segments)-1):
-            self.g += segments[segment_step + 1][1]
+            self.g = segments[segment_step + 1][1]
         if self.enc_states is None:
             self.enc_states = torch.empty((0, h.size(2)), device=self.device)
         self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
