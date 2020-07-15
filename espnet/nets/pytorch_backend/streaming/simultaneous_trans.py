@@ -30,7 +30,6 @@ def read_textgrid(segment_file, k=1):
             continue
 
         if count < k:
-            logging.info('continue')
             count += 1
             continue
 
@@ -133,6 +132,7 @@ class SimultaneousSTE2E(object):
                 self.last_action = decision
                 if "b" in self._e2e.etype:
                     action = self.read_action_blstm(x, segments, segment_step)
+                    segment_step += 1
                 else:
                     action = self.read_action_ulstm(x, segments, segment_step)
                     segment_step += 1
