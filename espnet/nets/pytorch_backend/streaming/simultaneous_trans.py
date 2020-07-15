@@ -30,6 +30,7 @@ def read_textgrid(segment_file, k=1):
             continue
 
         if count < k:
+            logging.info('continue')
             count += 1
             continue
 
