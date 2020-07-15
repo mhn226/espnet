@@ -108,7 +108,7 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, 5)
+        segments = read_textgrid(segment_file, k=5)
         for i, segment in enumerate(segments):
             if segment[1] >= self.g:
                 self.g = segment[1]
