@@ -15,11 +15,12 @@ def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
         re = 0
     return re
 
-def read_textgrid(segment_file):
+def read_textgrid(segment_file, k=1):
     # If a TextGrid file is available, read it
     grid = textgrids.TextGrid(segment_file)
     segments = []
     offset = 0.0
+    count = 1
     for i, w in enumerate(grid['words']):
         # Convert Praat to Unicode in the label
         label = w.text.transcode()
@@ -27,10 +28,18 @@ def read_textgrid(segment_file):
         #    pass
         if label == '':  # space
             continue
+
+        if count < k:
+            count += 1
+            continue
+
         if i == len(grid['words']) - 2 and grid['words'][i + 1].text.transcode() == '':
             segments.append([len2numframes(offset), len2numframes(grid['words'][i + 1].xmax)])
         else:
             segments.append([len2numframes(offset), len2numframes(w.xmax)])
+
+        if len(segments) == 0:
+            segments.append([0, len2numframes(grid.xmax)])
         #segments.append([offset, w.xmax])
         #segments.append([len2numframes(offset), len2numframes(w.xmax)])
         offset = w.xmax
@@ -87,7 +96,7 @@ class SimultaneousSTE2E(object):
             return READ
 
         # follow every read with a transcription:
-        if self.last_action == READ:
+        if self.last_action == READ or self.finish_read:
             return WRITE
         else:
             return READ
@@ -97,7 +106,7 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file)
+        segments = read_textgrid(segment_file, 5)
         for i, segment in enumerate(segments):
             if segment[1] >= self.g:
                 self.g = segment[1]
