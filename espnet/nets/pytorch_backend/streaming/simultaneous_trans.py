@@ -38,11 +38,13 @@ def read_textgrid(segment_file, k=1):
         else:
             segments.append([len2numframes(offset), len2numframes(w.xmax)])
 
-        if len(segments) == 0:
-            segments.append([0, len2numframes(grid.xmax)])
         #segments.append([offset, w.xmax])
         #segments.append([len2numframes(offset), len2numframes(w.xmax)])
         offset = w.xmax
+
+    if len(segments) == 0:
+        segments.append([0, len2numframes(grid.xmax)])
+
     return segments
 
 class SimultaneousSTE2E(object):
