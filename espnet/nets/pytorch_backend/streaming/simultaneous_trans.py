@@ -47,6 +47,28 @@ def read_textgrid(segment_file, k=1):
 
     return segments
 
+def read_textgrid2(segment_file, k=5, sample_rate = 16000):
+    # If a TextGrid file is available, read it
+    grid = textgrids.TextGrid(segment_file)
+    segments = []
+    count = 1
+    for i, w in enumerate(grid['words']):
+        # Convert Praat to Unicode in the label
+        label = w.text.transcode()
+        if label == '':  # space
+            continue
+
+        if count < k:
+            count += 1
+            continue
+
+        segments.append([len2numframes(w.xmin), len2numframes(w.xmax)])
+
+    if len(segments) == 0:
+        segments.append([0.0, len2numframes(grid.xmax)])
+
+    return segments
+
 class SimultaneousSTE2E(object):
     """SimultaneousSTE2E constructor.
     :param E2E e2e: E2E ST object
@@ -108,7 +130,8 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, k=5)
+        #segments = read_textgrid(segment_file, k=5)
+        segments = read_textgrid2(segment_file, k=5)
         self.g = segments[0][1]
         #for i, segment in enumerate(segments):
         #    if segment[i] >= self.g:
