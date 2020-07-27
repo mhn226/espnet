@@ -176,8 +176,7 @@ def train(args):
 
     # Setup an optimizer
     if args.opt == 'adadelta':
-        for param in model.parameters():
-            print(param)
+        print(list(model.named_parameters()), len(print(list(m.named_parameters()))))
         optimizer = torch.optim.Adadelta(
             model.parameters(), rho=0.95, eps=args.eps,
             weight_decay=args.weight_decay)
