@@ -542,9 +542,8 @@ def torch_resume(snapshot_path, trainer):
     snapshot_dict = torch.load(snapshot_path, map_location=lambda storage, loc: storage)
 
     if "ctc.ctc_lo.weight" in snapshot_dict['model']:
-        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        del snapshot_dict["ctc.ctc_lo.weight"]
-        del snapshot_dict["ctc.ctc_lo.bias"]
+        del snapshot_dict['model']["ctc.ctc_lo.weight"]
+        del snapshot_dict['model']["ctc.ctc_lo.bias"]
 
     print(snapshot_dict)
 
