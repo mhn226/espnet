@@ -517,9 +517,12 @@ def torch_load(path, model):
         # HN 20/04 remove ctc related stuffs to state dict of st model
 	    # Normally in the old version, asr_train add ctc modules into model_state_dict,
         # even though ctc_weight = 0.0
-        if "ctc.ctc_lo.weight" in model_state_dict:
-            del model_state_dict["ctc.ctc_lo.weight"]
-            del model_state_dict["ctc.ctc_lo.bias"]
+        #if "ctc.ctc_lo.weight" in model_state_dict:
+        #    del model_state_dict["ctc.ctc_lo.weight"]
+        #    del model_state_dict["ctc.ctc_lo.bias"]
+        if "ctc.ctc_lo.weight" not in model_state_dict:
+            model_state_dict["ctc.ctc_lo.weight"] = torch.zeros([102, 1024])
+            model_state_dict["ctc.ctc_lo.bias"] = torch.zeros([102])
 
         model.load_state_dict(model_state_dict)
 
