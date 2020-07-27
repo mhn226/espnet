@@ -540,6 +540,7 @@ def torch_resume(snapshot_path, trainer):
     """
     # load snapshot
     snapshot_dict = torch.load(snapshot_path, map_location=lambda storage, loc: storage)
+    print(snapshot_dict)
 
     # restore trainer states
     d = NpzDeserializer(snapshot_dict['trainer'])
