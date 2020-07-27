@@ -545,8 +545,6 @@ def torch_resume(snapshot_path, trainer):
         del snapshot_dict['model']["ctc.ctc_lo.weight"]
         del snapshot_dict['model']["ctc.ctc_lo.bias"]
 
-    print(snapshot_dict['model'], len(snapshot_dict['model'].keys()))
-
     # restore trainer states
     d = NpzDeserializer(snapshot_dict['trainer'])
     d.load(trainer)
