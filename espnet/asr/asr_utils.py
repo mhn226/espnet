@@ -520,6 +520,7 @@ def torch_load(path, model):
         #if "ctc.ctc_lo.weight" in model_state_dict:
         #    del model_state_dict["ctc.ctc_lo.weight"]
         #    del model_state_dict["ctc.ctc_lo.bias"]
+        print(model_state_dict)
         if "ctc.ctc_lo.weight" not in model_state_dict:
             model_state_dict["ctc.ctc_lo.weight"] = torch.zeros([102, 1024])
             model_state_dict["ctc.ctc_lo.bias"] = torch.zeros([102])
