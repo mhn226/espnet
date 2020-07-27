@@ -545,7 +545,7 @@ def torch_resume(snapshot_path, trainer):
         del snapshot_dict['model']["ctc.ctc_lo.weight"]
         del snapshot_dict['model']["ctc.ctc_lo.bias"]
         print('################### ', len(snapshot_dict['optimizer']['param_groups'][0]['params']))
-        del snapshot_dict['optimizer']['param_groups']['params'][50:52]
+        del snapshot_dict['optimizer']['param_groups'][0]['params'][50:52]
         print('################### ', len(snapshot_dict['optimizer']['param_groups'][0]['params']))
 
     # restore trainer states
