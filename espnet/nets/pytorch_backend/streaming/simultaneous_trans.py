@@ -130,7 +130,7 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, k=5)
+        segments = read_textgrid(segment_file, k=30)
         #segments = read_textgrid2(segment_file, k=5)
         self.g = segments[0][1]
         #for i, segment in enumerate(segments):
@@ -257,6 +257,8 @@ class SimultaneousSTE2E(object):
             # Finish this sentence is predict EOS
             if len(self.hyp['yseq']) == self.max_len - 1:
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
+            else:
+                print("############## emit EOS ###############")
             self.finished = True
             return
 
