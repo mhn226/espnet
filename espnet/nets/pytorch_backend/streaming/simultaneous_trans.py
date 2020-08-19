@@ -258,7 +258,7 @@ class SimultaneousSTE2E(object):
             if len(self.hyp['yseq']) == self.max_len - 1:
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
             else:
-                print("############## emit EOS ###############")
+                logging.info("############## emit EOS ###############")
             self.finished = True
             return
 
