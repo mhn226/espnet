@@ -200,6 +200,7 @@ class SimultaneousSTE2E(object):
         # segment_size =  160000  # Wait-until-end
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
+        logging.info('dec_step: ', segment_step)
         if self.g >= len(x):
             x_ = x
             self.finish_read = True
