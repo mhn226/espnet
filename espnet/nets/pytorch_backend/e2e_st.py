@@ -916,7 +916,7 @@ class E2E(STInterface, torch.nn.Module):
         return att_ws
 
     def subsample_frames(self, x):
-        """Subsample speeh frames in the encoder."""
+        """Subsample speech frames in the encoder."""
         # subsample frame
         x = x[::self.subsample[0], :]
         ilen = [x.shape[0]]

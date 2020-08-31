@@ -130,7 +130,7 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, k=30)
+        segments = read_textgrid(segment_file, k=20)
         #segments = read_textgrid2(segment_file, k=5)
         self.g = segments[0][1]
         #for i, segment in enumerate(segments):
@@ -208,7 +208,6 @@ class SimultaneousSTE2E(object):
         logging.info('len_feat=' + str(len(x_)))
         # if states["steps"]["src"] == 0:
         h, ilen = self._e2e.subsample_frames(x_)
-        # Run encoder and apply greedy search on CTC softmax output
         self.enc_states = self._e2e.encode(torch.as_tensor(h).to(device=self.device, dtype=self.dtype))
         #if self.g == math.inf and len(self.hyp['yseq']) == 1:
         if self.finish_read:
