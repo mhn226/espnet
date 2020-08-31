@@ -200,7 +200,7 @@ class SimultaneousSTE2E(object):
         # segment_size =  160000  # Wait-until-end
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
-        logging.info('dec_step: ' + str(segment_step))
+        logging.info('enc_step: ' + str(segment_step))
         if self.g >= len(x):
             x_ = x
             self.finish_read = True
@@ -266,7 +266,8 @@ class SimultaneousSTE2E(object):
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1)
-        logging.info(local_best_score)
+        logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
+        #logging.info(local_best_score)
         logging.info(local_best_id)
         if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
                 (self.finish_read and len(self.hyp['yseq']) < self.min_len and int(local_best_id) == self._e2e.dec.eos):
