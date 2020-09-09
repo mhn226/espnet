@@ -125,13 +125,14 @@ class SimultaneousSTE2E(object):
         else:
             return READ
 
-    def predefined_policy(self, x, segment_file=None):
+    def predefined_policy(self, x, segment_file=None, num_of_toks=0):
         """
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
         segments = read_textgrid(segment_file, k=20)
         #segments = read_textgrid2(segment_file, k=5)
+        self.min_len = num_of_toks
         self.g = segments[0][1]
         # HN 09/09 - predefined number of tokens
         #num_of_toks =
@@ -218,8 +219,8 @@ class SimultaneousSTE2E(object):
         if self.finish_read:
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
-            self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
-            logging.info('min_len: ' + str(self.min_len))
+            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            #logging.info('min_len: ' + str(self.min_len))
         if segments == None:
             self.g += self.s
         elif segment_step < (len(segments)-1):
