@@ -133,6 +133,10 @@ class SimultaneousSTE2E(object):
         segments = read_textgrid(segment_file, k=20)
         #segments = read_textgrid2(segment_file, k=5)
         self.g = segments[0][1]
+        # HN 09/09 - predefined number of tokens
+        #num_of_toks =
+
+
         #for i, segment in enumerate(segments):
         #    if segment[i] >= self.g:
         #        self.g = segment[i]

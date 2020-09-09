@@ -193,6 +193,8 @@ def trans_waitk(args):
             batch = [(name, js[name])]
             k = 100 # 100 frames = 1s
             g = 4 # 4 frames at a time
+            print('@@@@@@@@@@@@@@@@@@@@@ ', load_inputs_and_targets(batch))
+            aaaaaaaaaaaaaaaaaaaaa
             feat = load_inputs_and_targets(batch)[0][0]
             textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
