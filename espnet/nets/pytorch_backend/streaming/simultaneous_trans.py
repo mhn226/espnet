@@ -220,7 +220,7 @@ class SimultaneousSTE2E(object):
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
-            #logging.info('min_len: ' + str(self.min_len))
+            logging.info('min_len: ' + str(self.min_len))
         if segments == None:
             self.g += self.s
         elif segment_step < (len(segments)-1):
