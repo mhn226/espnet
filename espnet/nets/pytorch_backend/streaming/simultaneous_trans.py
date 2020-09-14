@@ -267,6 +267,9 @@ class SimultaneousSTE2E(object):
             self.finished = True
             return
 
+        if self.hyp['states'] is None:
+            self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
+
         hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
         hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         m_score = 0.0
