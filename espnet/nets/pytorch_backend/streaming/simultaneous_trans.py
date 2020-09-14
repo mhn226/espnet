@@ -109,7 +109,6 @@ class SimultaneousSTE2E(object):
         self.min_len = 0
         self.offset = 0
         #self.max_len = 1000
-        self.dec_step = 1
 
         assert self._trans_args.batchsize <= 1, \
             "SegmentStreamingE2E works only with batch size <= 1"
@@ -173,7 +172,6 @@ class SimultaneousSTE2E(object):
                 dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
                 action = self.write_action_until(dec_step=dec_step)
-                self.dec_step += 1
 
         return action
 
@@ -274,7 +272,7 @@ class SimultaneousSTE2E(object):
         hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         m_score = 0.0
         m_id = torch.tensor([self._e2e.dec.sos], device=self.device)
-        for i in range(dec_step):
+        for i in range(self.max_len):
             score, states = self._e2e.dec.score(hyp['yseq'], hyp['states'], self.enc_states)
             score = F.log_softmax(score, dim=1).squeeze()
             # greedy search, take only the (1) best score
@@ -287,12 +285,31 @@ class SimultaneousSTE2E(object):
             hyp['yseq'] = torch.cat((hyp['yseq'], local_best_id))
             m_score = local_best_score[0]
             m_id = local_best_id
-        self.hyp['states']['z_prev'] = hyp['states']['z_prev']
-        self.hyp['states']['c_prev'] = hyp['states']['c_prev']
-        self.hyp['states']['a_prev'] = hyp['states']['a_prev']
-        self.hyp['states']['workspace'] = hyp['states']['workspace']
-        self.hyp['score'] = self.hyp['score'] + m_score
-        self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+            if self.finish_read and i >= dec_step-1:
+                self.hyp['states']['z_prev'] = hyp['states']['z_prev']
+                self.hyp['states']['c_prev'] = hyp['states']['c_prev']
+                self.hyp['states']['a_prev'] = hyp['states']['a_prev']
+                self.hyp['states']['workspace'] = hyp['states']['workspace']
+                self.hyp['score'] = self.hyp['score'] + m_score
+                self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+                if ((self.hyp['yseq'][len(self.hyp['yseq']) - 1] == self._e2e.dec.eos) and (
+                        len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
+                    # Finish this sentence is predict EOS
+                    if len(self.hyp['yseq']) == self.max_len - 1:
+                        self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
+                    else:
+                        logging.info("############## emit EOS ###############")
+                    self.finished = True
+                    return
+            elif not self.finish_read and i == dec_step - 1:
+                break
+        if not self.finish_read:
+            self.hyp['states']['z_prev'] = hyp['states']['z_prev']
+            self.hyp['states']['c_prev'] = hyp['states']['c_prev']
+            self.hyp['states']['a_prev'] = hyp['states']['a_prev']
+            self.hyp['states']['workspace'] = hyp['states']['workspace']
+            self.hyp['score'] = self.hyp['score'] + m_score
+            self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
 
     def write_action(self):
         model_index = 0
