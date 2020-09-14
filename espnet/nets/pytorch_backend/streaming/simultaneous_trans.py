@@ -170,7 +170,7 @@ class SimultaneousSTE2E(object):
                 # WRITE
                 self.last_action = WRITE
                 #action = self.write_action()
-                dec_step = len(self.hyp['yseq']) + 1
+                dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
                 action = self.write_action_until(dec_step=dec_step)
                 self.dec_step += 1
