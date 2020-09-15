@@ -99,12 +99,12 @@ class SimultaneousSTE2E(object):
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.k = 400
+        self.k = 200
         self.g = self.k
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
-        self.s = 200
+        self.s = 100
         self.max_len = 400
         self.min_len = 0
         self.offset = 0
@@ -130,7 +130,7 @@ class SimultaneousSTE2E(object):
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, k=20)
+        segments = read_textgrid(segment_file, k=10)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
