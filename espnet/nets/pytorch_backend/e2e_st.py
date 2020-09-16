@@ -763,8 +763,8 @@ class E2E(STInterface, torch.nn.Module):
                 y_hat = y_hat.detach().cpu().numpy()
                 y_true = ys_out_pad[i]
                 y_true = y_true.detach().cpu().numpy()
-                print('idx_hat: ', idx_hat.size())
-                print('idx_true: ', idx_true.size())
+                print('idx_hat: ', y_hat.size())
+                print('idx_true: ', y_true.size())
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]
 
