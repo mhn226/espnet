@@ -508,8 +508,8 @@ class E2E(STInterface, torch.nn.Module):
                     seq_true = [self.char_list[int(idx)] for idx in idx_true]
                     seq_hat = "".join(seq_hat)
                     seq_true = "".join(seq_true)
-                    logging.info("groundtruth[%d]: " % i + seq_true)
-                    logging.info("prediction [%d]: " % i + seq_hat)
+                    #logging.info("groundtruth[%d]: " % i + seq_true)
+                    #logging.info("prediction [%d]: " % i + seq_hat)
 
             if self.dec.labeldist is not None:
                 if self.dec.vlabeldist is None:
@@ -719,17 +719,17 @@ class E2E(STInterface, torch.nn.Module):
                 dec_step += 1
                 g += s
 
-                # when finished_read
-                if finished_read:
-                    c_list = [self.dec.zero_state(hs_pad[0])]
-                    z_list = [self.dec.zero_state(hs_pad[0])]
-                    for _ in six.moves.range(1, self.dec.dlayers):
-                        c_list.append(self.dec.zero_state(hs_pad[0]))
-                        z_list.append(self.dec.zero_state(hs_pad[0]))
-                    for i in six.moves.range(olength):
-                        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                        if i >= dec_step - 1:
-                            z_all.append(z_)
+            # when finished_read
+            if finished_read:
+                c_list = [self.dec.zero_state(hs_pad[0])]
+                z_list = [self.dec.zero_state(hs_pad[0])]
+                for _ in six.moves.range(1, self.dec.dlayers):
+                    c_list.append(self.dec.zero_state(hs_pad[0]))
+                    z_list.append(self.dec.zero_state(hs_pad[0]))
+                for i in six.moves.range(olength):
+                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                    if i >= dec_step - 1:
+                        z_all.append(z_)
 
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
