@@ -280,14 +280,25 @@ class SimultaneousSTE2E(object):
             score = F.log_softmax(score, dim=1).squeeze()
             # greedy search, take only the (1) best score
             local_best_score, local_best_id = torch.topk(score, 1)
+            if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos):
+                local_best_score, local_best_id = torch.topk(score, 2)
+                local_best_score = local_best_score[-1].view(1)
+                local_best_id = local_best_id[-1].view(1)
+                logging.info(local_best_score)
+                logging.info(local_best_id)
+                logging.info(
+                    'EOS emits before reading all of source frames, choose the second best target token instead: '
+                    + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+            m_score = local_best_score[0]
+            m_id = local_best_id
+
             hyp['states']['z_prev'] = states['z_prev']
             hyp['states']['c_prev'] = states['c_prev']
             hyp['states']['a_prev'] = states['a_prev']
             hyp['states']['workspace'] = states['workspace']
             hyp['score'] = hyp['score'] + local_best_score[0]
             hyp['yseq'] = torch.cat((hyp['yseq'], local_best_id))
-            m_score = local_best_score[0]
-            m_id = local_best_id
+
             if self.finish_read and i >= dec_step-1:
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
                 self.hyp['states']['c_prev'] = hyp['states']['c_prev']
