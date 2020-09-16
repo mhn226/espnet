@@ -731,8 +731,10 @@ class E2E(STInterface, torch.nn.Module):
                     if i >= dec_step - 1:
                         z_all.append(z_)
 
-            z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+            #z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
+            #y_all = self.dec.output(z_all)
+            z_all = torch.stack(z_all, dim=1)
             y_all = self.dec.output(z_all)
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
