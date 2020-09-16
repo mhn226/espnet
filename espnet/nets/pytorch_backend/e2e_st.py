@@ -508,8 +508,8 @@ class E2E(STInterface, torch.nn.Module):
                     seq_true = [self.char_list[int(idx)] for idx in idx_true]
                     seq_hat = "".join(seq_hat)
                     seq_true = "".join(seq_true)
-                    #logging.info("groundtruth[%d]: " % i + seq_true)
-                    #logging.info("prediction [%d]: " % i + seq_hat)
+                    logging.info("groundtruth[%d]: " % i + seq_true)
+                    logging.info("prediction [%d]: " % i + seq_hat)
 
             if self.dec.labeldist is not None:
                 if self.dec.vlabeldist is None:
@@ -763,11 +763,11 @@ class E2E(STInterface, torch.nn.Module):
                 y_hat = y_hat.detach().cpu().numpy()
                 y_true = ys_out_pad[i]
                 y_true = y_true.detach().cpu().numpy()
-
+                print('idx_hat: ', idx_hat.size())
+                print('idx_true: ', idx_true.size())
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]
-                #print('idx_hat: ', idx_hat)
-                #print('idx_true: ', idx_true)
+
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
                 seq_true = [self.char_list[int(idx)] for idx in idx_true]
                 seq_hat_text = "".join(seq_hat).replace(self.trans_args.space, ' ')
@@ -776,7 +776,7 @@ class E2E(STInterface, torch.nn.Module):
 
                 bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
                 bleus.append(bleu)
-                #print('bleus: ', bleus)
+                print('bleus: ', bleus)
 
             bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
 
