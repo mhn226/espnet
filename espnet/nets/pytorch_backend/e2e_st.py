@@ -761,17 +761,10 @@ class E2E(STInterface, torch.nn.Module):
             self.acc = acc
             self.loss_st = self.dec.loss
 
-            print('y_all: ', len(y_all))
-            print('training: ', self.training)
-            print('batch size: ', batch)
-            print('olength: ', olength)
             for i, y_hat in enumerate(y_all):
                 y_hat = y_hat.detach().cpu().numpy()
                 y_true = ys_out_pad[i]
                 y_true = y_true.detach().cpu().numpy()
-                print('ys_out_pad: ', ys_out_pad.size())
-                print('idx_hat: ', y_hat, len(y_hat))
-                print('idx_true: ', y_true, len(y_true))
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]
 
@@ -783,7 +776,6 @@ class E2E(STInterface, torch.nn.Module):
 
                 bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
                 bleus.append(bleu)
-                print('bleus: ', bleus)
 
             bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
 
