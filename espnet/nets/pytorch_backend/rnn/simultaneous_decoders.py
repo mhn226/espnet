@@ -100,9 +100,9 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         self.logzero = -10000000000.0
 
         # simultanenous params:
-        self.k = 200
+        self.k = 100
         self.g = self.k
-        self.s = 100
+        self.s = 20
 
     def zero_state(self, hs_pad):
         return hs_pad.new_zeros(hs_pad.size(0), self.dunits)
