@@ -756,6 +756,10 @@ class E2E(STInterface, torch.nn.Module):
             #else:
             #    y_hats = torch.stack(y_hats, dim=1)
             #    #print('y_hats stacked: ', len(y_hats), y_hats)
+            print('y_all: ', len(y_all))
+            print('training: ', self.training)
+            print('batch size: ', batch)
+            print('olength: ', olength)
             for i, y_hat in enumerate(y_all):
                 #y_true = ys_pad[i]
                 #print('y_hat: ', y_hat, y_hat.size())
@@ -764,11 +768,13 @@ class E2E(STInterface, torch.nn.Module):
                 y_true = ys_out_pad[i]
                 #print('y_true: ', y_true.size())
                 y_true = y_true.detach().cpu().numpy()
-
+                print('ys_out_pad: ', ys_out_pad.size())
+                print('idx_hat: ', y_hat, len(y_hat))
+                print('idx_true: ', y_true, len(y_true))
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]
-                print('idx_hat: ', idx_hat)
-                print('idx_true: ', idx_true)
+                #print('idx_hat: ', idx_hat)
+                #print('idx_true: ', idx_true)
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
                 seq_true = [self.char_list[int(idx)] for idx in idx_true]
                 #seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
