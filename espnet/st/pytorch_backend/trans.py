@@ -195,7 +195,7 @@ def trans_waitk(args):
             g = 4 # 4 frames at a time
 
             # HN 09/09: predefine number of toks
-            num_of_toks = js[name]['output'][0]['shape'][0]
+            #num_of_toks = js[name]['output'][0]['shape'][0]
 
             feat = load_inputs_and_targets(batch)[0][0]
             textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
