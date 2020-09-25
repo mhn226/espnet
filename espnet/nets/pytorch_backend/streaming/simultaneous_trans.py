@@ -105,7 +105,7 @@ class SimultaneousSTE2E(object):
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
-        self.s = 50
+        self.s = 10
         self.max_len = 400
         self.min_len = 0
         self.offset = 0
