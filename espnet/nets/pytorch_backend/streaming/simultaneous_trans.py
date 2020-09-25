@@ -101,6 +101,7 @@ class SimultaneousSTE2E(object):
         self.last_action = None
         self.k = 100
         self.g = self.k
+        self.N = 5 # maximum number of target tokens generated at one step
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
@@ -275,6 +276,7 @@ class SimultaneousSTE2E(object):
         hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         m_score = 0.0
         m_id = torch.tensor([self._e2e.dec.sos], device=self.device)
+        count = 1
         for i in range(self.max_len):
             score, states = self._e2e.dec.score(hyp['yseq'], hyp['states'], self.enc_states)
             score = F.log_softmax(score, dim=1).squeeze()
@@ -319,15 +321,23 @@ class SimultaneousSTE2E(object):
                         logging.info("############## emit EOS ###############")
                     self.finished = True
                     return
-            elif not self.finish_read and i == dec_step - 1:
-                break
-        if not self.finish_read:
-            self.hyp['states']['z_prev'] = hyp['states']['z_prev']
-            self.hyp['states']['c_prev'] = hyp['states']['c_prev']
-            self.hyp['states']['a_prev'] = hyp['states']['a_prev']
-            self.hyp['states']['workspace'] = hyp['states']['workspace']
-            self.hyp['score'] = self.hyp['score'] + m_score
-            self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+            elif not self.finish_read and i >= dec_step - 1:
+                self.hyp['states']['z_prev'] = hyp['states']['z_prev']
+                self.hyp['states']['c_prev'] = hyp['states']['c_prev']
+                self.hyp['states']['a_prev'] = hyp['states']['a_prev']
+                self.hyp['states']['workspace'] = hyp['states']['workspace']
+                self.hyp['score'] = self.hyp['score'] + m_score
+                self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+                if count >= self.N:
+                    return
+                count += 1
+        #if not self.finish_read:
+        #    self.hyp['states']['z_prev'] = hyp['states']['z_prev']
+        #    self.hyp['states']['c_prev'] = hyp['states']['c_prev']
+        #    self.hyp['states']['a_prev'] = hyp['states']['a_prev']
+        #    self.hyp['states']['workspace'] = hyp['states']['workspace']
+        #    self.hyp['score'] = self.hyp['score'] + m_score
+        #    self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
 
     def write_action(self):
         model_index = 0
