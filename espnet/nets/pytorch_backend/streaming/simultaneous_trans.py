@@ -101,7 +101,7 @@ class SimultaneousSTE2E(object):
         self.last_action = None
         self.k = 100
         self.g = self.k
-        self.N = 2 # maximum number of target tokens generated at one step
+        self.N = 5 #2 # maximum number of target tokens generated at one step
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
@@ -283,7 +283,7 @@ class SimultaneousSTE2E(object):
             # greedy search, take only the (1) best score
             local_best_score, local_best_id = torch.topk(score, 1)
             if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos):
-                # Wait for more source token
+                # Wait for more source toke -
                 logging.info(
                     'EOS emits before reading all of source frames, wait for more to come')
                 return
