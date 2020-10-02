@@ -89,8 +89,13 @@ def AverageLagging(delays, src_lens, tgt_lens, target_padding_mask=None):
     lagging_padding_mask = delays >= src_lens.unsqueeze(1)
     # Padding one token at beginning to consider at least one delays that
     # larget than src_lens
+
+    print(lagging_padding_mask)
+
     lagging_padding_mask = torch.nn.functional.pad(
         lagging_padding_mask, (1, 0))[:, :-1]
+
+    print(lagging_padding_mask)
 
     if target_padding_mask is not None:
         lagging_padding_mask = lagging_padding_mask.masked_fill(
