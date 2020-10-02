@@ -191,14 +191,12 @@ def trans_waitk(args):
         for idx, name in enumerate(js.keys(), 1):
             logging.info('(%d/%d) decoding ' + name, idx, len(js.keys()))
             batch = [(name, js[name])]
-            k = 100 # 100 frames = 1s
-            g = 4 # 4 frames at a time
 
             # HN 09/09: predefine number of toks
             #num_of_toks = js[name]['output'][0]['shape'][0]
 
             feat = load_inputs_and_targets(batch)[0][0]
-            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
+            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
@@ -229,8 +227,9 @@ def trans_waitk(args):
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
+            logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
+            aaaaaaaaaaaaa
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
-            print(new_js[name])
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))

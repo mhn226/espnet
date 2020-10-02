@@ -95,7 +95,7 @@ class SimultaneousSTE2E(object):
 
         self.enc_states = None
 
-        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None}
+        self.hyp = {'score': 0.0, 'yseq': torch.tensor([self._e2e.dec.sos], device=self.device), 'states': None, 'delays': []}
         self.finished = False
         self.finish_read = False
         self.last_action = None
@@ -215,6 +215,7 @@ class SimultaneousSTE2E(object):
         logging.info('enc_step: ' + str(segment_step))
         if self.g >= len(x):
             x_ = x
+            self.g = len(x)
             self.finish_read = True
         else:
             x_ = x[:self.g]
@@ -320,6 +321,7 @@ class SimultaneousSTE2E(object):
                     else:
                         logging.info("############## emit EOS ###############")
                     self.finished = True
+                    self.hyp['delays'].append(self.g)
                     return
             elif not self.finish_read and i >= dec_step - 1:
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
@@ -328,6 +330,7 @@ class SimultaneousSTE2E(object):
                 self.hyp['states']['workspace'] = hyp['states']['workspace']
                 self.hyp['score'] = self.hyp['score'] + m_score
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+                self.hyp['delays'].append(self.g)
                 if count >= self.N:
                     return
                 count += 1
