@@ -228,7 +228,6 @@ def trans_waitk(args):
             nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
-            aaaaaaaaaaaaa
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
 
     with open(args.result_label, 'wb') as f:
