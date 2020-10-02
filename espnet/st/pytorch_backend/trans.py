@@ -17,6 +17,12 @@ from espnet.nets.scorers.length_bonus import LengthBonus
 from espnet.utils.deterministic_utils import set_deterministic_pytorch
 from espnet.utils.io_utils import LoadInputsAndTargets
 
+from espnet.metrics.latency import (
+    AverageLagging,
+    AverageProportion,
+    DifferentiableAverageLagging
+)
+
 def trans(args):
     """Decode with custom models that implements ScorerInterface.
     Notes:
@@ -117,6 +123,16 @@ def trans(args):
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
 
+def eval_all_latency(delays, src_len):
+    results = {}
+    for name, func in {
+        "AL": AverageLagging,
+        "AP": AverageProportion,
+        "DAL": DifferentiableAverageLagging
+    }.items():
+        results[name] = func(delays, src_len).item()
+
+    return results
 
 def trans_waitk(args):
     """Decode with custom models that implements ScorerInterface.
@@ -229,6 +245,8 @@ def trans_waitk(args):
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
+            latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0] + 1)
+            logging.info('latency: ' + str(latency))
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
