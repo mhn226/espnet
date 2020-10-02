@@ -325,6 +325,7 @@ class SimultaneousSTE2E(object):
                     return
             elif not self.finish_read and i >= dec_step - 1:
                 if dec_step == 1:
+                    print(self.g)
                     aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
                 self.hyp['states']['c_prev'] = hyp['states']['c_prev']
