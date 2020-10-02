@@ -313,6 +313,7 @@ class SimultaneousSTE2E(object):
                 self.hyp['states']['workspace'] = hyp['states']['workspace']
                 self.hyp['score'] = self.hyp['score'] + m_score
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
+                self.hyp['delays'].append(self.g)
                 if ((self.hyp['yseq'][len(self.hyp['yseq']) - 1] == self._e2e.dec.eos) and (
                         len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
                     # Finish this sentence is predict EOS
@@ -321,7 +322,7 @@ class SimultaneousSTE2E(object):
                     else:
                         logging.info("############## emit EOS ###############")
                     self.finished = True
-                    self.hyp['delays'].append(self.g)
+                    #self.hyp['delays'].append(self.g)
                     return
             elif not self.finish_read and i >= dec_step - 1:
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
