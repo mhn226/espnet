@@ -38,6 +38,8 @@ def latency_metric(func):
             delays = delays.masked_fill(target_padding_mask, 0)
         else:
             tgt_lens = torch.ones_like(src_lens) * delays.size(1)
+            print(src_lens, delays.size(), tgt_lens, torch.ones_like(src_lens))
+            aaaaaaaaaaaaaaa
 
         return delays, src_lens, tgt_lens, target_padding_mask
 
