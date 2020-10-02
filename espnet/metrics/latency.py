@@ -83,7 +83,7 @@ def AverageLagging(delays, src_lens, tgt_lens, target_padding_mask=None):
     tau = argmin_i(delays_i = |x|)
     """
     _, tgt_len = delays.size()
-    print(delays.size())
+    print(delays.size(), src_lens.unsqueeze(1))
     # tau = argmin_i(delays_i = |x|)
     # Only consider one delays that has already larger than src_lens
     lagging_padding_mask = delays >= src_lens.unsqueeze(1)
