@@ -588,12 +588,14 @@ def parse_hypothesis(hyp, char_list):
     token_as_list = [char_list[idx] for idx in tokenid_as_list]
     score = float(hyp['score'])
 
+    latency = hyp['latency']
+
     # convert to string
     tokenid = " ".join([str(idx) for idx in tokenid_as_list])
     token = " ".join(token_as_list)
     text = "".join(token_as_list).replace('<space>', ' ')
 
-    return text, token, tokenid, score
+    return text, token, tokenid, score, latency
 
 
 def add_results_to_json(js, nbest_hyps, char_list):
@@ -615,7 +617,7 @@ def add_results_to_json(js, nbest_hyps, char_list):
 
     for n, hyp in enumerate(nbest_hyps, 1):
         # parse hypothesis
-        rec_text, rec_token, rec_tokenid, score = parse_hypothesis(hyp, char_list)
+        rec_text, rec_token, rec_tokenid, score, latency = parse_hypothesis(hyp, char_list)
 
         # copy ground-truth
         if len(js['output']) > 0:
@@ -632,6 +634,7 @@ def add_results_to_json(js, nbest_hyps, char_list):
         out_dic['rec_token'] = rec_token
         out_dic['rec_tokenid'] = rec_tokenid
         out_dic['score'] = score
+        out_dic['latency'] = latency
 
         # add to list of N-best result dicts
         new_js['output'].append(out_dic)
