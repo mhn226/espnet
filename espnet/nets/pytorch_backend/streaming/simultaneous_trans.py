@@ -231,7 +231,7 @@ class SimultaneousSTE2E(object):
             logging.info('min_len: ' + str(self.min_len))
         if segments == None and not self.finish_read:
             self.g += self.s
-        elif segment_step < (len(segments)-1) and not self.finish_read:
+        elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read:
             self.g = segments[segment_step + 1][1]
         #self.g += self.s
 
