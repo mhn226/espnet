@@ -101,7 +101,7 @@ class SimultaneousSTE2E(object):
         self.last_action = None
         self.k = 100
         self.g = self.k
-        self.N = 5 #2 # maximum number of target tokens generated at one step
+        self.N = 2 #2 # maximum number of target tokens generated at one step
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
