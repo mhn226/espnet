@@ -248,7 +248,7 @@ def trans_waitk(args):
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
-            latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0] + 1)
+            latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0])
             logging.info('latency: ' + str(latency))
 
     with open(args.result_label, 'wb') as f:
