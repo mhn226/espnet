@@ -324,16 +324,13 @@ class SimultaneousSTE2E(object):
                     self.hyp['delays'].append(self.g)
                     return
             elif not self.finish_read and i >= dec_step - 1:
-                if dec_step == 1:
-                    print(self.g)
-                    aaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
                 self.hyp['states']['c_prev'] = hyp['states']['c_prev']
                 self.hyp['states']['a_prev'] = hyp['states']['a_prev']
                 self.hyp['states']['workspace'] = hyp['states']['workspace']
                 self.hyp['score'] = self.hyp['score'] + m_score
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
-                self.hyp['delays'].append(self.g)
+                self.hyp['delays'].append(self.g - self.s)
                 if count >= self.N:
                     return
                 count += 1
