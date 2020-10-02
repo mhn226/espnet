@@ -229,9 +229,9 @@ class SimultaneousSTE2E(object):
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
-        if segments == None:
+        if segments == None and not self.finish_read:
             self.g += self.s
-        elif segment_step < (len(segments)-1):
+        elif segment_step < (len(segments)-1) and not self.finish_read:
             self.g = segments[segment_step + 1][1]
         #self.g += self.s
 
