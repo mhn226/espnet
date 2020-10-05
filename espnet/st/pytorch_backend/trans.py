@@ -245,7 +245,7 @@ def trans_waitk(args):
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
-            print((nbest_hyps[0]['yseq'] == 179).nonzero())
+            print((nbest_hyps[0]['yseq'] == 179).nonzero().unsqueeze(1))
             aaaaaaaaaaaaaaaaaaa
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
