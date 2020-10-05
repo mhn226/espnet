@@ -23,6 +23,7 @@ def latency_metric(func):
             delays = torch.FloatTensor(delays)
 
         if len(delays.size()) == 1:
+            aaaaaaaaaaaaaaaaaaaaaaaaaa
             delays = delays.view(1, -1)
 
         if isinstance(src_lens, list):
