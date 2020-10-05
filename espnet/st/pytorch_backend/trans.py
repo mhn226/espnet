@@ -202,6 +202,9 @@ def trans_waitk(args):
     with open(args.trans_json[0], 'rb') as f:
         js = json.load(f)['utts']
     new_js = {}
+    corpus_latency = {}
+    corpus_AL = []
+    corpus_DAL = []
     with torch.no_grad():
         for idx, name in enumerate(js.keys(), 1):
             logging.info('(%d/%d) decoding ' + name, idx, len(js.keys()))
@@ -247,6 +250,14 @@ def trans_waitk(args):
             nbest_hyps[0]['latency'] = latency
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             logging.info('latency: ' + str(latency))
+            corpus_AL.append(latency['AL'])
+            corpus_DAL.append(latency['DAL'])
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
+
+    corpus_AL = sum(corpus_AL) / len(corpus_AL)
+    corpus_DAL = sum(corpus_DAL) / len(corpus_DAL)
+    corpus_latency['AL'] = corpus_AL
+    corpus_latency['DAL'] = corpus_DAL
+    print(corpus_latency)
