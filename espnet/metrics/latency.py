@@ -130,7 +130,7 @@ def DifferentiableAverageLagging(
                     delays[:, i].unsqueeze(1)
                 ],
                 dim=1
-            )
+            ).max(dim=1)
             print(a, type(a))
             new_delays[:, i] = torch.cat(
                 [
