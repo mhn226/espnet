@@ -299,8 +299,6 @@ class SimultaneousSTE2E(object):
             m_score = local_best_score[0]
             m_id = local_best_id
 
-            logging.info(m_id)
-
             hyp['states']['z_prev'] = states['z_prev']
             hyp['states']['c_prev'] = states['c_prev']
             hyp['states']['a_prev'] = states['a_prev']
