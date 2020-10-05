@@ -256,6 +256,7 @@ def trans_waitk(args):
             word_indices = torch.cat((word_indices, torch.tensor([last_index])))
             print(word_indices)
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
+            print(len(action['value']['dec_hyp']['delays']))
             word_delays = [action['value']['dec_hyp']['delays'][i] for i in word_indices]
             print(word_delays)
             aaaaaaaaaaaaaaaa
