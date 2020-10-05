@@ -254,6 +254,7 @@ def trans_waitk(args):
             else:
                 last_index = len(nbest_hyps[0]['yseq']) - 1
             word_indices = torch.cat((word_indices, torch.tensor([last_index])))
+            print(nbest_hyps[0]['yseq'])
             print(word_indices)
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             print(len(action['value']['dec_hyp']['delays']), len(nbest_hyps[0]['yseq']))
