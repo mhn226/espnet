@@ -125,16 +125,12 @@ def trans(args):
 
 def eval_all_latency(delays, src_len):
     results = {}
-    #for name, func in {
-    #    "AL": AverageLagging,
-    #    "AP": AverageProportion,
-    #    "DAL": DifferentiableAverageLagging
-    #}.items():
     for name, func in {
-            "AL": AverageLagging
+        "AL": AverageLagging,
+        "AP": AverageProportion,
+        "DAL": DifferentiableAverageLagging
     }.items():
         results[name] = func(delays, src_len).item()
-
     return results
 
 def trans_waitk(args):
