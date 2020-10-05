@@ -247,6 +247,8 @@ def trans_waitk(args):
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
             space_indices = (nbest_hyps[0]['yseq'] == 179).nonzero().squeeze(1)
             space_indices = space_indices[space_indices != 1]
+            tmp = torch.ones_like(space_indices)
+            space_indices = space_indices - tmp
             print(space_indices)
             aaaaaaaaaaaaaaaaaaa
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
