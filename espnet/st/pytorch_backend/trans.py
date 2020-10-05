@@ -249,7 +249,7 @@ def trans_waitk(args):
             space_indices = space_indices[space_indices != 1]
             tmp = torch.ones_like(space_indices)
             word_indices = space_indices - tmp
-            if nbest_hyps[0]['yseq'] == model.dec.eos:
+            if nbest_hyps[0]['yseq'][len(nbest_hyps[0]['yseq'])-1] == model.dec.eos:
                 last_index = len(nbest_hyps[0]['yseq']) - 2
             else:
                 last_index = len(nbest_hyps[0]['yseq']) - 1
