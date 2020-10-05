@@ -248,8 +248,14 @@ def trans_waitk(args):
             space_indices = (nbest_hyps[0]['yseq'] == 179).nonzero().squeeze(1)
             space_indices = space_indices[space_indices != 1]
             tmp = torch.ones_like(space_indices)
-            space_indices = space_indices - tmp
-            print(space_indices, nbest_hyps[0]['yseq'])
+            word_indices = space_indices - tmp
+            if nbest_hyps[0]['yseq'] == model.dec.eos:
+                last_index = len(nbest_hyps[0]['yseq']) - 2
+            else:
+                last_index = len(nbest_hyps[0]['yseq']) - 1
+            print(word_indices)
+            word_indices = torch.cat((word_indices, last_index))
+            print(word_indices)
             aaaaaaaaaaaaaaaaaaa
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
