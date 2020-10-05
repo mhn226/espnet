@@ -123,14 +123,14 @@ def trans(args):
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
 
-def eval_all_latency(delays, src_len):
+def eval_all_latency(delays, src_len, target_len):
     results = {}
     for name, func in {
         "AL": AverageLagging,
         "AP": AverageProportion,
         "DAL": DifferentiableAverageLagging
     }.items():
-        results[name] = func(delays, src_len).item()
+        results[name] = func(delays, src_len, target_len).item()
     return results
 
 def trans_waitk(args):
