@@ -118,7 +118,7 @@ def DifferentiableAverageLagging(
 
     gamma = tgt_lens / src_lens
     new_delays = torch.zeros_like(delays)
-    print(type(new_delays))
+    print(type(new_delays), new_delays.size())
 
     for i in range(tgt_len):
         if i == 0:
