@@ -12,6 +12,7 @@ def latency_metric(func):
     def prepare_latency_metric(
         delays,
         src_lens,
+        tgt_lens=None,
         target_padding_mask=None,
     ):
         """
@@ -31,19 +32,17 @@ def latency_metric(func):
         if isinstance(src_lens, numbers.Number):
             src_lens = torch.FloatTensor([src_lens])
 
-        if isinstance(target_padding_mask, numbers.Number):
-            target_padding_mask = torch.FloatTensor([target_padding_mask])
+        if isinstance(tgt_lens, numbers.Number):
+            tgt_lens = torch.FloatTensor([tgt_lens])
 
         src_lens = src_lens.type_as(delays)
 
         if target_padding_mask is not None:
-            # For now, since batch size is always equal to 1,
-            # tgt_lens = target_padding_mask
-            tgt_lens = target_padding_mask
-            #tgt_lens = target_padding_mask.sum(dim=0)
-            #delays = delays.masked_fill(target_padding_mask, 0)
+            tgt_lens = target_padding_mask.sum(dim=0)
+            delays = delays.masked_fill(target_padding_mask, 0)
         else:
-            tgt_lens = torch.ones_like(src_lens) * delays.size(1)
+            tgt_lens = tgt_lens
+            #tgt_lens = torch.ones_like(src_lens) * delays.size(1)
 
         return delays, src_lens, tgt_lens, target_padding_mask
 
