@@ -245,19 +245,12 @@ def trans_waitk(args):
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
-            print(nbest_hyps[0]['yseq'])
             sen_ = [nbest_hyps[0]['yseq'][nbest_hyps[0]['yseq'] != 183]]
-            print(sen_, nbest_hyps[0]['yseq'])
-            space_indices = (nbest_hyps[0]['yseq'] == 179).nonzero().squeeze(1)
+            space_indices = (sen_ == 179).nonzero().squeeze(1)
             space_indices = space_indices[space_indices != 1]
-            tmp = torch.ones_like(space_indices)
-            word_indices = space_indices - tmp
-            if nbest_hyps[0]['yseq'][len(nbest_hyps[0]['yseq'])-1] == model.dec.eos:
-                last_index = len(nbest_hyps[0]['yseq']) - 2
-            else:
-                last_index = len(nbest_hyps[0]['yseq']) - 1
-            word_indices = torch.cat((word_indices, torch.tensor([last_index])))
-            print(nbest_hyps[0]['yseq'])
+            word_indices = space_indices - torch.ones_like(space_indices)
+            word_indices = torch.cat((word_indices, torch.tensor([len(sen_)-1])))
+            print(sen_)
             print(word_indices)
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             print(len(action['value']['dec_hyp']['delays']), len(nbest_hyps[0]['yseq']))
