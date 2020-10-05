@@ -124,6 +124,13 @@ def DifferentiableAverageLagging(
         if i == 0:
             new_delays[:, i] = delays[:, i]
         else:
+            print(torch.cat(
+                [
+                    new_delays[:, i - 1].unsqueeze(1) + 1 / gamma,
+                    delays[:, i].unsqueeze(1)
+                ],
+                dim=1
+            ).max(dim=1))
             new_delays[:, i] = torch.cat(
                 [
                     new_delays[:, i - 1].unsqueeze(1) + 1 / gamma,
