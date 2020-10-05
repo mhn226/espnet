@@ -253,11 +253,12 @@ def trans_waitk(args):
                 last_index = len(nbest_hyps[0]['yseq']) - 2
             else:
                 last_index = len(nbest_hyps[0]['yseq']) - 1
-            print(word_indices)
             word_indices = torch.cat((word_indices, torch.tensor([last_index])))
             print(word_indices)
-            aaaaaaaaaaaaaaaaaaa
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
+            word_delays = [word_delays[i] for i in word_indices]
+            print(word_delays)
+            aaaaaaaaaaaaaaaa
             latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
             nbest_hyps[0]['latency'] = latency
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
