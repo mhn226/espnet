@@ -32,7 +32,6 @@ def latency_metric(func):
             src_lens = torch.FloatTensor([src_lens])
 
         if isinstance(target_padding_mask, numbers.Number):
-            aaaaaaaaaaaaaaaaaaaaaa
             src_lens = torch.FloatTensor([target_padding_mask])
 
         src_lens = src_lens.type_as(delays)
