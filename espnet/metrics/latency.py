@@ -34,6 +34,8 @@ def latency_metric(func):
         src_lens = src_lens.type_as(delays)
 
         if target_padding_mask is not None:
+            print(target_padding_mask)
+            aaaaaaaaaaaaaaaaa
             tgt_lens = target_padding_mask.sum(dim=1)
             delays = delays.masked_fill(target_padding_mask, 0)
             print(tgt_lens)
