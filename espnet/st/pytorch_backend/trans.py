@@ -249,7 +249,7 @@ def trans_waitk(args):
             space_indices = space_indices[space_indices != 1]
             tmp = torch.ones_like(space_indices)
             space_indices = space_indices - tmp
-            print(space_indices)
+            print(space_indices, nbest_hyps[0]['yseq'])
             aaaaaaaaaaaaaaaaaaa
             logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
