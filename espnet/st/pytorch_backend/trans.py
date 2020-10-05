@@ -245,7 +245,7 @@ def trans_waitk(args):
             #nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
             nbest_hyps[0]['yseq'] = action['value']['dec_hyp']['yseq']
             nbest_hyps[0]['scrore'] = action['value']['dec_hyp']['score']
-            sen_ = [nbest_hyps[0]['yseq'][nbest_hyps[0]['yseq'] != 183]]
+            sen_ = nbest_hyps[0]['yseq'][nbest_hyps[0]['yseq'] != 183]
             space_indices = (sen_ == 179).nonzero().squeeze(1)
             space_indices = space_indices[space_indices != 1]
             word_indices = space_indices - torch.ones_like(space_indices)
