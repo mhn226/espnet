@@ -299,6 +299,8 @@ class SimultaneousSTE2E(object):
             m_score = local_best_score[0]
             m_id = local_best_id
 
+            logging.info(m_id)
+
             hyp['states']['z_prev'] = states['z_prev']
             hyp['states']['c_prev'] = states['c_prev']
             hyp['states']['a_prev'] = states['a_prev']
@@ -322,7 +324,6 @@ class SimultaneousSTE2E(object):
                     else:
                         logging.info("############## emit EOS ###############")
                     self.finished = True
-                    #self.hyp['delays'].append(self.g)
                     return
             elif not self.finish_read and i >= dec_step - 1:
                 self.hyp['states']['z_prev'] = hyp['states']['z_prev']
@@ -362,7 +363,7 @@ class SimultaneousSTE2E(object):
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1)
         logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
-        logging.info(local_best_score, local_best_id)
+        #logging.info(local_best_score)
         logging.info(local_best_id)
         if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
                 (self.finish_read and len(self.hyp['yseq']) < self.min_len and int(local_best_id) == self._e2e.dec.eos):
