@@ -40,7 +40,7 @@ def latency_metric(func):
             # For now, since batch size is always equal to 1,
             # tgt_lens = target_padding_mask
             #tgt_lens = target_padding_mask
-            print(target_padding_mask.size(), src_lens)
+            print(target_padding_mask, src_lens)
             tgt_lens = target_padding_mask.sum(dim=0)
             delays = delays.masked_fill(target_padding_mask, 0)
         else:
