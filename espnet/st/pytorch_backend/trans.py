@@ -268,7 +268,7 @@ def trans_waitk(args):
             #print(word_indices)
             hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
             ref_seq = list(map(int, js[name]['output'][0]['tokenid'].split()))
-            ref_word_indices = word_splitter(ref_seq, 179, model.dec.eos)
+            ref_word_indices = word_splitter(torch.tensor(ref_seq), 179, model.dec.eos)
             print(ref_word_indices)
             aaaaaaaaaaaaaaaaaaaa
             #logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
