@@ -133,6 +133,16 @@ def eval_all_latency(delays, src_len, target_len):
         results[name] = func(delays, src_len, target_len).item()
     return results
 
+def word_splitter(yseq, space, eos):
+    # A simple word splitter
+    sen_ = yseq[yseq != eos]
+    space_indices = (sen_ == space).nonzero().squeeze(1)
+    space_indices = space_indices[space_indices != 0]
+    word_indices = space_indices - torch.ones_like(space_indices)
+    word_indices = torch.cat((word_indices, torch.tensor([len(sen_) - 1])))
+    return word_indices
+
+
 def trans_waitk(args):
     """Decode with custom models that implements ScorerInterface.
     Notes:
@@ -250,6 +260,10 @@ def trans_waitk(args):
             space_indices = space_indices[space_indices != 0]
             word_indices = space_indices - torch.ones_like(space_indices)
             word_indices = torch.cat((word_indices, torch.tensor([len(sen_)-1])))
+            print(word_indices)
+            word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
+            print(word_indices)
+            aaaaaaaaaaaaaaaaaaa
             #logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             word_delays = [action['value']['dec_hyp']['delays'][i] for i in word_indices]
             logging.info('delays: ' + str(word_delays))
