@@ -147,7 +147,8 @@ def word_splitter_spm(yseq, under_bound, upper_bound, eos):
     print(yseq)
     sen_ = yseq[yseq != eos]
     print(sen_)
-    space_indices = (under_bound <= sen_ <= upper_bound).nonzero().squeeze(1)
+    #space_indices = (under_bound <= sen_ <= upper_bound).nonzero().squeeze(1)
+    space_indices = [x for x in sen_ if (under_bound <= x <= upper_bound)]
     print(space_indices)
     space_indices = space_indices[space_indices != 0]
     word_indices = space_indices - torch.ones_like(space_indices)
