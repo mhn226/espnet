@@ -144,22 +144,22 @@ def word_splitter(yseq, space, eos):
 
 def word_splitter_spm(yseq, under_bound, upper_bound, eos):
     # A simple word splitter
-    print(under_bound, upper_bound)
-    print(yseq)
+    #print(under_bound, upper_bound)
+    #print(yseq)
     sen_ = yseq[yseq != eos]
-    print(sen_)
+    #print(sen_)
     space_indices1 = (sen_ <= upper_bound).nonzero().squeeze(1)
-    print(space_indices1)
+    #print(space_indices1)
     space_indices2 = (sen_ >= under_bound).nonzero().squeeze(1)
-    print(space_indices2)
+    #print(space_indices2)
     space_indices = torch.tensor([int(x) for x in space_indices1 if x in space_indices2])
-    print(space_indices)
+    #print(space_indices)
     space_indices = space_indices[space_indices != 0]
-    print(space_indices)
+    #print(space_indices)
     word_indices = space_indices - torch.ones_like(space_indices)
-    print(word_indices)
+    #print(word_indices)
     word_indices = torch.cat((word_indices, torch.tensor([len(sen_) - 1])))
-    print(word_indices)
+    #print(word_indices)
     return word_indices
 
 
@@ -294,7 +294,6 @@ def trans_waitk(args):
             nbest_hyps[0]['latency'] = latency
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             logging.info('latency: ' + str(latency))
-            aaaaaaaaaaaaaaaaaaaaaa
             #corpus_AL.append(latency['AL'])
             #corpus_DAL.append(latency['DAL'])
 
