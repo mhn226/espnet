@@ -586,7 +586,6 @@ def parse_hypothesis(hyp, char_list):
     # remove sos and get results
     tokenid_as_list = list(map(int, hyp['yseq'][1:]))
     token_as_list = [char_list[idx] for idx in tokenid_as_list]
-    print(token_as_list)
     score = float(hyp['score'])
 
     latency = hyp['latency']

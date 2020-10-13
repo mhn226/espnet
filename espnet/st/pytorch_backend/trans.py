@@ -135,9 +135,20 @@ def eval_all_latency(delays, src_len, target_len):
 
 def word_splitter(yseq, space, eos):
     # A simple word splitter
-    print(yseq)
     sen_ = yseq[yseq != eos]
     space_indices = (sen_ == space).nonzero().squeeze(1)
+    space_indices = space_indices[space_indices != 0]
+    word_indices = space_indices - torch.ones_like(space_indices)
+    word_indices = torch.cat((word_indices, torch.tensor([len(sen_) - 1])))
+    return word_indices
+
+def word_splitter_spm(yseq, under_bound, upper_bound, eos):
+    # A simple word splitter
+    print(yseq)
+    sen_ = yseq[yseq != eos]
+    print(sen_)
+    space_indices = (under_bound <= sen_ <= upper_bound).nonzero().squeeze(1)
+    print(space_indices)
     space_indices = space_indices[space_indices != 0]
     word_indices = space_indices - torch.ones_like(space_indices)
     word_indices = torch.cat((word_indices, torch.tensor([len(sen_) - 1])))
@@ -262,7 +273,8 @@ def trans_waitk(args):
             #word_indices = space_indices - torch.ones_like(space_indices)
             #word_indices = torch.cat((word_indices, torch.tensor([len(sen_)-1])))
             #print(word_indices)
-            hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
+            #hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
+            hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 819, 1986, model.dec.eos)
             #ref_seq = list(map(int, js[name]['output'][0]['tokenid'].split()))
             #ref_word_indices = word_splitter(torch.tensor(ref_seq), 179, model.dec.eos)
             #logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
