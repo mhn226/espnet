@@ -135,6 +135,7 @@ def eval_all_latency(delays, src_len, target_len):
 
 def word_splitter(yseq, space, eos):
     # A simple word splitter
+    print(yseq)
     sen_ = yseq[yseq != eos]
     space_indices = (sen_ == space).nonzero().squeeze(1)
     space_indices = space_indices[space_indices != 0]
@@ -273,6 +274,7 @@ def trans_waitk(args):
             nbest_hyps[0]['latency'] = latency
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             logging.info('latency: ' + str(latency))
+            aaaaaaaaaaaaaaaaaaaaaa
             #corpus_AL.append(latency['AL'])
             #corpus_DAL.append(latency['DAL'])
 
