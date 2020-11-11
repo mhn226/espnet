@@ -99,9 +99,9 @@ class SimultaneousSTE2E(object):
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.k = 200
+        self.k = 100
         self.g = self.k
-        self.N = 2 #2 # maximum number of target tokens generated at one step
+        self.N = 3 #2 # maximum number of target tokens generated at one step
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
@@ -193,10 +193,11 @@ class SimultaneousSTE2E(object):
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
-                if "b" in self._e2e.etype:
-                    action = self.read_action_blstm(x)
-                else:
-                    action = self.read_action_ulstm(x)
+                action = self.read_action_blstm(x)
+                #if "b" in self._e2e.etype:
+                #    action = self.read_action_blstm(x)
+                #else:
+                #    action = self.read_action_ulstm(x)
 
             else:
                 # WRITE
@@ -238,7 +239,8 @@ class SimultaneousSTE2E(object):
     def read_action_ulstm(self, x, segments=None, segment_step=0):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
-        logging.info('len_in=' + str(len(x)))
+        logging.info('ulstm len_in=' + str(len(x)))
+        logging.info('enc_step: ' + str(segment_step))
         if self.g >= len(x):
             self.g = len(x)
             self.finish_read = True
@@ -246,22 +248,30 @@ class SimultaneousSTE2E(object):
         x_ = x[self.offset:self.g]
         h, ilens = self._e2e.subsample_frames(x_)
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
-        self.offset = self.g
-        if segments == None:
-            self.g += self.s
-        elif segment_step < (len(segments)-1):
-            self.g = segments[segment_step + 1][1]
         if self.enc_states is None:
-            self.enc_states = torch.empty((0, h.size(2)), device=self.device)
-        self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
+            #self.enc_states = torch.empty((0, h.size(2)), device=self.device)
+            self.enc_states = h.squeeze(0)
+        #self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
+        else:
+            self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
+
+        self.offset = self.g
+        if segments == None and not self.finish_read:
+            self.g += self.s
+        elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read: 
+            self.g = segments[segment_step + 1][1]
 
         if self.finish_read:
+            tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
+            tmp_h, _, tmp_prev = self._e2e.enc(tmp_h.unsqueeze(0), tmp_ilens, None)
+            self.enc_states = tmp_h.squeeze(0)
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
+
     def write_action_until(self, dec_step=1):
-        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
+        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) >= self.max_len - 1):
             # Finish this sentence is predict EOS
             if len(self.hyp['yseq']) == self.max_len - 1:
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
