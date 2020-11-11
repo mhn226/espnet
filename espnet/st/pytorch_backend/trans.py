@@ -241,10 +241,10 @@ def trans_waitk(args):
             batch = [(name, js[name])]
 
             # HN 09/09: predefine number of toks
-            #num_of_toks = js[name]['output'][0]['shape'][0]
-
+            num_of_toks = js[name]['output'][0]['shape'][0]
             feat = load_inputs_and_targets(batch)[0][0]
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
+            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
@@ -254,8 +254,12 @@ def trans_waitk(args):
 
             while action.get('value', None) != model.dec.eos:
                 # take an action
-                action = se2e.policy(feat)
-                #action = se2e.predefined_policy(feat, textgrid_file, num_of_toks)
+                import os.path
+                if os.path.isfile(textgrid_file):
+                    action = se2e.predefined_policy(feat, textgrid_file, num_of_toks)
+                else:
+                    action = se2e.policy(feat)
+
 
                 #if action['key'] == 'GET':
                 #    print('get')
