@@ -244,7 +244,7 @@ def trans_waitk(args):
             num_of_toks = js[name]['output'][0]['shape'][0]
             feat = load_inputs_and_targets(batch)[0][0]
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
-            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav' + name + '.TextGrid'
+            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
