@@ -126,12 +126,53 @@ class SimultaneousSTE2E(object):
         else:
             return READ
 
+    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+        # If a TextGrid file is available, read it
+        grid = textgrids.TextGrid(segment_file)
+        segments = []
+        offset = 0.0
+        count = 0
+
+        while offset < self.k:
+            if count >= len(grid['words']):
+                break
+            w = grid['words'][count]
+            count += 1
+            # Convert Praat to Unicode in the label
+            label = w.text.transcode()
+            if label == '':  # space
+                continue
+            offset = w.xmax
+            if len2numframes(offset) > self.k:
+                # count -= 1
+                # offset = grid['words'][count-1].xmax
+                break
+            # count += 1
+        if count < len(grid['words']):
+            for i in range(count, len(grid['words'])):
+                w = grid['words'][i]
+                # Convert Praat to Unicode in the label
+                label = w.text.transcode()
+                if label == '':  # space
+                    continue
+                if i == len(grid['words']) - 2 and grid['words'][i + 1].text.transcode() == '':
+                    segments.append([len2numframes(offset), len2numframes(grid['words'][i + 1].xmax)])
+                else:
+                    # segments.append([offset, w.xmax])
+                    segments.append([len2numframes(offset), len2numframes(w.xmax)])
+                offset = w.xmax
+        if len(segments) == 0:
+            segments.append([0, len2numframes(grid.xmax)])
+
+        return segments
+
     def predefined_policy(self, x, segment_file=None, num_of_toks=0):
         """
         If a forced-aligment file is available, one could use it
         """
         segment_step = 0
-        segments = read_textgrid(segment_file, k=10)
+        #segments = read_textgrid(segment_file, k=10)
+        segments = self.read_textgrid(segment_file)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
