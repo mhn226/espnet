@@ -767,6 +767,7 @@ class E2E(STInterface, torch.nn.Module):
 
             print(ys_pad.size())
             print(ys_out_pad.size())
+            y_all = y_all.view(batch, olength, -1)
             for i, y_hat in enumerate(y_all):
                 print('y_hat: ' + str(y_hat.size()))
                 y_hat = y_hat.detach().cpu().numpy()
