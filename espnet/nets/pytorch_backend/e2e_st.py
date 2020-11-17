@@ -443,7 +443,10 @@ class E2E(STInterface, torch.nn.Module):
         offset = 0
 
         dec_step = 1
-        y_all = []
+        print(ys_pad.size())
+        y_all = [[0]*batch]
+        print(y_all.size())
+        aaaaaaaaaaaaaaaaaaaaaaaaa
 
         if self.training:
             while not finished_read:
