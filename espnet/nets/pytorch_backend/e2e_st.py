@@ -413,6 +413,7 @@ class E2E(STInterface, torch.nn.Module):
         batch = ys_out_pad.size(0)
         olength = ys_out_pad.size(1)
 
+        """
         # initialization
         c_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
         z_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
@@ -429,6 +430,7 @@ class E2E(STInterface, torch.nn.Module):
             att_c_list = [None] * (self.dec.num_encs)  # atts
             for idx in range(self.dec.num_encs + 1):
                 self.dec.att[idx].reset()  # reset pre-computation of h in atts and han
+        """
 
         # pre-computation of embedding
         eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
@@ -457,17 +459,18 @@ class E2E(STInterface, torch.nn.Module):
                 else:
                     hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
 
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
+                #c_list = [self.dec.zero_state(hs_pad[0])]
+                #z_list = [self.dec.zero_state(hs_pad[0])]
+                #for _ in six.moves.range(1, self.dec.dlayers):
+                #    c_list.append(self.dec.zero_state(hs_pad[0]))
+                #    z_list.append(self.dec.zero_state(hs_pad[0]))
                 #for i in range(dec_step):
                 #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
 
                 ################
                 # will replace out_hyp_buff by y_all
                 y_all = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                print(len(y_all))
                 #z_all.append(z_)
                 #dec_step += 1
                 g += s
@@ -707,11 +710,13 @@ class E2E(STInterface, torch.nn.Module):
                 else:
                     hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
 
+                """
                 c_list = [self.dec.zero_state(hs_pad[0])]
                 z_list = [self.dec.zero_state(hs_pad[0])]
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
                     z_list.append(self.dec.zero_state(hs_pad[0]))
+                """
                 #for i in range(dec_step):
                 #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
                 y_all = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
