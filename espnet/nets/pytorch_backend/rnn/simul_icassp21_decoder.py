@@ -254,7 +254,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
                 else:
                     z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
-                aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
             """
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
