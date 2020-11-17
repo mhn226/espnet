@@ -138,9 +138,9 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         """
 
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
-        if self.num_encs == 1:
-            hs_pad = [hs_pad]
-            hlens = [hlens]
+        #if self.num_encs == 1:
+        #    hs_pad = [hs_pad]
+        #    hlens = [hlens]
 
         # TODO(kan-bayashi): need to make more smart way
         ys = [y[y != self.ignore_id] for y in ys_pad]  # parse padded ys
