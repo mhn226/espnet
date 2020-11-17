@@ -149,8 +149,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         att_idx = min(strm_idx, len(self.att) - 1)
 
         # hlens should be list of list of integer
-        print(hlens[0].size())
-        hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
+        #hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
 
         # prepare input and output word sequences with sos/eos IDs
         eos = ys[0].new([self.eos])
