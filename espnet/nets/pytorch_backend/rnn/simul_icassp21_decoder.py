@@ -199,7 +199,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         # loop for an output sequence
         for i in six.moves.range(olength):
-            print(i)
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
             else:
@@ -229,6 +228,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # compute loss
         y_all = self.output(z_all)
         out_buff.extend(y_all[len(out_buff):])
+        torch.cuda.empty_cache()
+        print(out_buff)
         return out_buff
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
