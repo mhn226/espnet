@@ -26,7 +26,7 @@ MAX_DECODER_OUTPUT = 5
 CTC_SCORING_RATIO = 1.5
 
 
-class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
+class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
     """Decoder module
 
     :param int eprojs: encoder projection units
@@ -119,8 +119,8 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
                 z_list[l] = self.decoder[l](self.dropout_dec[l - 1](z_list[l - 1]), z_prev[l])
         return z_list, c_list
 
-    #def forward(self, hs_pad, hlens, ys_pad, strm_idx=0, lang_ids=None):
-    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
+    def forward(self, hs_pad, hlens, ys_pad, out_buff, N=1, finished_read=False, strm_idx=0, lang_ids=None):
+    #def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
         """Decoder forward
 
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
@@ -136,38 +136,98 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         :return: accuracy
         :rtype: float
         """
-        att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-        if eys is not None:
-            if step > 0 and random.random() < self.sampling_probability:
+
+        # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
+        if self.num_encs == 1:
+            hs_pad = [hs_pad]
+            hlens = [hlens]
+
+        # TODO(kan-bayashi): need to make more smart way
+        ys = [y[y != self.ignore_id] for y in ys_pad]  # parse padded ys
+        # attention index for the attention module
+        # in SPA (speaker parallel attention), att_idx is used to select attention module. In other cases, it is 0.
+        att_idx = min(strm_idx, len(self.att) - 1)
+
+        # hlens should be list of list of integer
+        hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
+
+        # prepare input and output word sequences with sos/eos IDs
+        eos = ys[0].new([self.eos])
+        sos = ys[0].new([self.sos])
+        if self.replace_sos:
+            ys_in = [torch.cat([idx, y], dim=0) for idx, y in zip(lang_ids, ys)]
+        else:
+            ys_in = [torch.cat([sos, y], dim=0) for y in ys]
+        ys_out = [torch.cat([y, eos], dim=0) for y in ys]
+
+        # padding for ys with -1
+        # pys: utt x olen
+        ys_in_pad = pad_list(ys_in, self.eos)
+        ys_out_pad = pad_list(ys_out, self.ignore_id)
+
+        # get dim, length info
+        batch = ys_out_pad.size(0)
+        if not finished_read:
+            olength = len(out_buff) + N
+        else:
+            olength = ys_out_pad.size(1)
+        for idx in range(self.num_encs):
+            logging.info(
+                self.__class__.__name__ + 'Number of Encoder:{}; enc{}: input lengths: {}.'.format(self.num_encs,
+                                                                                                   idx + 1, hlens[idx]))
+        logging.info(self.__class__.__name__ + ' output lengths: ' + str([y.size(0) for y in ys_out]))
+
+        # initialization
+        c_list = [self.zero_state(hs_pad[0])]
+        z_list = [self.zero_state(hs_pad[0])]
+        for _ in six.moves.range(1, self.dlayers):
+            c_list.append(self.zero_state(hs_pad[0]))
+            z_list.append(self.zero_state(hs_pad[0]))
+        z_all = []
+        if self.num_encs == 1:
+            att_w = None
+            self.att[att_idx].reset()  # reset pre-computation of h
+        else:
+            att_w_list = [None] * (self.num_encs + 1)  # atts + han
+            att_c_list = [None] * (self.num_encs)  # atts
+            for idx in range(self.num_encs + 1):
+                self.att[idx].reset()  # reset pre-computation of h in atts and han
+
+        # pre-computation of embedding
+        eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
+
+        # loop for an output sequence
+        for i in six.moves.range(olength):
+            if self.num_encs == 1:
+                att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+            else:
+                for idx in range(self.num_encs):
+                    att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
+                                                                     self.dropout_dec[0](z_list[0]), att_w_list[idx])
+                hs_pad_han = torch.stack(att_c_list, dim=1)
+                hlens_han = [self.num_encs] * len(ys_in)
+                att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
+                                                                           self.dropout_dec[0](z_list[0]),
+                                                                           att_w_list[self.num_encs])
+            if i > 0 and random.random() < self.sampling_probability:
                 logging.info(' scheduled sampling ')
                 z_out = self.output(z_all[-1])
                 z_out = np.argmax(z_out.detach().cpu(), axis=1)
                 z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
                 ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
             else:
-                ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
-        else:
-            if step == 0:
-                z_out = torch.zeros((hs_pad[0].size(0)), device=hs_pad[0].device)
-                #z_out = z_all[-1].new_zeros(hs_pad.size(0))
-                z_out = z_out.new_full(z_out.size(), fill_value=self.sos, device=hs_pad[0].device, dtype=torch.long)
-                #print(z_all[-1].size())
-                print('hs_pad: ', len(hs_pad), hs_pad[0].size())
-                print('z_out init eos: ', z_out.size(), z_out)
+                ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
+            z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
+            if self.context_residual:
+                z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
             else:
-                z_out = self.output(z_all[-1])
-                z_out = np.argmax(z_out.detach().cpu(), axis=1)
-            z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-            ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
-        #print(z_list[0].size())
-        #print(c_list[0].size())
-        z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
-        if self.context_residual:
-            z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
-        else:
-            z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
+                z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
 
-        return z_list, c_list, att_w, z_
+        z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+        # compute loss
+        y_all = self.output(z_all)
+        out_buff.extend(y_all[len(out_buff):])
+        return out_buff
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
@@ -830,8 +890,8 @@ class SimultaneousDecoder(torch.nn.Module, ScorerInterface):
         return logits, dict(c_prev=c_list[:], z_prev=z_list[:], a_prev=att_w, workspace=(att_idx, z_list, c_list))
 
 
-def simultaneous_decoder_for(args, odim, sos, eos, att, labeldist):
-    return SimultaneousDecoder(args.eprojs, odim, args.dtype, args.dlayers, args.dunits, sos, eos, att, args.verbose,
+def simultaneous_icassp21_decoder_for(args, odim, sos, eos, att, labeldist):
+    return SimultaneousICASSP21Decoder(args.eprojs, odim, args.dtype, args.dlayers, args.dunits, sos, eos, att, args.verbose,
                    args.char_list, labeldist,
                    args.lsm_weight, args.sampling_probability, args.dropout_rate_decoder,
                    getattr(args, "context_residual", False),  # use getattr to keep compatibility

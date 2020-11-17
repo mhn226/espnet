@@ -39,6 +39,7 @@ from espnet.nets.pytorch_backend.nets_utils import to_torch_tensor
 from espnet.nets.pytorch_backend.rnn.attentions import att_for
 from espnet.nets.pytorch_backend.rnn.decoders import decoder_for
 from espnet.nets.pytorch_backend.rnn.simultaneous_decoders import simultaneous_decoder_for
+from espnet.nets.pytorch_backend.rnn.simul_icassp21_decoder import simultaneous_icassp21_decoder_for
 from espnet.nets.pytorch_backend.rnn.encoders import encoder_for
 from espnet.nets.pytorch_backend.rnn.wav2vec_encoder import wav2vec_encoder_for
 from espnet.nets.st_interface import STInterface
@@ -224,7 +225,8 @@ class E2E(STInterface, torch.nn.Module):
         self.att = att_for(args)
         # decoder (ST)
         #self.dec = decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
-        self.dec = simultaneous_decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
+        #self.dec = simultaneous_decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
+        self.dec = simultaneous_icassp21_decoder_for(args, odim, self.sos, self.eos, self.att, labeldist)
 
         # submodule for ASR task
         self.ctc = None
@@ -287,8 +289,9 @@ class E2E(STInterface, torch.nn.Module):
         # simultaneous training
         self.k = 200
         self.g = self.k
-        self.s = 100
-        print('k, g, s: ', self.k, self.g, self.s)
+        self.s = 20
+        self.N = 1
+        print('k, g, s, N: ', self.k, self.g, self.s, self.N)
         #self.finished_read = False
         self.maxlen = 400
         self.args = args
@@ -438,6 +441,8 @@ class E2E(STInterface, torch.nn.Module):
         offset = 0
 
         dec_step = 1
+        y_all = []
+
         if self.training:
             while not finished_read:
                 if "b" not in self.etype:
@@ -457,27 +462,31 @@ class E2E(STInterface, torch.nn.Module):
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
                     z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in range(dec_step):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                z_all.append(z_)
-                dec_step += 1
+                #for i in range(dec_step):
+                #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+
+                ################
+                # will replace out_hyp_buff by y_all
+                y_all = self.dec(y_all, hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                #z_all.append(z_)
+                #dec_step += 1
                 g += s
 
             # when finished_read
-            if finished_read:
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in six.moves.range(olength):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                    if i >= dec_step - 1:
-                        z_all.append(z_)
+            #if finished_read:
+            #    c_list = [self.dec.zero_state(hs_pad[0])]
+            #    z_list = [self.dec.zero_state(hs_pad[0])]
+            #    for _ in six.moves.range(1, self.dec.dlayers):
+            #        c_list.append(self.dec.zero_state(hs_pad[0]))
+            #        z_list.append(self.dec.zero_state(hs_pad[0]))
+            #    for i in six.moves.range(olength):
+            #        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+            #        if i >= dec_step - 1:
+            #            z_all.append(z_)
 
-            z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+            #z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
-            y_all = self.dec.output(z_all)
+            #y_all = self.dec.output(z_all)
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
@@ -703,29 +712,30 @@ class E2E(STInterface, torch.nn.Module):
                 for _ in six.moves.range(1, self.dec.dlayers):
                     c_list.append(self.dec.zero_state(hs_pad[0]))
                     z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in range(dec_step):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                z_all.append(z_)
-                dec_step += 1
+                #for i in range(dec_step):
+                #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                y_all = self.dec(y_all, hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                #z_all.append(z_)
+                #dec_step += 1
                 g += s
 
             # when finished_read
-            if finished_read:
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in six.moves.range(olength):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                    if i >= dec_step - 1:
-                        z_all.append(z_)
+            #if finished_read:
+            #    c_list = [self.dec.zero_state(hs_pad[0])]
+            #    z_list = [self.dec.zero_state(hs_pad[0])]
+            #    for _ in six.moves.range(1, self.dec.dlayers):
+            #        c_list.append(self.dec.zero_state(hs_pad[0]))
+            #        z_list.append(self.dec.zero_state(hs_pad[0]))
+            #    for i in six.moves.range(olength):
+            #        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+            #        if i >= dec_step - 1:
+            #            z_all.append(z_)
 
             # z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
             # y_all = self.dec.output(z_all)
-            z_all = torch.stack(z_all, dim=1)
-            y_all = self.dec.output(z_all)
+            #z_all = torch.stack(z_all, dim=1)
+            #y_all = self.dec.output(z_all)
 
             if LooseVersion(torch.__version__) < LooseVersion('1.0'):
                 reduction_str = 'elementwise_mean'
