@@ -11,8 +11,8 @@ WRITE=1
 
 def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
     # len_ in second
-    #re = int(round((len_ - frame_len) / frame_shift + 1))
-    re = int(math.floor((len_ - frame_len) / frame_shift + 1))
+    re = int(round((len_ - frame_len) / frame_shift + 1))
+    #re = int(math.floor((len_ - frame_len) / frame_shift + 1))
     if re < 0:
         re = 0
     return re
