@@ -5,12 +5,14 @@ import math
 import textgrids
 
 import logging
-
+import math
 READ=0
 WRITE=1
 
 def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
-    re = int(round((len_ - frame_len) / frame_shift + 1))
+    # len_ in second
+    #re = int(round((len_ - frame_len) / frame_shift + 1))
+    re = int(math.floor((len_ - frame_len) / frame_shift + 1))
     if re < 0:
         re = 0
     return re
@@ -126,6 +128,46 @@ class SimultaneousSTE2E(object):
         else:
             return READ
 
+    #def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+    #    # If a TextGrid file is available, read it
+    #    grid = textgrids.TextGrid(segment_file)
+    #    segments = []
+    #    offset = 0.0
+    #    count = 0
+
+    #    while offset < self.k:
+    #        if count >= len(grid['words']):
+    #            break
+    #        w = grid['words'][count]
+    #        count += 1
+    #        # Convert Praat to Unicode in the label
+    #        label = w.text.transcode()
+    #        if label == '':  # space
+    #            continue
+    #        offset = w.xmax
+    #        if len2numframes(offset) > self.k:
+    #            count -= 1
+    #            offset = grid['words'][count-1].xmax
+    #            break
+    #        # count += 1
+    #    if count < len(grid['words']):
+    #        for i in range(count, len(grid['words'])):
+    #            w = grid['words'][i]
+    #            # Convert Praat to Unicode in the label
+    #            label = w.text.transcode()
+    #            if label == '':  # space
+    #                continue
+    #            if i == len(grid['words']) - 2 and grid['words'][i + 1].text.transcode() == '':
+    #                segments.append([len2numframes(offset), len2numframes(grid['words'][i + 1].xmax)])
+    #            else:
+    #                # segments.append([offset, w.xmax])
+    #                segments.append([len2numframes(offset), len2numframes(w.xmax)])
+    #            offset = w.xmax
+    #    if len(segments) == 0:
+    #        segments.append([0, len2numframes(grid.xmax)])
+
+    #    return segments
+
     def read_textgrid(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
@@ -137,17 +179,22 @@ class SimultaneousSTE2E(object):
             if count >= len(grid['words']):
                 break
             w = grid['words'][count]
-            count += 1
+            # count += 1
             # Convert Praat to Unicode in the label
             label = w.text.transcode()
             if label == '':  # space
+                count += 1
                 continue
             offset = w.xmax
             if len2numframes(offset) > self.k:
-                # count -= 1
-                # offset = grid['words'][count-1].xmax
+                count -= 1
+                # offset = grid['words'][count].xmax
+                if count > 0 and grid['words'][count].text.transcode() == '':
+                    count -= 1
+                    # offset = grid['words'][count].xmax
+                offset = grid['words'][count].xmin
                 break
-            # count += 1
+            count += 1
         if count < len(grid['words']):
             for i in range(count, len(grid['words'])):
                 w = grid['words'][i]
