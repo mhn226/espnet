@@ -470,7 +470,6 @@ class E2E(STInterface, torch.nn.Module):
                 ################
                 # will replace out_hyp_buff by y_all
                 y_all = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
-                print(len(y_all))
                 #z_all.append(z_)
                 #dec_step += 1
                 g += s
