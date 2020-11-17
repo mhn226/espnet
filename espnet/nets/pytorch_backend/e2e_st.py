@@ -437,8 +437,8 @@ class E2E(STInterface, torch.nn.Module):
 
         finished_read = False
         finished_write = False
-        hs_pad = [torch.empty((batch, 0, self.args.eunits), device=xs_pad.device)] * self.dec.num_encs
-        hlens = [[0] * batch] * self.dec.num_encs
+        #hs_pad = [torch.empty((batch, 0, self.args.eunits), device=xs_pad.device)] * self.dec.num_encs
+        #hlens = [[0] * batch] * self.dec.num_encs
         last_enc_states = None
         offset = 0
 
