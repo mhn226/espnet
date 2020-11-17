@@ -119,7 +119,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 z_list[l] = self.decoder[l](self.dropout_dec[l - 1](z_list[l - 1]), z_prev[l])
         return z_list, c_list
 
-    def forward(self, hs_pad, hlens, ys_pad, out_buff, N=1, finished_read=False, strm_idx=0, lang_ids=None):
+    def forward(self, hs_pad, hlens, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
     #def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
         """Decoder forward
 
@@ -284,9 +284,13 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # compute loss
         y_all = self.output(z_all)
         print(type(y_all), y_all.size())
-        out_buff.extend(y_all[len(out_buff):])
+        if out_buff is None:
+            out_buff = y_all
+        else:
+            out_buff = torch.cat(out_buff, y_all[out_buff.size(0):], dim=0)
+            #out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
-        print(len(out_buff))
+        print(out_buff.size())
         return out_buff
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
