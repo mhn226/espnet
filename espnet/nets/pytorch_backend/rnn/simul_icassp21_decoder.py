@@ -229,7 +229,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         y_all = self.output(z_all)
         out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
-        print(out_buff)
+        print(len(out_buff))
         return out_buff
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
