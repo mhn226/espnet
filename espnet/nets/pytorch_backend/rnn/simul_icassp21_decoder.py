@@ -199,30 +199,31 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         # loop for an output sequence
         for i in six.moves.range(olength):
-            if self.num_encs == 1:
-                att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-            else:
-                for idx in range(self.num_encs):
-                    att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
+            with torch.no_grad():
+                if self.num_encs == 1:
+                    att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+                else:
+                    for idx in range(self.num_encs):
+                        att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
                                                                      self.dropout_dec[0](z_list[0]), att_w_list[idx])
-                hs_pad_han = torch.stack(att_c_list, dim=1)
-                hlens_han = [self.num_encs] * len(ys_in)
-                att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
+                    hs_pad_han = torch.stack(att_c_list, dim=1)
+                    hlens_han = [self.num_encs] * len(ys_in)
+                    att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
                                                                            self.dropout_dec[0](z_list[0]),
                                                                            att_w_list[self.num_encs])
-            if i > 0 and random.random() < self.sampling_probability:
-                logging.info(' scheduled sampling ')
-                z_out = self.output(z_all[-1])
-                z_out = np.argmax(z_out.detach().cpu(), axis=1)
-                z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-                ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
-            else:
-                ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
-            z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
-            if self.context_residual:
-                z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
-            else:
-                z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
+                if i > 0 and random.random() < self.sampling_probability:
+                    logging.info(' scheduled sampling ')
+                    z_out = self.output(z_all[-1])
+                    z_out = np.argmax(z_out.detach().cpu(), axis=1)
+                    z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
+                    ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
+                else:
+                    ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
+                z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
+                if self.context_residual:
+                    z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
+                else:
+                    z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
 
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         # compute loss
