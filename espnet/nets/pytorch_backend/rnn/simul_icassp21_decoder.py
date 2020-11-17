@@ -290,7 +290,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         if out_buff is None:
             out_buff = y_all
         else:
-            out_buff = torch.cat(out_buff, y_all[out_buff.size(0):], dim=0)
+            out_buff = torch.cat((out_buff, y_all[out_buff.size(0):]), dim=0)
             #out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
         print(out_buff.size())
