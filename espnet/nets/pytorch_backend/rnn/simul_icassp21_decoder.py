@@ -283,6 +283,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         # compute loss
         y_all = self.output(z_all)
+        print(type(y_all), y_all.size())
         out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
         print(len(out_buff))
