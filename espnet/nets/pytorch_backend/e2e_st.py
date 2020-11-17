@@ -765,6 +765,8 @@ class E2E(STInterface, torch.nn.Module):
             self.acc = acc
             self.loss_st = self.dec.loss
 
+            print(ys_pad.size())
+            print(ys_out_pad.size())
             for i, y_hat in enumerate(y_all):
                 print('y_hat: ' + str(y_hat.size()))
                 y_hat = y_hat.detach().cpu().numpy()
