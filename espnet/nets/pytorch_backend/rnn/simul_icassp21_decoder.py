@@ -167,11 +167,10 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         # get dim, length info
         batch = ys_out_pad.size(0)
-        if not finished_read:
-            if out_buff is None:
-                olength = N
-            else:
-                olength = out_buff.size(0) + N
+        if out_buff is None:
+            olength = min(N, ys_out_pad.size(1))
+        elif not finished_read:
+            olength = min(out_buff.size(0) + N, ys_out_pad.size(1))
         else:
             olength = ys_out_pad.size(1)
         for idx in range(self.num_encs):
