@@ -745,7 +745,7 @@ class E2E(STInterface, torch.nn.Module):
                 reduction_str = 'elementwise_mean'
             else:
                 reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all.view(batch * olength, -1), ys_out_pad.view(-1),
+            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
                                             ignore_index=self.dec.ignore_id,
                                             reduction=reduction_str)
             # compute perplexity
@@ -765,14 +765,10 @@ class E2E(STInterface, torch.nn.Module):
             self.acc = acc
             self.loss_st = self.dec.loss
 
-            print(ys_pad.size())
-            print(ys_out_pad.size())
             y_all = y_all.view(batch, olength, -1)
             for i, y_hat in enumerate(y_all):
-                print('y_hat: ' + str(y_hat.size()))
                 y_hat = y_hat.detach().cpu().numpy()
                 y_true = ys_out_pad[i]
-                print('y_true: ' + str(y_true.size()))
                 y_true = y_true.detach().cpu().numpy()
                 idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.dec.ignore_id]

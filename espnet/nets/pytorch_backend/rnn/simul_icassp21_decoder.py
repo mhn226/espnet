@@ -197,7 +197,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         # pre-computation of embedding
         eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
-        print(eys.size(), olength)
 
         # loop for an output sequence
         for i in six.moves.range(olength):
