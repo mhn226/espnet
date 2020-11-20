@@ -255,35 +255,50 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
                 else:
                     z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
-            """
-            if self.num_encs == 1:
-                att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-            else:
-                for idx in range(self.num_encs):
-                    att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
-                                                                     self.dropout_dec[0](z_list[0]), att_w_list[idx])
-                hs_pad_han = torch.stack(att_c_list, dim=1)
-                hlens_han = [self.num_encs] * len(ys_in)
-                att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
-                                                                           self.dropout_dec[0](z_list[0]),
-                                                                           att_w_list[self.num_encs])
-            if i > 0 and random.random() < self.sampling_probability:
-                logging.info(' scheduled sampling ')
-                z_out = self.output(z_all[-1])
-                z_out = np.argmax(z_out.detach().cpu(), axis=1)
-                z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-                ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
-            else:
-                ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
-            z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
-            if self.context_residual:
-                z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
-            else:
-                z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
-            """
+
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         # compute loss
         y_all = self.output(z_all)
+
+        if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            reduction_str = 'elementwise_mean'
+        else:
+            reduction_str = 'mean'
+        self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+                                ignore_index=self.ignore_id,
+                                reduction=reduction_str)
+
+        # compute perplexity
+        ppl = math.exp(self.loss.item())
+        # -1: eos, which is removed in the loss computation
+        self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+        acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
+        logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
+
+        """"
+        # show predicted character sequence for debug
+        if self.verbose > 0 and self.char_list is not None:
+            ys_hat = y_all.view(batch, olength, -1)
+            ys_true = ys_out_pad
+            for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+                                      ys_true.detach().cpu().numpy()):
+                if i == MAX_DECODER_OUTPUT:
+                    break
+                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.ignore_id]
+                seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                seq_hat = "".join(seq_hat)
+                seq_true = "".join(seq_true)
+                logging.info("groundtruth[%d]: " % i + seq_true)
+                logging.info("prediction [%d]: " % i + seq_hat)
+        """
+        if self.labeldist is not None:
+            if self.vlabeldist is None:
+                self.vlabeldist = to_device(self, torch.from_numpy(self.labeldist))
+            loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
+            self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
+
         print(type(y_all), y_all.size())
         if out_buff is None:
             out_buff = y_all
@@ -292,7 +307,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             #out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
         print(out_buff.size())
-        return out_buff
+        return out_buff, y_all, self.loss, acc, ppl
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim

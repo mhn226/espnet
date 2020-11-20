@@ -459,51 +459,27 @@ class E2E(STInterface, torch.nn.Module):
                 else:
                     hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
 
-                #c_list = [self.dec.zero_state(hs_pad[0])]
-                #z_list = [self.dec.zero_state(hs_pad[0])]
-                #for _ in six.moves.range(1, self.dec.dlayers):
-                #    c_list.append(self.dec.zero_state(hs_pad[0]))
-                #    z_list.append(self.dec.zero_state(hs_pad[0]))
-                #for i in range(dec_step):
-                #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-
                 ################
                 # will replace out_hyp_buff by y_all
-                y_all = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
-                #z_all.append(z_)
-                #dec_step += 1
+                y_all, _, loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                self.loss_st += loss_st
                 g += s
 
-            # when finished_read
-            #if finished_read:
-            #    c_list = [self.dec.zero_state(hs_pad[0])]
-            #    z_list = [self.dec.zero_state(hs_pad[0])]
-            #    for _ in six.moves.range(1, self.dec.dlayers):
-            #        c_list.append(self.dec.zero_state(hs_pad[0]))
-            #        z_list.append(self.dec.zero_state(hs_pad[0]))
-            #    for i in six.moves.range(olength):
-            #        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-            #        if i >= dec_step - 1:
-            #            z_all.append(z_)
-
-            #z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
-            #y_all = self.dec.output(z_all)
-
-            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-                reduction_str = 'elementwise_mean'
-            else:
-                reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
-                                            ignore_index=self.dec.ignore_id,
-                                            reduction=reduction_str)
+            #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            #    reduction_str = 'elementwise_mean'
+            #else:
+            #    reduction_str = 'mean'
+            #self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+            #                                ignore_index=self.dec.ignore_id,
+            #                                reduction=reduction_str)
 
             # compute perplexity
-            ppl = math.exp(self.dec.loss.item())
+            #ppl = math.exp(self.loss_st.item())
             # -1: eos, which is removed in the loss computation
-            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+            #self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            self.acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
 
             # show predicted character sequence for debug
             if self.verbose > 0 and self.char_list is not None:
@@ -522,14 +498,14 @@ class E2E(STInterface, torch.nn.Module):
                     logging.info("groundtruth[%d]: " % i + seq_true)
                     logging.info("prediction [%d]: " % i + seq_hat)
 
-            if self.dec.labeldist is not None:
-                if self.dec.vlabeldist is None:
-                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
-                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+            #if self.dec.labeldist is not None:
+            #    if self.dec.vlabeldist is None:
+            #        self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+            #    loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+            #    self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
 
-            self.acc = acc
-            self.loss_st = self.dec.loss
+            #self.acc = acc
+            #self.loss_st = self.dec.loss
 
         """
         # 1. Encoder
@@ -709,61 +685,33 @@ class E2E(STInterface, torch.nn.Module):
                 else:
                     hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
 
-                """
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-                """
-                #for i in range(dec_step):
-                #    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                y_all = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
-                #z_all.append(z_)
-                #dec_step += 1
+                y_all, _, loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                self.loss_st += loss_st
                 g += s
 
-            # when finished_read
-            #if finished_read:
-            #    c_list = [self.dec.zero_state(hs_pad[0])]
-            #    z_list = [self.dec.zero_state(hs_pad[0])]
-            #    for _ in six.moves.range(1, self.dec.dlayers):
-            #        c_list.append(self.dec.zero_state(hs_pad[0]))
-            #        z_list.append(self.dec.zero_state(hs_pad[0]))
-            #    for i in six.moves.range(olength):
-            #        z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-            #        if i >= dec_step - 1:
-            #            z_all.append(z_)
-
-            # z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-            # compute loss
-            # y_all = self.dec.output(z_all)
-            #z_all = torch.stack(z_all, dim=1)
-            #y_all = self.dec.output(z_all)
-
-            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-                reduction_str = 'elementwise_mean'
-            else:
-                reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
-                                            ignore_index=self.dec.ignore_id,
-                                            reduction=reduction_str)
+            #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            #    reduction_str = 'elementwise_mean'
+            #else:
+            #    reduction_str = 'mean'
+            #self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+            #                                ignore_index=self.dec.ignore_id,
+            #                                reduction=reduction_str)
             # compute perplexity
-            ppl = math.exp(self.dec.loss.item())
+            #ppl = math.exp(self.dec.loss.item())
             # -1: eos, which is removed in the loss computation
-            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
-            if self.dec.labeldist is not None:
-                if self.dec.vlabeldist is None:
-                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-                loss_reg = - torch.sum(
-                    (F.log_softmax(y_all.view(batch * olength, -1), dim=1) * self.dec.vlabeldist).view(-1),
-                    dim=0) / len(ys_in)
-                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+             #self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            self.acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
+            #if self.dec.labeldist is not None:
+            #    if self.dec.vlabeldist is None:
+            #        self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+            #    loss_reg = - torch.sum(
+            #        (F.log_softmax(y_all.view(batch * olength, -1), dim=1) * self.dec.vlabeldist).view(-1),
+            #        dim=0) / len(ys_in)
+            #    self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
 
-            self.acc = acc
-            self.loss_st = self.dec.loss
+            #self.acc = acc
+            #self.loss_st = self.dec.loss
 
             y_all = y_all.view(batch, olength, -1)
             for i, y_hat in enumerate(y_all):
