@@ -461,7 +461,7 @@ class E2E(STInterface, torch.nn.Module):
 
                 ################
                 # will replace out_hyp_buff by y_all
-                y_all, _, loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                y_all, _, loss_st = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
                 self.loss_st += loss_st
                 g += s
 
@@ -685,7 +685,7 @@ class E2E(STInterface, torch.nn.Module):
                 else:
                     hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
 
-                y_all, _, loss_st, acc, _ = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
+                y_all, _, loss_st = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
                 self.loss_st += loss_st
                 g += s
 

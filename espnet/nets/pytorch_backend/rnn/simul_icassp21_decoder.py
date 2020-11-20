@@ -270,13 +270,11 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                                 ignore_index=self.ignore_id,
                                 reduction=reduction_str)
         # compute perplexity
-        ppl = math.exp(self.loss.item())
+        #ppl = math.exp(self.loss.item())
         # -1: eos, which is removed in the loss computation
         self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
 
-        print('#########################################')
-        print(ys_out_pad.size(), y_all.size())
-        acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
+        #acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
         logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
 
         """"
@@ -311,7 +309,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             #out_buff.extend(y_all[len(out_buff):])
         torch.cuda.empty_cache()
         print(out_buff.size())
-        return out_buff, y_all, self.loss, acc, ppl
+        return out_buff, y_all, self.loss
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
