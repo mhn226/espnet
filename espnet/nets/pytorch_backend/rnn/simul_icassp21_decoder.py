@@ -273,6 +273,9 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         ppl = math.exp(self.loss.item())
         # -1: eos, which is removed in the loss computation
         self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+
+        print('#########################################')
+        print(ys_out_pad.size(), y_all.size())
         acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
         logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
 
