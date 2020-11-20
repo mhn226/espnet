@@ -264,7 +264,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             reduction_str = 'elementwise_mean'
         else:
             reduction_str = 'mean'
-        print(ys_out_pad.size())
+        print(ys_out_pad.size(), y_all.size)
         self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
                                 ignore_index=self.ignore_id,
                                 reduction=reduction_str)
