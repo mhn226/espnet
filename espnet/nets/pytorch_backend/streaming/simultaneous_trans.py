@@ -79,6 +79,8 @@ def rand_sum(N, M, seed=7):
 
 def rand_segs(input_segments, k):
     # Generate random senquence of segments whose length is the same as the input segments
+    if input_segments[-1][1] <= k:
+        return input_segments
     lens = rand_sum(len(input_segments)-1, input_segments[-1][1] - k)
     output_segments = []
     count = k
