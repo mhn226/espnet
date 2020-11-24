@@ -73,22 +73,19 @@ def read_textgrid2(segment_file, k=5, sample_rate = 16000):
 
 def rand_sum(N, M, seed=7):
     # Generate an array of N integers whose some is M
-    np.random.seed(7)
+    np.random.seed(seed)
     array = np.random.multinomial(M, np.ones(N) / N)
     return array
 
-def rand_segs(input_segments):
+def rand_segs(input_segments, k):
     # Generate random senquence of segments whose length is the same as the input segments
-    lens = rand_sum(len(input_segments), input_segments[-1][1])
+    lens = rand_sum(len(input_segments)-1, input_segments[-1][1] - k)
     output_segments = []
-    count = 0
+    count = k
+    output_segments.append([0, k])
     for i, len_ in enumerate(lens):
-        if i==0:
-            output_segments.append([0, len_])
-            count += len_
-        else:
-            output_segments.append([count, count+len_])
-            count += len_
+        output_segments.append([count, count+len_])
+        count += len_
     return output_segments
 
 class SimultaneousSTE2E(object):
@@ -323,7 +320,7 @@ class SimultaneousSTE2E(object):
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
         logging.info('enc_step: ' + str(segment_step))
-        if self.g >= len(x):
+        if (self.g >= len(x)) or (segments is not None and segment_step >= len(segments)-1):
             x_ = x
             self.g = len(x)
             self.finish_read = True
@@ -350,7 +347,7 @@ class SimultaneousSTE2E(object):
         logging.info('frame_count=' + str(self.g))
         logging.info('ulstm len_in=' + str(len(x)))
         logging.info('enc_step: ' + str(segment_step))
-        if self.g >= len(x):
+        if (self.g >= len(x)) or (segments is not None and segment_step>=len(segments)-1):
             self.g = len(x)
             self.finish_read = True
 
