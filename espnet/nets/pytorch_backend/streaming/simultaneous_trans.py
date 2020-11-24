@@ -82,13 +82,13 @@ def rand_segs(input_segments):
     lens = rand_sum(len(input_segments), input_segments[-1][1])
     output_segments = []
     count = 0
-    for i, len in enumerate(lens):
+    for i, len_ in enumerate(lens):
         if i==0:
-            output_segments.append([0, len])
-            count += len
+            output_segments.append([0, len_])
+            count += len_
         else:
-            output_segments.append([count, count+len])
-            count += len
+            output_segments.append([count, count+len_])
+            count += len_
     return output_segments
 
 class SimultaneousSTE2E(object):
