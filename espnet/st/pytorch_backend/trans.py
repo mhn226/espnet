@@ -246,7 +246,8 @@ def trans_waitk(args):
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav/' + name + '.TextGrid'
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
-            textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
+            #textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
+            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
             action = {}
@@ -287,8 +288,8 @@ def trans_waitk(args):
             #word_indices = space_indices - torch.ones_like(space_indices)
             #word_indices = torch.cat((word_indices, torch.tensor([len(sen_)-1])))
             #print(word_indices)
-            hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
-            #hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 819, 1986, model.dec.eos)
+            #hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 179, model.dec.eos)
+            hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 819, 1986, model.dec.eos)
             #hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 263, 393, model.dec.eos)
             #ref_seq = list(map(int, js[name]['output'][0]['tokenid'].split()))
             #ref_word_indices = word_splitter(torch.tensor(ref_seq), 179, model.dec.eos)
