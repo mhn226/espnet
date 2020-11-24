@@ -239,7 +239,7 @@ class SimultaneousSTE2E(object):
         segment_step = 0
         #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
-        segments = rand_segs(segments)
+        segments = rand_segs(segments, self.k)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
