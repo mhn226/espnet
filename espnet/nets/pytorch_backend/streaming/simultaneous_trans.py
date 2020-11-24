@@ -71,6 +71,26 @@ def read_textgrid2(segment_file, k=5, sample_rate = 16000):
 
     return segments
 
+def rand_sum(N, M, seed=7):
+    # Generate an array of N integers whose some is M
+    np.random.seed(7)
+    array = np.random.multinomial(M, np.ones(N) / N)
+    return array
+
+def rand_segs(input_segments):
+    # Generate random senquence of segments whose length is the same as the input segments
+    lens = rand_sum(len(input_segments), input_segments[-1][1])
+    output_segments = []
+    count = 0
+    for i, len in enumerate(lens):
+        if i==0:
+            output_segments.append([0, len])
+            count += len
+        else:
+            output_segments.append([count, count+len])
+            count += len
+    return output_segments
+
 class SimultaneousSTE2E(object):
     """SimultaneousSTE2E constructor.
     :param E2E e2e: E2E ST object
@@ -220,6 +240,7 @@ class SimultaneousSTE2E(object):
         segment_step = 0
         #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
+        segments = rand_segs(segments)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
