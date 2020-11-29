@@ -107,6 +107,22 @@ def rand_segs2(input_segments, k):
         count += len_
     return output_segments
 
+def rand_segs3(input_segments, k, low=10, high=50):
+    # Generate random senquence of segments whose length is the same as the input segments
+    # Each frame is between low and high
+    # Default: low = 10ms, high = 50ms
+    sequence_len = input_segments[-1][1]
+    lens = np.random.randint(10, 50, round(sequence_len / 10))
+    output_segments = []
+    count = 0
+    i = 0
+    while (count < sequence_len):
+        output_segments.append([count, count + lens[i]])
+        count += lens[i]
+        i += 1
+    output_segments.append([output_segments[-1][1], sequence_len])
+    return output_segments
+
 class SimultaneousSTE2E(object):
     """SimultaneousSTE2E constructor.
     :param E2E e2e: E2E ST object
@@ -256,7 +272,7 @@ class SimultaneousSTE2E(object):
         segment_step = 0
         #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
-        segments = rand_segs2(segments, self.k)
+        segments = rand_segs3(segments, self.k, 10, 50)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
