@@ -9,6 +9,8 @@ import math
 READ=0
 WRITE=1
 
+np.random.seed(7)
+
 def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
     # len_ in second
     re = int(round((len_ - frame_len) / frame_shift + 1))
@@ -79,6 +81,7 @@ def rand_sum(N, M, seed=7):
 
 def rand_segs(input_segments, k):
     # Generate random senquence of segments whose length is the same as the input segments
+    # Number of output segments = number of input segments
     if input_segments[-1][1] <= k:
         return input_segments
     lens = rand_sum(len(input_segments)-1, input_segments[-1][1] - k)
@@ -87,6 +90,20 @@ def rand_segs(input_segments, k):
     output_segments.append([0, k])
     for i, len_ in enumerate(lens):
         output_segments.append([count, count+len_])
+        count += len_
+    return output_segments
+
+def rand_segs2(input_segments, k):
+    # Generate random senquence of segments whose length is the same as the input segments
+    # Number of output segments is random
+    sequence_len = input_segments[-1][1]
+    #num_out_segs = np.random.randint(1, sequence_len)
+    num_out_segs = np.random.randint(sequence_len / 200, sequence_len / 5)
+    lens = rand_sum(num_out_segs, sequence_len)
+    output_segments = []
+    count = 0
+    for i, len_ in enumerate(lens):
+        output_segments.append([count, count + len_])
         count += len_
     return output_segments
 
@@ -239,7 +256,7 @@ class SimultaneousSTE2E(object):
         segment_step = 0
         #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
-        #segments = rand_segs(segments, self.k)
+        segments = rand_segs2(segments, self.k)
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
