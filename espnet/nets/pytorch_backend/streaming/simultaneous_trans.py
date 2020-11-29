@@ -112,7 +112,7 @@ def rand_segs3(input_segments, k, low=10, high=50):
     # Each frame is between low and high
     # Default: low = 10ms, high = 50ms
     sequence_len = input_segments[-1][1]
-    lens = np.random.randint(10, 50, round(sequence_len / 10))
+    lens = np.random.randint(low, high, round(sequence_len / low))
     output_segments = []
     count = 0
     i = 0
