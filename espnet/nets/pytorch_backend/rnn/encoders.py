@@ -241,7 +241,30 @@ class Encoder(torch.nn.Module):
                 self.enc = torch.nn.ModuleList([RNN(idim, elayers, eunits, eprojs, dropout, typ=typ)])
                 logging.info(typ.upper() + ' without projection for encoder')
 
-    def forward(self, xs_pad, ilens, prev_states=None):
+    #def forward(self, xs_pad, ilens, prev_states=None):
+    #    """Encoder forward
+
+    #    :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
+    #    :param torch.Tensor ilens: batch of lengths of input sequences (B)
+    #    :param torch.Tensor prev_state: batch of previous encoder hidden states (?, ...)
+    #    :return: batch of hidden state sequences (B, Tmax, eprojs)
+    #    :rtype: torch.Tensor
+    #    """
+    #    if prev_states is None:
+    #        prev_states = [None] * len(self.enc)
+    #    assert len(prev_states) == len(self.enc)
+
+    #    current_states = []
+    #    for module, prev_state in zip(self.enc, prev_states):
+    #        xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+    #        current_states.append(states)
+
+    #    # make mask to remove bias value in padded part
+    #    mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+
+    #    return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+
+    def forward(self, xs_pad, ilens, k, s):
         """Encoder forward
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
@@ -250,19 +273,55 @@ class Encoder(torch.nn.Module):
         :return: batch of hidden state sequences (B, Tmax, eprojs)
         :rtype: torch.Tensor
         """
-        if prev_states is None:
-            prev_states = [None] * len(self.enc)
-        assert len(prev_states) == len(self.enc)
+        #if prev_states is None:
+        #    prev_states = [None] * len(self.enc)
+        #assert len(prev_states) == len(self.enc)
 
+        encoder_output = []
         current_states = []
+        ilens_out = []
+        g = k
+        Tmax = xs_pad.size(1)
+
+        while (g < Tmax):
+            prev_states = [None] * len(self.enc)
+            assert len(prev_states) == len(self.enc)
+
+            xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+
+            current_states_ = []
+            for module, prev_state in zip(self.enc, prev_states):
+                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                current_states_.append(states)
+
+            # make mask to remove bias value in padded part
+            mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
+            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            current_states.append(current_states_)
+            ilens_out.append(ilens_)
+            g += s
+
+        # g = Tmax
+        current_states_ = []
+        prev_states = [None] * len(self.enc)
+        assert len(prev_states) == len(self.enc)
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-            current_states.append(states)
-
+            current_states_.append(states)
         # make mask to remove bias value in padded part
         mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+        encoder_output.append(xs_pad.masked_fill(mask, 0.0))
+        current_states.append(current_states_)
+        ilens_out.append(ilens)
 
-        return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        return {
+            "encoder_output": encoder_output,
+            "ilens": ilens_out,
+            "current_states": current_states
+        }
 
 
 def encoder_for(args, idim, subsample):

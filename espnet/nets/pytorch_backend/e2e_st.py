@@ -446,6 +446,7 @@ class E2E(STInterface, torch.nn.Module):
         y_all = None
 
         if self.training:
+            """
             while not finished_read:
                 if "b" not in self.etype:
                     hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
@@ -464,6 +465,9 @@ class E2E(STInterface, torch.nn.Module):
                 y_all, _, loss_st = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
                 self.loss_st += loss_st
                 g += s
+            """
+            encoder_out_dict = self.enc(xs_pad, ilens, k, s)
+            y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
 
             # compute loss
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
@@ -576,15 +580,17 @@ class E2E(STInterface, torch.nn.Module):
         if self.asr_weight == 0 or self.mtlalpha == 0:
             self.loss_ctc = 0.0
         else:
-            self.loss_ctc = self.ctc(hs_pad, hlens, ys_pad_src)
+            print("Doing nothing for now")
+            #self.loss_ctc = self.ctc(hs_pad, hlens, ys_pad_src)
 
         # 3. ASR attention loss
         if self.asr_weight == 0 or self.mtlalpha == 1:
             self.loss_asr = 0.0
             self.acc_asr = 0.0
         else:
-            self.loss_asr, acc_asr, _ = self.dec_asr(hs_pad, hlens, ys_pad_src)
-            self.acc_asr = acc_asr
+            print("Doing nothing for now")
+            #self.loss_asr, acc_asr, _ = self.dec_asr(hs_pad, hlens, ys_pad_src)
+            #self.acc_asr = acc_asr
 
         # 3. MT attention loss
         if self.mt_weight == 0:
@@ -604,6 +610,8 @@ class E2E(STInterface, torch.nn.Module):
         if (self.asr_weight == 0 or self.mtlalpha == 0) or self.char_list is None:
             cer_ctc = None
         else:
+            print("Doing nothing for now")
+            """
             cers = []
 
             y_hats = self.ctc.argmax(hs_pad).data
@@ -623,11 +631,13 @@ class E2E(STInterface, torch.nn.Module):
                     cers.append(editdistance.eval(hyp_chars, ref_chars) / len(ref_chars))
 
             cer_ctc = sum(cers) / len(cers) if cers else None
+            """
 
         # 5. compute cer/wer
         if self.training or (self.asr_weight == 0 or self.mtlalpha == 1 or not (self.report_cer or self.report_wer)):
             cer, wer = 0.0, 0.0
             # oracle_cer, oracle_wer = 0.0, 0.0
+        """
         else:
             if (self.asr_weight > 0 and self.mtlalpha > 0) and self.recog_args.ctc_weight > 0.0:
                 lpz = self.ctc.log_softmax(hs_pad).data
@@ -661,6 +671,7 @@ class E2E(STInterface, torch.nn.Module):
 
             wer = 0.0 if not self.report_wer else float(sum(word_eds)) / sum(word_ref_lens)
             cer = 0.0 if not self.report_cer else float(sum(char_eds)) / sum(char_ref_lens)
+        """
 
         # 6. compute bleu
         if self.training or not self.report_bleu:
@@ -672,6 +683,7 @@ class E2E(STInterface, torch.nn.Module):
             step = 0
             # y_hats = []
             self.maxlen = olength
+            """
             while not finished_read:
                 if "b" not in self.etype:
                     hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
@@ -688,6 +700,9 @@ class E2E(STInterface, torch.nn.Module):
                 y_all, _, loss_st = self.dec(hs_pad, hlens, ys_pad, y_all, self.N, finished_read)
                 self.loss_st += loss_st
                 g += s
+            """
+            encoder_out_dict = self.enc(xs_pad, ilens, k, s)
+            y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
 
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
             #    reduction_str = 'elementwise_mean'
