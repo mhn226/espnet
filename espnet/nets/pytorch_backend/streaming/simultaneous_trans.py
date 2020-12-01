@@ -120,7 +120,9 @@ def rand_segs3(input_segments, k, low=10, high=50):
         output_segments.append([count, count + lens[i]])
         count += lens[i]
         i += 1
-    output_segments.append([output_segments[-1][1], sequence_len])
+    if output_segments[-1][1] > sequence_len:
+        output_segments[-1][1] = sequence_len
+    #output_segments.append([output_segments[-1][1], sequence_len])
     return output_segments
 
 class SimultaneousSTE2E(object):
