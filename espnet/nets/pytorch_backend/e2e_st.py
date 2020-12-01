@@ -468,7 +468,7 @@ class E2E(STInterface, torch.nn.Module):
             """
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
             y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
-
+            self.loss_st += loss_st
             # compute loss
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
             #    reduction_str = 'elementwise_mean'
@@ -703,6 +703,7 @@ class E2E(STInterface, torch.nn.Module):
             """
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
             y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+            self.loss_st += loss_st
 
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
             #    reduction_str = 'elementwise_mean'
