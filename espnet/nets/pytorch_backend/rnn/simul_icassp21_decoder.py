@@ -164,7 +164,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # pre-computation of embedding
         eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
 
-        for enc_step, hs_pad, hlens in enumerate(hs_pad_list, hlens_list):
+        for enc_step, (hs_pad, hlens) in enumerate(zip(hs_pad_list, hlens_list)):
             # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
             if self.num_encs == 1:
                 hs_pad = [hs_pad]
