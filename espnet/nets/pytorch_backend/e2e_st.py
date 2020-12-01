@@ -945,9 +945,12 @@ class E2E(STInterface, torch.nn.Module):
                 ys_pad = ys_pad[:, 1:]  # remove target language ID in the beggining
             else:
                 tgt_lang_ids = None
-            hpad, hlens, _ = self.enc(xs_pad, ilens)
+            #hpad, hlens, _ = self.enc(xs_pad, ilens)
+            encoder_out_dict = self.enc(xs_pad, ilens, k=1000000, s=1000000)
 
             # 2. Decoder
+            hpad = encoder_out_dict["encoder_output"][0]
+            hlens = encoder_out_dict["ilens"][0]
             att_ws = self.dec.calculate_all_attentions(hpad, hlens, ys_pad, lang_ids=tgt_lang_ids)
 
         return att_ws
