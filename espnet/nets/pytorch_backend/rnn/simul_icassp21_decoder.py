@@ -185,7 +185,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                                                                                                        idx + 1, hlens[idx]))
             #logging.info(self.__class__.__name__ + ' output lengths: ' + str([y.size(0) for y in ys_out]))
 
-            print(olength)
+            print(enc_step, olength)
 
             # initialization
             c_list = [self.zero_state(hs_pad[0])]
