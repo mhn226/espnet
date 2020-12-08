@@ -247,7 +247,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             # -1: eos, which is removed in the loss computation
             self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
 
-            #acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
+            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
             logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
 
             if self.labeldist is not None:
@@ -264,7 +264,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 #out_buff.extend(y_all[len(out_buff):])
         #torch.cuda.empty_cache()
         #print(out_buff.size())
-        return out_buff, y_all, self.loss
+        return out_buff, y_all, self.loss, acc
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim

@@ -467,7 +467,7 @@ class E2E(STInterface, torch.nn.Module):
                 g += s
             """
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
-            y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+            y_all, _, loss_st, self.acc = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
             self.loss_st += loss_st
             # compute loss
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
@@ -482,7 +482,7 @@ class E2E(STInterface, torch.nn.Module):
             #ppl = math.exp(self.loss_st.item())
             # -1: eos, which is removed in the loss computation
             #self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            self.acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            #self.acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
             logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
 
             # show predicted character sequence for debug
@@ -702,7 +702,7 @@ class E2E(STInterface, torch.nn.Module):
                 g += s
             """
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
-            y_all, _, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+            y_all, _, loss_st self.acc = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
             self.loss_st += loss_st
 
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
@@ -716,7 +716,7 @@ class E2E(STInterface, torch.nn.Module):
             #ppl = math.exp(self.dec.loss.item())
             # -1: eos, which is removed in the loss computation
              #self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            self.acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
+            #self.acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
             logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
             #if self.dec.labeldist is not None:
             #    if self.dec.vlabeldist is None:
