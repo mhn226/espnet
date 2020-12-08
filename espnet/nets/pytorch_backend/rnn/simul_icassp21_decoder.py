@@ -238,7 +238,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             else:
                 reduction_str = 'mean'
             #print('#########################################')
-            #print(ys_out_pad.size(), y_all.size(), ys_out_pad.view(-1).size(), ys_out_pad.view(-1)[0:y_all.size(0)].size())
+            print(ys_out_pad.size(), y_all.size(), ys_out_pad.view(-1).size(), ys_out_pad.view(-1)[0:y_all.size(0)].size())
             self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1)[0:y_all.size(0)],
                                 ignore_index=self.ignore_id,
                                 reduction=reduction_str)
@@ -263,8 +263,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 out_buff = torch.cat((out_buff, y_all[out_buff.size(0):]), dim=0)
                 #out_buff.extend(y_all[len(out_buff):])
         #torch.cuda.empty_cache()
-        #print(out_buff.size())
-        return out_buff, y_all, self.loss, acc
+        print(out_buff.size())
+        return out_buff, y_all, self.loss
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
