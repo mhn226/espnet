@@ -702,7 +702,7 @@ class E2E(STInterface, torch.nn.Module):
                 g += s
             """
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
-            y_all, _, loss_st self.acc = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+            y_all, _, loss_st, self.acc = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
             self.loss_st += loss_st
 
             #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
