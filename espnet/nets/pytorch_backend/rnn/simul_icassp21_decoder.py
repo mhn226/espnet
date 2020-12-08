@@ -173,8 +173,9 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
             # hlens should be list of list of integer
             hlens = [list(map(int, hlens[idx])) for idx in range(self.num_encs)]
-
-            if out_buff is None:
+            if len(hs_pad_list) == 1:
+                olength = ys_out_pad.size(1)
+            elif out_buff is None:
                 olength = min(N, ys_out_pad.size(1))
             elif enc_step < len(hs_pad_list)-1:
                 olength = min(out_buff.size(0) + N, ys_out_pad.size(1))
