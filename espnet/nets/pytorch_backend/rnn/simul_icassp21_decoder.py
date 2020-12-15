@@ -208,7 +208,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             # loop for an output sequence
             for i in six.moves.range(olength):
                 if self.num_encs == 1:
-                    print(hs_pad[idx].size(), hlens[idx])
                     att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
                 else:
                     for idx in range(self.num_encs):
@@ -243,7 +242,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             else:
                 reduction_str = 'mean'
             #print('#########################################')
-            print(ys_out_pad.size(), y_all.size(), ys_out_pad.view(-1).size(), ys_out_pad.view(-1)[0:y_all.size(0)].size())
+            #print(ys_out_pad.size(), y_all.size(), ys_out_pad.view(-1).size(), ys_out_pad.view(-1)[0:y_all.size(0)].size())
             self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1)[0:y_all.size(0)],
                                 ignore_index=self.ignore_id,
                                 reduction=reduction_str)
