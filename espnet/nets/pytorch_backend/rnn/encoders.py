@@ -288,7 +288,7 @@ class Encoder(torch.nn.Module):
         offset = 0
         #u_xs_pad_buff = [torch.empty((xs_pad.size(0), 0, self.args.eunits), device=xs_pad.device)]
         u_xs_pad_buff = None
-        print(self.etype, self.eunits)
+        print(self.etype, self.eunits, len(self.enc))
         while (g < Tmax):
             if "b" in self.etype:
                 #prev_states = [None] * len(self.enc)
