@@ -326,7 +326,7 @@ class Encoder(torch.nn.Module):
         current_states_ = []
         assert len(prev_states) == len(self.enc)
         for module, prev_state in zip(self.enc, prev_states):
-            if self.etype == "blstm":
+            if "b" in self.etype:
                 xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
                 current_states_.append(states)
                 mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
