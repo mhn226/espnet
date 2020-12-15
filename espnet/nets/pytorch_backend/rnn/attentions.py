@@ -207,9 +207,7 @@ class AttAdd(torch.nn.Module):
         # pre-compute all h outside the decoder loop
         if self.pre_compute_enc_h is None or self.han_mode:
             self.enc_h = enc_hs_pad  # utt x frame x hdim
-            print(self.enc_h.size())
             self.h_length = self.enc_h.size(1)
-            print(self.h_length)
             # utt x frame x att_dim
             self.pre_compute_enc_h = self.mlp_enc(self.enc_h)
 
