@@ -332,6 +332,7 @@ class Encoder(torch.nn.Module):
                 mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
                 encoder_output.append(xs_pad.masked_fill(mask, 0.0))
                 ilens_out.append(ilens)
+                print(ilens)
             elif offset < Tmax:
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:Tmax].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
