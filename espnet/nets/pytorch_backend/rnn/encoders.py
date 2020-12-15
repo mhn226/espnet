@@ -282,14 +282,21 @@ class Encoder(torch.nn.Module):
         ilens_out = []
         g = k
         Tmax = xs_pad.size(1)
-
+        prev_states = [None] * len(self.enc)
+        offset = 0
+        u_xs_pad_buff = None
         while (g < Tmax):
-            prev_states = [None] * len(self.enc)
-            assert len(prev_states) == len(self.enc)
+            if self.typ == "blstm":
+                #prev_states = [None] * len(self.enc)
+                xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
+                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+            else:
+                xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
+                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                ilens_ = ilens_.new_full(ilens.size(), fill_value=(g - offset))
 
-            xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
-            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-            ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+            assert len(prev_states) == len(self.enc)
 
             current_states_ = []
             for module, prev_state in zip(self.enc, prev_states):
@@ -298,25 +305,41 @@ class Encoder(torch.nn.Module):
 
             # make mask to remove bias value in padded part
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
-            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            if self.typ == "blstm":
+                encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+                print(ilens_)
+                ilens_out.append(ilens_)
             current_states.append(current_states_)
-            ilens_out.append(ilens_)
+            if self.typ != "blstm":
+                prev_states = current_states_
+                u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
+                encoder_output.append(u_xs_pad_buff)
+                ilens_out.append(ilens_)
+                offset = g
             g += s
 
         # g = Tmax
         current_states_ = []
-        prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
         for module, prev_state in zip(self.enc, prev_states):
-            xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-            current_states_.append(states)
+            if self.typ == "blstm":
+                xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+                current_states_.append(states)
+                mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+                encoder_output.append(xs_pad.masked_fill(mask, 0.0))
+                ilens_out.append(ilens)
+            elif offset < Tmax:
+                xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:Tmax].transpose(1, 2)
+                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+                ilens_ = ilens_.new_full(ilens.size(), fill_value=(Tmax - offset))
+                xs_pad, ilens, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                current_states_.append(states)
+                u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad), dim=1)
+                encoder_output.append(u_xs_pad_buff)
+                ilens_out.append(ilens)
         # make mask to remove bias value in padded part
-        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
-        encoder_output.append(xs_pad.masked_fill(mask, 0.0))
         current_states.append(current_states_)
-        ilens_out.append(ilens)
 
-        #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
         return {
             "encoder_output": encoder_output,
             "ilens": ilens_out,
