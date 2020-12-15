@@ -313,36 +313,39 @@ class Encoder(torch.nn.Module):
                 encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
                 print(ilens_)
                 ilens_out.append(ilens_)
-            current_states.append(current_states_)
-            if "b" not in self.etype:
+            else:
                 prev_states = current_states_
                 #u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
                 encoder_output.append(u_xs_pad_buff)
                 ilens_out.append(ilens_)
                 offset = g
+            current_states.append(current_states_)
             g += s
 
         # g = Tmax
         current_states_ = []
         assert len(prev_states) == len(self.enc)
+        if "b" in self.etype:
+            xs_pad_ = xs_pad
+            ilens_ = ilens
+        elif offset < Tmax:
+            xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:Tmax].transpose(1, 2)
+            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            ilens_ = ilens_.new_full(ilens.size(), fill_value=(Tmax - offset))
         for module, prev_state in zip(self.enc, prev_states):
-            if "b" in self.etype:
-                xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-                current_states_.append(states)
-                mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
-                encoder_output.append(xs_pad.masked_fill(mask, 0.0))
-                ilens_out.append(ilens)
-                print('enc: ', prev_states, ilens, xs_pad.size())
-            elif offset < Tmax:
-                xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:Tmax].transpose(1, 2)
-                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
-                ilens_ = ilens_.new_full(ilens.size(), fill_value=(Tmax - offset))
-                xs_pad, ilens, states = module(xs_pad_, ilens_, prev_state=prev_state)
-                current_states_.append(states)
-                #u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad), dim=1)
-                encoder_output.append(u_xs_pad_buff)
-                ilens_out.append(ilens)
-        # make mask to remove bias value in padded part
+            xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+            current_states_.append(states)
+
+        if "b" in self.etype:
+            mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
+            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            ilens_out.append(ilens_)
+            print('enc: ', prev_states, ilens_, xs_pad_.size())
+        elif offset < Tmax:
+            #u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
+            encoder_output.append(u_xs_pad_buff)
+            ilens_out.append(ilens_)
+
         current_states.append(current_states_)
 
         return {
