@@ -261,7 +261,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
                 self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
 
-            print(type(y_all), y_all.size())
+            #print(type(y_all), y_all.size())
             if out_buff is None:
                 out_buff = y_all
             else:
