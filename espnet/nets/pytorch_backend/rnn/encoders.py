@@ -216,6 +216,7 @@ class Encoder(torch.nn.Module):
     def __init__(self, etype, idim, elayers, eunits, eprojs, subsample, dropout, in_channel=1):
         super(Encoder, self).__init__()
         typ = etype.lstrip("vgg").rstrip("p")
+        self.etype = etype
         if typ not in ['lstm', 'gru', 'blstm', 'bgru']:
             logging.error("Error: need to specify an appropriate encoder architecture")
 
@@ -286,7 +287,7 @@ class Encoder(torch.nn.Module):
         offset = 0
         u_xs_pad_buff = None
         while (g < Tmax):
-            if self.typ == "blstm":
+            if self.etype == "blstm":
                 #prev_states = [None] * len(self.enc)
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -305,12 +306,12 @@ class Encoder(torch.nn.Module):
 
             # make mask to remove bias value in padded part
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
-            if self.typ == "blstm":
+            if self.etype == "blstm":
                 encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
                 print(ilens_)
                 ilens_out.append(ilens_)
             current_states.append(current_states_)
-            if self.typ != "blstm":
+            if self.etype != "blstm":
                 prev_states = current_states_
                 u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
                 encoder_output.append(u_xs_pad_buff)
@@ -322,7 +323,7 @@ class Encoder(torch.nn.Module):
         current_states_ = []
         assert len(prev_states) == len(self.enc)
         for module, prev_state in zip(self.enc, prev_states):
-            if self.typ == "blstm":
+            if self.etype == "blstm":
                 xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
                 current_states_.append(states)
                 mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
