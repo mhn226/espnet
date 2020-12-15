@@ -287,6 +287,7 @@ class Encoder(torch.nn.Module):
         prev_states = [None] * len(self.enc)
         offset = 0
         u_xs_pad_buff = torch.empty((xs_pad.size(0), 0, self.eunits), device=xs_pad.device)
+        ilen_buff = [0] * xs_pad.size(0)
         #u_xs_pad_buff = None
         print(self.etype, self.eunits, len(self.enc))
         while (g < Tmax):
@@ -311,14 +312,14 @@ class Encoder(torch.nn.Module):
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
             if "b" in self.etype:
                 encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
-                print(ilens_)
                 ilens_out.append(ilens_)
             else:
                 prev_states = current_states_
                 print(xs_pad_.size(), u_xs_pad_buff.size())
                 u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
                 encoder_output.append(u_xs_pad_buff)
-                ilens_out.append(ilens_)
+                ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
+                ilens_out.append(ilen_buff)
                 offset = g
             current_states.append(current_states_)
             g += s
@@ -345,7 +346,8 @@ class Encoder(torch.nn.Module):
         elif offset < Tmax:
             u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
             encoder_output.append(u_xs_pad_buff)
-            ilens_out.append(ilens_)
+            ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
+            ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
 
         current_states.append(current_states_)
