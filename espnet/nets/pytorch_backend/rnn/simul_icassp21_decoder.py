@@ -211,6 +211,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
                 else:
                     for idx in range(self.num_encs):
+                        print(hs_pad[idx].size(), hlens[idx])
                         att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
                                                                          self.dropout_dec[0](z_list[0]),
                                                                          att_w_list[idx])
