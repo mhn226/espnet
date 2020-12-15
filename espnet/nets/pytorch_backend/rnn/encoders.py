@@ -315,6 +315,7 @@ class Encoder(torch.nn.Module):
                 ilens_out.append(ilens_)
             else:
                 prev_states = current_states_
+                print(xs_pad_.size())
                 u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
                 encoder_output.append(u_xs_pad_buff)
                 ilens_out.append(ilens_)
