@@ -163,7 +163,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         # pre-computation of embedding
         eys = self.dropout_emb(self.embed(ys_in_pad))  # utt x olen x zdim
-        print(len(hs_pad_list))
+        #print(len(hs_pad_list))
 
         for enc_step, (hs_pad, hlens) in enumerate(zip(hs_pad_list, hlens_list)):
             # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
@@ -187,7 +187,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                                                                                                        idx + 1, hlens[idx]))
             #logging.info(self.__class__.__name__ + ' output lengths: ' + str([y.size(0) for y in ys_out]))
 
-            print(enc_step, olength)
+            #print(enc_step, olength)
 
             # initialization
             c_list = [self.zero_state(hs_pad[0])]
@@ -208,7 +208,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             # loop for an output sequence
             for i in six.moves.range(olength):
                 if self.num_encs == 1:
-                    print(hs_pad[0].size(), hlens[0])
                     att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
                 else:
                     for idx in range(self.num_encs):
@@ -268,7 +267,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 out_buff = torch.cat((out_buff, y_all[out_buff.size(0):]), dim=0)
                 #out_buff.extend(y_all[len(out_buff):])
         #torch.cuda.empty_cache()
-        print(out_buff.size())
+        #print(out_buff.size())
         return out_buff, y_all, self.loss
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
