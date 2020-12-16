@@ -351,7 +351,7 @@ class Encoder(torch.nn.Module):
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
 
         current_states.append(current_states_)
-
+        print("enc ends")
         return {
             "encoder_output": encoder_output,
             "ilens": ilens_out,
