@@ -289,8 +289,8 @@ class E2E(STInterface, torch.nn.Module):
         # simultaneous training
         self.k = 200
         self.g = self.k
-        self.s = 200
-        self.N = 5
+        self.s = 20
+        self.N = 1
         print('k, g, s, N: ', self.k, self.g, self.s, self.N)
         #self.finished_read = False
         self.maxlen = 400
