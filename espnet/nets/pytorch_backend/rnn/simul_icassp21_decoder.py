@@ -237,28 +237,28 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             # compute loss
             y_all = self.output(z_all)
 
-            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-                reduction_str = 'elementwise_mean'
-            else:
-                reduction_str = 'mean'
+            #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            #    reduction_str = 'elementwise_mean'
+            #else:
+            #    reduction_str = 'mean'
             #print('#########################################')
             #print(ys_out_pad.size(), y_all.size(), ys_out_pad.view(-1).size(), ys_out_pad.view(-1)[0:y_all.size(0)].size())
-            self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1)[0:y_all.size(0)],
-                                ignore_index=self.ignore_id,
-                                reduction=reduction_str)
+            #self.loss = F.cross_entropy(y_all, ys_out_pad.view(-1)[0:y_all.size(0)],
+            #                    ignore_index=self.ignore_id,
+            #                    reduction=reduction_str)
             # compute perplexity
             #ppl = math.exp(self.loss.item())
             # -1: eos, which is removed in the loss computation
-            self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            #self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
 
             #acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
+            #logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
 
-            if self.labeldist is not None:
-                if self.vlabeldist is None:
-                    self.vlabeldist = to_device(self, torch.from_numpy(self.labeldist))
-                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
-                self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
+            #if self.labeldist is not None:
+            #    if self.vlabeldist is None:
+            #        self.vlabeldist = to_device(self, torch.from_numpy(self.labeldist))
+            #    loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
+            #    self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
 
             #print(type(y_all), y_all.size())
             if out_buff is None:
@@ -266,6 +266,25 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             else:
                 out_buff = torch.cat((out_buff, y_all[out_buff.size(0):]), dim=0)
                 #out_buff.extend(y_all[len(out_buff):])
+
+        if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            reduction_str = 'elementwise_mean'
+        else:
+            reduction_str = 'mean'
+        self.loss = F.cross_entropy(out_buff, ys_out_pad.view(-1)[0:y_all.size(0)],
+                                ignore_index=self.ignore_id,
+                                reduction=reduction_str)
+
+        self.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+
+        logging.info('att loss:' + ''.join(str(self.loss.item()).split('\n')))
+
+        if self.labeldist is not None:
+            if self.vlabeldist is None:
+                self.vlabeldist = to_device(self, torch.from_numpy(self.labeldist))
+            loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
+            self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
+
         #torch.cuda.empty_cache()
         #print(out_buff.size())
         return out_buff, y_all, self.loss
