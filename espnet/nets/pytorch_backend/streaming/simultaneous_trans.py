@@ -512,6 +512,7 @@ class SimultaneousSTE2E(object):
             return
 
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
+        logging.info('zzzzzz: ' + str(states['z_prev']))
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1)
