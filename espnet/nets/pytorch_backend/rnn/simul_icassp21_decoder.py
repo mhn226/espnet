@@ -947,6 +947,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             a_prev_size = state['a_prev'][0].size(0)
             if a_prev_size < x[0].size(0):
                 a_prev_padded = torch.zeros(x[0].size(0))
+                logging.info(str(a_prev_padded.size()))
+                logging.info(str(state['a_prev'][0].size()))
                 a_prev_padded[:, a_prev_size] = state['a_prev'][0]
 
         att_idx, z_list, c_list = state["workspace"]
