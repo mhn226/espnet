@@ -165,6 +165,7 @@ class SimultaneousSTE2E(object):
         self.max_len = 400
         self.min_len = 0
         self.offset = 0
+        self.all_states = []
         #self.max_len = 1000
 
         assert self._trans_args.batchsize <= 1, \
@@ -350,7 +351,8 @@ class SimultaneousSTE2E(object):
                 logging.info('dec_step: ' + str(dec_step))
                 #action = self.write_action_until(dec_step=dec_step)
                 action = self.write_action()
-
+        with open('hiden_states', 'w') as fw:
+            fw.writelines(self.all_states)
         return action
 
     def read_action_blstm(self, x,  segments=None, segment_step=0):
@@ -514,6 +516,7 @@ class SimultaneousSTE2E(object):
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
         logging.info('zzzzzz: ' + str(states['z_prev']))
         logging.info('zzzzzz size: ' + str(len(states['z_prev'])) + "   " + str(states['z_prev'][0].size()))
+        self.all_states.append(str(states['z_prev']) + '\n')
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
         local_best_score, local_best_id = torch.topk(score, 1)

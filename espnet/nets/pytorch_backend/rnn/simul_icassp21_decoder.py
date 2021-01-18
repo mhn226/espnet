@@ -923,11 +923,9 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         c_list = [self.zero_state(x[0].unsqueeze(0))]
         z_list = [self.zero_state(x[0].unsqueeze(0))]
-        logging.info("@@@@@@@@@@ :" + str(len(c_list)))
         for _ in six.moves.range(1, self.dlayers):
             c_list.append(self.zero_state(x[0].unsqueeze(0)))
             z_list.append(self.zero_state(x[0].unsqueeze(0)))
-        logging.info("########## :" + str(len(c_list)))
         # TODO(karita): support strm_index for `asr_mix`
         strm_index = 0
         att_idx = min(strm_index, len(self.att) - 1)
