@@ -942,6 +942,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
         if self.num_encs == 1:
             x = [x]
+        a_prev_padded = None
         if state['a_prev'] is not None:
             # num_encs == 1
             a_prev_size = state['a_prev'][0].size(0)
