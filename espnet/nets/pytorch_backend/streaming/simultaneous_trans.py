@@ -351,7 +351,7 @@ class SimultaneousSTE2E(object):
                 logging.info('dec_step: ' + str(dec_step))
                 #action = self.write_action_until(dec_step=dec_step)
                 action = self.write_action()
-        with open('hiden_states', 'w') as fw:
+        with open('/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/iwslt20/mustc_europarl_how2/hiden_states', 'w') as fw:
             fw.writelines(self.all_states)
         return action
 
