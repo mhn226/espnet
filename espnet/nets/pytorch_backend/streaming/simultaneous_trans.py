@@ -542,7 +542,7 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['z_prev'] = states['z_prev']
         self.hyp['states']['c_prev'] = states['c_prev']
         self.hyp['states']['a_prev'] = states['a_prev']
-        logging.info('aaaaaaaaaaaa :' + len(states['a_prev']))
+        logging.info('aaaaaaaaaaaa :' + str(len(states['a_prev'])))
         self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
         self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
