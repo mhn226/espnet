@@ -344,8 +344,8 @@ def trans_waitk(args):
     logging.info('len offline: ' + str(len(action_offline['value']['dec_hyp']['all_states'])))
     min_len = min(len(action['value']['dec_hyp']['all_states']), len(action_offline['value']['dec_hyp']['all_states']))
     for i in range(min_len):
-        sim = torch.nn.CosineSimilarity(action['value']['dec_hyp']['all_states'][i][1], action_offline['value']['dec_hyp']['all_states'][i][1])
-        logging.info('sim at position ' + str(i) + ': ' + str(sim))(sim(sim(sim(sim(sim(sim(sim(sim))))))))
+        sim = torch.nn.CosineSimilarity(action['value']['dec_hyp']['all_states'][i][1], action_offline['value']['dec_hyp']['all_states'][i][1], dim=0)
+        logging.info('sim at position ' + str(i) + ': ' + str(sim))
     #corpus_AL = sum(corpus_AL) / len(corpus_AL)
     #corpus_DAL = sum(corpus_DAL) / len(corpus_DAL)
     #corpus_latency['AL'] = corpus_AL
