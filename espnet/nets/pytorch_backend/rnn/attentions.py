@@ -9,6 +9,8 @@ import torch.nn.functional as F
 from espnet.nets.pytorch_backend.nets_utils import make_pad_mask
 from espnet.nets.pytorch_backend.nets_utils import to_device
 
+import logging
+
 
 def _apply_attention_constraint(e, last_attended_idx, backward_window=1, forward_window=3):
     """Apply monotonic attention constraint.
@@ -202,7 +204,9 @@ class AttAdd(torch.nn.Module):
         :return: previous attention weights (B x T_max)
         :rtype: torch.Tensor
         """
-
+        logging.info('atttttttttttttttttttttt: ')
+        logging.info(str(enc_hs_pad.size()))
+        logging.info(str(enc_hs_len))
         batch = len(enc_hs_pad)
         # pre-compute all h outside the decoder loop
         if self.pre_compute_enc_h is None or self.han_mode:
