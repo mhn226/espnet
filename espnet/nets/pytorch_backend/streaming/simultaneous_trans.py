@@ -543,7 +543,7 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
         self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
-        self.hyp['all_states'].append(str(states['z_prev']) + '\n')
+        self.hyp['all_states'].append(states['z_prev'])
         if self.finish_read:
             self.hyp['delays'].append(self.g)
         else:
