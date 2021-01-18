@@ -959,6 +959,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             #att_c, att_w = self.att[att_idx](
             #    x[0].unsqueeze(0), [x[0].size(0)],
             #    self.dropout_dec[0](state['z_prev'][0]), state['a_prev'])
+            self.att[att_idx].pre_compute_enc_h = None
             att_c, att_w = self.att[att_idx](
                 x[0].unsqueeze(0), [x[0].size(0)],
                 self.dropout_dec[0](state['z_prev'][0]), a_prev_padded)

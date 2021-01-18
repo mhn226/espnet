@@ -222,7 +222,7 @@ class AttAdd(torch.nn.Module):
 
         # dot with gvec
         # utt x frame x att_dim -> utt x frame
-        logging.info('attttttttttt: ')
+        logging.info('atttttttttttttttttttttttttt: ')
         logging.info(str(self.pre_compute_enc_h.size()) + ', ' + str(dec_z_tiled.size()))
         e = self.gvec(torch.tanh(self.pre_compute_enc_h + dec_z_tiled)).squeeze(2)
 
