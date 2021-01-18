@@ -944,9 +944,9 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             x = [x]
         if state['a_prev'] is not None:
             # num_encs == 1
-            if state['a_prev'][0].size() < x[0].size(0):
+            if state['a_prev'][0].size(0) < x[0].size(0):
                 a_prev = torch.zeros(x[0].size(0))
-                a_prev[:, state['a_prev'][0].size()] = state['a_prev'][0].size()
+                a_prev[:, state['a_prev'][0].size(0)] = state['a_prev'][0]
 
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
