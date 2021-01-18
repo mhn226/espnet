@@ -132,7 +132,7 @@ class SimultaneousSTE2E(object):
     :param trans_args: arguments for "trans" method of E2E
     """
 
-    def __init__(self, e2e, trans_args, rnnlm=None):
+    def __init__(self, e2e, trans_args, k, s, N, rnnlm=None):
         self._e2e = e2e
         self._trans_args = trans_args
         self._char_list = e2e.char_list
@@ -156,13 +156,16 @@ class SimultaneousSTE2E(object):
         self.finished = False
         self.finish_read = False
         self.last_action = None
-        self.k = 200
+        #self.k = 200
+        self.k = k
         self.g = self.k
-        self.N = 1 #2 # maximum number of target tokens generated at one step
+        #self.N = 1 #2 # maximum number of target tokens generated at one step
+        self.N = N
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
-        self.s = 20
+        #self.s = 20
+        self.s = s
         self.max_len = 400
         self.min_len = 0
         self.offset = 0

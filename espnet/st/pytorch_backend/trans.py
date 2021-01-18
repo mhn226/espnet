@@ -249,7 +249,7 @@ def trans_waitk(args):
             textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
-            se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
+            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=200, s=20, N=1)
             action = {}
             nbest_hyps = []
             for n in range(args.nbest):
@@ -305,9 +305,9 @@ def trans_waitk(args):
             #corpus_AL.append(latency['AL'])
             #corpus_DAL.append(latency['DAL'])
 
-            se2e_offline = SimultaneousSTE2E(e2e=model, trans_args=args)
-            se2e_offline.k = 1000000
-            se2e_offline.s = 1000000
+            se2e_offline = SimultaneousSTE2E(e2e=model, trans_args=args, k=1000000, s=1000000, N=1)
+            #se2e_offline.k = 1000000
+            #se2e_offline.s = 1000000
             action_offline = {}
             nbest_hyps_offline = []
             for n in range(args.nbest):
