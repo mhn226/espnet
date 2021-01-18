@@ -438,7 +438,6 @@ class SimultaneousSTE2E(object):
         count = 1
         for i in range(self.max_len):
             score, states = self._e2e.dec.score(hyp['yseq'], hyp['states'], self.enc_states)
-            #logging.info('zzzzzz: ' + str(states['z_prev']))
             score = F.log_softmax(score, dim=1).squeeze()
             # greedy search, take only the (1) best score
             local_best_score, local_best_id = torch.topk(score, 1)
@@ -518,8 +517,6 @@ class SimultaneousSTE2E(object):
             return
 
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
-        #logging.info('zzzzzz: ' + str(states['z_prev']))
-        logging.info('zzzzzz size: ' + str(len(states['z_prev'])) + "   " + str(states['z_prev'][0].size()))
         #self.all_states.append(str(states['z_prev']) + '\n')
         score = F.log_softmax(score, dim=1).squeeze()
         # greedy search, take only the (1) best score
@@ -545,6 +542,7 @@ class SimultaneousSTE2E(object):
         self.hyp['states']['z_prev'] = states['z_prev']
         self.hyp['states']['c_prev'] = states['c_prev']
         self.hyp['states']['a_prev'] = states['a_prev']
+        logging.info('aaaaaaaaaaaa :' + len(states['a_prev']))
         self.hyp['states']['workspace'] = states['workspace']
         self.hyp['score'] = self.hyp['score'] + local_best_score[0]
         self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
