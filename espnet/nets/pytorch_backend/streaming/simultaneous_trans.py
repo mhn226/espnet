@@ -318,7 +318,6 @@ class SimultaneousSTE2E(object):
                 dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
                 action = self.write_action_until(dec_step=dec_step)
-        #self.hyp['all_states'] = self.all_states
         return action
 
 
