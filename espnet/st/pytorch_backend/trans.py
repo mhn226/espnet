@@ -249,7 +249,7 @@ def trans_waitk(args):
             textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
-            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=200, s=50, N=1)
+            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=400, s=50, N=1)
             action = {}
             nbest_hyps = []
             for n in range(args.nbest):
