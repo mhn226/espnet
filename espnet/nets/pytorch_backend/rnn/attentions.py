@@ -204,19 +204,18 @@ class AttAdd(torch.nn.Module):
         :return: previous attention weights (B x T_max)
         :rtype: torch.Tensor
         """
-        logging.info('atttttttttttttttttttttt: ')
-        logging.info(str(enc_hs_pad.size()))
-        logging.info(str(enc_hs_len))
         batch = len(enc_hs_pad)
         # pre-compute all h outside the decoder loop
         if self.pre_compute_enc_h is None or self.han_mode:
             self.enc_h = enc_hs_pad  # utt x frame x hdim
             self.h_length = self.enc_h.size(1)
             # utt x frame x att_dim
+            logging.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             self.pre_compute_enc_h = self.mlp_enc(self.enc_h)
 
         if dec_z is None:
             dec_z = enc_hs_pad.new_zeros(batch, self.dunits)
+            logging.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
         else:
             dec_z = dec_z.view(batch, self.dunits)
 
