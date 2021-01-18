@@ -942,7 +942,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
         if self.num_encs == 1:
             x = [x]
-        logging.info('xxxxxxxxxxxx size: ' + str(x[0].size()) + ', ' + str(state['a_prev'][0].size()))
+        if state['a_prev'][0] is not None:
+            logging.info('xxxxxxxxxxxx size: ' + str(x[0].size()) + ', ' + str(state['a_prev'][0].size()))
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
