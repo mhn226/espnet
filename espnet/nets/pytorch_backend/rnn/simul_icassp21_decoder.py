@@ -951,6 +951,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 logging.info(str(a_prev_padded.size()))
                 a_prev_padded[:a_prev_size] = state['a_prev'][0]
                 a_prev_padded = [a_prev_padded]
+                logging.info(str(a_prev_padded[0].size()))
 
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
