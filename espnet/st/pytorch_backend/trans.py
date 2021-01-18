@@ -307,7 +307,8 @@ def trans_waitk(args):
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
-
+    with open('/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/iwslt20/mustc_europarl_how2/hiden_states', 'w') as fw:
+        fw.writelines(action['value']['dec_hyp']['all_states'])
     #corpus_AL = sum(corpus_AL) / len(corpus_AL)
     #corpus_DAL = sum(corpus_DAL) / len(corpus_DAL)
     #corpus_latency['AL'] = corpus_AL
