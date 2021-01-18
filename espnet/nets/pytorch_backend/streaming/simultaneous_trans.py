@@ -10,6 +10,7 @@ READ=0
 WRITE=1
 
 np.random.seed(7)
+torch.set_printoptions(threshold=10000)
 
 def len2numframes(len_, sample_rate=16000, frame_len=0.025, frame_shift=0.01):
     # len_ in second
