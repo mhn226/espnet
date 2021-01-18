@@ -352,8 +352,8 @@ class SimultaneousSTE2E(object):
                 self.last_action = WRITE
                 dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
-                #action = self.write_action_until(dec_step=dec_step)
-                action = self.write_action()
+                action = self.write_action_until(dec_step=dec_step)
+                #action = self.write_action()
 
         return action
 
@@ -473,6 +473,7 @@ class SimultaneousSTE2E(object):
                 self.hyp['score'] = self.hyp['score'] + m_score
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
                 self.hyp['delays'].append(self.g)
+                self.hyp['all_states'].append(hyp['states']['z_prev'])
                 if ((self.hyp['yseq'][len(self.hyp['yseq']) - 1] == self._e2e.dec.eos) and (
                         len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
                     # Finish this sentence is predict EOS
@@ -490,6 +491,7 @@ class SimultaneousSTE2E(object):
                 self.hyp['score'] = self.hyp['score'] + m_score
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], m_id))
                 self.hyp['delays'].append(self.g - self.s)
+                self.hyp['all_states'].append(hyp['states']['z_prev'])
                 if count >= self.N:
                     return
                 count += 1
