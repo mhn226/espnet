@@ -210,12 +210,10 @@ class AttAdd(torch.nn.Module):
             self.enc_h = enc_hs_pad  # utt x frame x hdim
             self.h_length = self.enc_h.size(1)
             # utt x frame x att_dim
-            logging.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             self.pre_compute_enc_h = self.mlp_enc(self.enc_h)
 
         if dec_z is None:
             dec_z = enc_hs_pad.new_zeros(batch, self.dunits)
-            logging.info('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb')
         else:
             dec_z = dec_z.view(batch, self.dunits)
 
@@ -224,6 +222,8 @@ class AttAdd(torch.nn.Module):
 
         # dot with gvec
         # utt x frame x att_dim -> utt x frame
+        logging.info('attttttttttt: ')
+        logging.info(str(self.pre_compute_enc_h.size()) + ', ' + str(dec_z_tiled.size()))
         e = self.gvec(torch.tanh(self.pre_compute_enc_h + dec_z_tiled)).squeeze(2)
 
         # NOTE consider zero padding when compute w.
