@@ -846,6 +846,31 @@ class E2E(STInterface, torch.nn.Module):
         hs, _, _ = self.enc(hs, ilens)
         return hs.squeeze(0)
 
+    def encode_at_once(self, x, k, s):
+        """Encode acoustic features.
+
+                :param ndarray x: input acoustic feature (T, D)
+                :return: encoder outputs
+                :rtype: torch.Tensor
+                """
+        self.eval()
+        ilens = [x.shape[0]]
+
+        # subsample frame
+        x = x[::self.subsample[0], :]
+        p = next(self.parameters())
+        h = torch.as_tensor(x, device=p.device, dtype=p.dtype)
+        # make a utt list (1) to use the same interface for encoder
+        hs = h.contiguous().unsqueeze(0)
+
+        # 1. encoder
+        return self.enc(hs, ilens, k, s)
+
+    def decode_at_once(self, encoder_output, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
+        self.eval()
+        out_buff, y_all, loss = self.dec(encoder_output["encoder_output"], encoder_output["ilens"], ys_pad, None, N)
+        return y_all
+
     def translate(self, x, trans_args, char_list, rnnlm=None):
         """E2E beam search.
 

@@ -249,7 +249,7 @@ def trans_waitk(args):
             textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
             #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
             #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
-            se2e = SimultaneousSTE2E(e2e=model, trans_args=args)
+            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=200, s=20, N=2)
             action = {}
             nbest_hyps = []
             for n in range(args.nbest):
@@ -305,9 +305,53 @@ def trans_waitk(args):
             #corpus_AL.append(latency['AL'])
             #corpus_DAL.append(latency['DAL'])
 
+            """
+            se2e_offline = SimultaneousSTE2E(e2e=model, trans_args=args, k=1000000, s=1000000, N=1)
+            #se2e_offline.k = 1000000
+            #se2e_offline.s = 1000000
+            action_offline = {}
+            nbest_hyps_offline = []
+            for n in range(args.nbest):
+                nbest_hyps_offline.append({"yseq": [], "score": 0.0, "latency": {}})
+
+            while action_offline.get('value', None) != model.dec.eos:
+                # take an action
+                import os.path
+                if os.path.isfile(textgrid_file):
+                    action_offline = se2e_offline.predefined_policy(feat, textgrid_file, num_of_toks)
+                else:
+                    action_offline = se2e_offline.policy(feat)
+
+                if action_offline['key'] == 'SEND':
+                    break
+            # nbest_hyps = [h.asdict() for h in nbest_hyps[:min(len(nbest_hyps), args.nbest)]]
+            nbest_hyps_offline[0]['yseq'] = action_offline['value']['dec_hyp']['yseq']
+            nbest_hyps_offline[0]['scrore'] = action_offline['value']['dec_hyp']['score']
+            hyp_word_indices_offline = word_splitter(nbest_hyps_offline[0]['yseq'], 179, model.dec.eos)
+            hyp_word_delays_offline = [action_offline['value']['dec_hyp']['delays'][i] for i in hyp_word_indices_offline]
+            logging.info('delays: ' + str(hyp_word_delays_offline))
+            # latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
+            # latency = eval_all_latency(hyp_word_delays, js[name]['input'][0]['shape'][0], len(ref_word_indices))
+            latency_offline = eval_all_latency(hyp_word_delays_offline, js[name]['input'][0]['shape'][0], None)
+            nbest_hyps_offline[0]['latency'] = latency_offline
+            #new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
+            #logging.info('latency: ' + str(latency))
+            """
+
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
+    #with open('/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/iwslt20/mustc_europarl_how2/hiden_states', 'w') as fw:
+    #    fw.writelines(action['value']['dec_hyp']['all_states'])
 
+    """
+    logging.info('len simul: ' + str(len(action['value']['dec_hyp']['all_states'])))
+    logging.info('len offline: ' + str(len(action_offline['value']['dec_hyp']['all_states'])))
+    min_len = min(len(action['value']['dec_hyp']['all_states']), len(action_offline['value']['dec_hyp']['all_states']))
+    for i in range(min_len):
+        cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
+        sim = cos(action['value']['dec_hyp']['all_states'][i][1], action_offline['value']['dec_hyp']['all_states'][i][1])
+        logging.info('sim at position ' + str(i) + ': ' + str(sim))
+    """
     #corpus_AL = sum(corpus_AL) / len(corpus_AL)
     #corpus_DAL = sum(corpus_DAL) / len(corpus_DAL)
     #corpus_latency['AL'] = corpus_AL
