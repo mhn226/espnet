@@ -157,7 +157,7 @@ class SimultaneousSTE2E(object):
         self.last_action = None
         self.k = 200
         self.g = self.k
-        self.N = 1 #2 # maximum number of target tokens generated at one step
+        self.N = 2 #2 # maximum number of target tokens generated at one step
         #self.g = 1000000 #offline
         #self.g = math.inf
         #self.s = 5
@@ -274,7 +274,7 @@ class SimultaneousSTE2E(object):
         segment_step = 0
         #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
-        segments = rand_segs3(segments, self.k, 10, 50)
+        segments = rand_segs3(segments, self.k, 10, 100)
         logging.info('pref segments: ' + str(segments))
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
