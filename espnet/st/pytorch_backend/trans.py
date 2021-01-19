@@ -306,7 +306,6 @@ def trans_waitk(args):
             #corpus_DAL.append(latency['DAL'])
 
 
-            """
             se2e_offline = SimultaneousSTE2E(e2e=model, trans_args=args, k=1000000, s=1000000, N=1)
             #se2e_offline.k = 1000000
             #se2e_offline.s = 1000000
@@ -337,14 +336,12 @@ def trans_waitk(args):
             nbest_hyps_offline[0]['latency'] = latency_offline
             #new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             #logging.info('latency: ' + str(latency))
-            """
 
     with open(args.result_label, 'wb') as f:
         f.write(json.dumps({'utts': new_js}, indent=4, ensure_ascii=False, sort_keys=True).encode('utf_8'))
     #with open('/home/getalp/nguyen35/espnet_interspeech20/espnet/egs/iwslt20/mustc_europarl_how2/hiden_states', 'w') as fw:
     #    fw.writelines(action['value']['dec_hyp']['all_states'])
 
-    """
     logging.info('len simul: ' + str(len(action['value']['dec_hyp']['all_states'])))
     logging.info('len offline: ' + str(len(action_offline['value']['dec_hyp']['all_states'])))
     min_len = min(len(action['value']['dec_hyp']['all_states']), len(action_offline['value']['dec_hyp']['all_states']))
@@ -352,7 +349,7 @@ def trans_waitk(args):
         cos = torch.nn.CosineSimilarity(dim=1, eps=1e-6)
         sim = cos(action['value']['dec_hyp']['all_states'][i][1], action_offline['value']['dec_hyp']['all_states'][i][1])
         logging.info('sim at position ' + str(i) + ': ' + str(sim))
-    """
+
     #corpus_AL = sum(corpus_AL) / len(corpus_AL)
     #corpus_DAL = sum(corpus_DAL) / len(corpus_DAL)
     #corpus_latency['AL'] = corpus_AL
