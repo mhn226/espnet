@@ -507,7 +507,7 @@ class SimultaneousSTE2E(object):
         if self.hyp['states'] is None:
             self.hyp['states'] = self._e2e.dec.init_state(self.enc_states)
         #if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len):
-        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) == self.max_len - 1):
+        if ((self.hyp['yseq'][len(self.hyp['yseq'])-1] == self._e2e.dec.eos) and (len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) >= self.max_len - 1):
             # Finish this sentence is predict EOS
             if len(self.hyp['yseq']) == self.max_len - 1:
                 self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
@@ -516,6 +516,54 @@ class SimultaneousSTE2E(object):
             self.finished = True
             return
 
+        for i in range(self.N):
+            score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
+            # self.all_states.append(str(states['z_prev']) + '\n')
+            score = F.log_softmax(score, dim=1).squeeze()
+            # greedy search, take only the (1) best score
+            local_best_score, local_best_id = torch.topk(score, 1)
+            logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
+            # logging.info(local_best_score)
+            logging.info(local_best_id)
+            if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
+                    (self.finish_read and len(self.hyp['yseq']) < self.min_len and int(
+                        local_best_id) == self._e2e.dec.eos):
+                local_best_score, local_best_id = torch.topk(score, 2)
+                local_best_score = local_best_score[-1].view(1)
+                local_best_id = local_best_id[-1].view(1)
+                logging.info(local_best_score)
+                logging.info(local_best_id)
+                if not self.finish_read:
+                    logging.info(
+                        'EOS emits before reading all of source frames, choose the second best target token instead: '
+                        + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+                else:
+                    logging.info('EOS emits before reaching minlen, choose the second best target token instead: '
+                                 + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+
+            # [:] is needed!
+            self.hyp['states']['z_prev'] = states['z_prev']
+            self.hyp['states']['c_prev'] = states['c_prev']
+            self.hyp['states']['a_prev'] = states['a_prev']
+            #logging.info('aaaaaaaaaaaa :' + str(states['a_prev'][0].size()))
+            self.hyp['states']['workspace'] = states['workspace']
+            self.hyp['score'] = self.hyp['score'] + local_best_score[0]
+            self.hyp['yseq'] = torch.cat((self.hyp['yseq'], local_best_id))
+            self.hyp['all_states'].append(states['z_prev'])
+            if self.finish_read:
+                self.hyp['delays'].append(self.g)
+                if ((self.hyp['yseq'][len(self.hyp['yseq']) - 1] == self._e2e.dec.eos) and (
+                        len(self.hyp['yseq']) > 1)) or (len(self.hyp['yseq']) >= self.max_len - 1):
+                    # Finish this sentence is predict EOS
+                    if len(self.hyp['yseq']) == self.max_len - 1:
+                        self.hyp['yseq'] = torch.cat((self.hyp['yseq'], torch.tensor([self._e2e.dec.eos])))
+                    else:
+                        logging.info("############## emit EOS ###############")
+                    self.finished = True
+                    return
+            else:
+                self.hyp['delays'].append(self.g - self.s)
+        """    
         score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
         #self.all_states.append(str(states['z_prev']) + '\n')
         score = F.log_softmax(score, dim=1).squeeze()
@@ -551,7 +599,7 @@ class SimultaneousSTE2E(object):
             self.hyp['delays'].append(self.g)
         else:
             self.hyp['delays'].append(self.g - self.s)
-
+        """
         #if rnnlm:
         #    self.hyp['rnnlm_prev'] = rnnlm_state
         # will be (2 x beam) hyps at most
