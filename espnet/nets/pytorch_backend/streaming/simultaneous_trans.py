@@ -515,14 +515,14 @@ class SimultaneousSTE2E(object):
                 logging.info("############## emit EOS ###############")
             self.finished = True
             return
-
+        logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
         for i in range(self.N):
             score, states = self._e2e.dec.score(self.hyp['yseq'], self.hyp['states'], self.enc_states)
             # self.all_states.append(str(states['z_prev']) + '\n')
             score = F.log_softmax(score, dim=1).squeeze()
             # greedy search, take only the (1) best score
             local_best_score, local_best_id = torch.topk(score, 1)
-            logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
+            #logging.info('dec_step: ' + str(len(self.hyp['yseq'])))
             # logging.info(local_best_score)
             logging.info(local_best_id)
             if (not self.finish_read and int(local_best_id) == self._e2e.dec.eos) or \
