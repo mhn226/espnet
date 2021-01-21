@@ -96,6 +96,14 @@ def get_parser():
     # ensembling related
     parser.add_argument('--ensemble', action='store_true', help='Use ensembling action or not')
 
+    # simultaneous related
+    parser.add_argument('--k', type=int, default=200,
+                        help='Number of initial input frames read')
+    parser.add_argument('--s', type=int, default=20,
+                        help='Number of input frames read at each decoding step (after the first step)')
+    parser.add_argument('--N', type=int, default=1,
+                        help='Maximum number of output tokens generated at each decoding step')
+
     # add ctc-weight so that it would work with model trained by the old version
     parser.add_argument('--ctc-weight', type=float, default=0.0,
                         help='CTC weight in joint decoding')

@@ -253,8 +253,9 @@ def trans_waitk(args):
             if os.path.isfile(textgrid_file):
                 num_of_toks = js[name]['output'][0]['shape'][0]
             feat = load_inputs_and_targets(batch)[0][0]
-
-            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=200, s=20, N=2)
+            print(args.k, args.s, args.N)
+            aaaaaaaaaaaaaaaaaaaaaaaaa
+            se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=args.k, s=args.s, N=args.N)
             action = {}
             nbest_hyps = []
             for n in range(args.nbest):
