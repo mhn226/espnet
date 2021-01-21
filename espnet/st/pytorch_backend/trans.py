@@ -240,16 +240,19 @@ def trans_waitk(args):
             logging.info('(%d/%d) decoding ' + name, idx, len(js.keys()))
             batch = [(name, js[name])]
 
+            # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
+            # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav/' + name + '.TextGrid'
+            # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
+            # textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
+            textgrid_file = ''
+            # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
+            # se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
+
             # HN 09/09: predefine number of toks
-            num_of_toks = js[name]['output'][0]['shape'][0]
+            if os.path.isfile(textgrid_file):
+                num_of_toks = js[name]['output'][0]['shape'][0]
             feat = load_inputs_and_targets(batch)[0][0]
-            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
-            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav/' + name + '.TextGrid'
-            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
-            #textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
-            textgrid_file=''
-            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
-            #se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
+
             se2e = SimultaneousSTE2E(e2e=model, trans_args=args, k=200, s=20, N=2)
             action = {}
             nbest_hyps = []
