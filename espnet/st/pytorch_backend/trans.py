@@ -249,6 +249,7 @@ def trans_waitk(args):
             # se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
 
             # HN 09/09: predefine number of toks
+            import os.path
             if os.path.isfile(textgrid_file):
                 num_of_toks = js[name]['output'][0]['shape'][0]
             feat = load_inputs_and_targets(batch)[0][0]
@@ -261,7 +262,7 @@ def trans_waitk(args):
 
             while action.get('value', None) != model.dec.eos:
                 # take an action
-                import os.path
+                #import os.path
                 if os.path.isfile(textgrid_file):
                     action = se2e.predefined_policy(feat, textgrid_file, num_of_toks)
                 else:
