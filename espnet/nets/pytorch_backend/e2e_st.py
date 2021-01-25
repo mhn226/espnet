@@ -470,18 +470,6 @@ class E2E(STInterface, torch.nn.Module):
             y_all, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
             self.loss_st += loss_st
             # compute loss
-            #if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-            #    reduction_str = 'elementwise_mean'
-            #else:
-            #    reduction_str = 'mean'
-            #self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
-            #                                ignore_index=self.dec.ignore_id,
-            #                                reduction=reduction_str)
-
-            # compute perplexity
-            #ppl = math.exp(self.loss_st.item())
-            # -1: eos, which is removed in the loss computation
-            #self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
             self.acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
             logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
 
