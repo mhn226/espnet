@@ -671,8 +671,6 @@ class E2E(STInterface, torch.nn.Module):
             step = 0
             # y_hats = []
             self.maxlen = olength
-            print(self.training, self.report_bleu)
-            aaaaaaaaaaaaaaaaa
             """
             while not finished_read:
                 if "b" not in self.etype:
