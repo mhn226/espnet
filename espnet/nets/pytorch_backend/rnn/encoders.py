@@ -411,6 +411,7 @@ class Encoder(torch.nn.Module):
             ilens_ = np.ceil(g / 2)
             ilens_ = np.ceil(ilens_ / 2)
             xs_pad_ = xs_pad.transpose(0, 1).clone()[:ilens_].transpose(0, 1)
+            print('x_pad_ encoded', xs_pad_.size())
             encoder_output.append(xs_pad_)
             ilens_out.append(ilens_)
         encoder_output.append(xs_pad)
