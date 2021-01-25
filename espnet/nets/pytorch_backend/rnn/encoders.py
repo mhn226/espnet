@@ -357,6 +357,7 @@ class Encoder(torch.nn.Module):
             ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
         """
+        """
         encoder_output = []
         current_states = []
         ilens_out = []
@@ -388,6 +389,32 @@ class Encoder(torch.nn.Module):
             ilens_out.append(ilens_)
             current_states.append(current_states_)
             g += s
+        """
+        encoder_output = []
+        current_states = []
+        ilens_out = []
+        g = k
+        Tmax = xs_pad.size(1)
+        prev_states = [None] * len(self.enc)
+        assert len(prev_states) == len(self.enc)
+        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        current_states = []
+        for module, prev_state in zip(self.enc, prev_states):
+            xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+            current_states.append(states)
+
+        # make mask to remove bias value in padded part
+        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+        xs_pad.masked_fill(mask, 0.0)
+
+        while (g < Tmax):
+            ilens_ = np.ceil(g / 2)
+            ilens_ = np.ceil(ilens_ / 2)
+            xs_pad_ = xs_pad.transpose(0, 1).clone()[:ilens_].transpose(0, 1)
+            encoder_output.append(xs_pad_)
+            ilens_out.append(ilens_)
+        encoder_output.append(xs_pad)
+        ilens_out.append(Tmax)
 
         #current_states.append(current_states_)
         print("enc ends")
