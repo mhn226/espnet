@@ -426,9 +426,8 @@ class E2E(STInterface, torch.nn.Module):
         dec_step = 1
         y_all = None
         print('################################# ' + str(self.training) + ' ##################################', batch)
-        with torch.no_grad():
-            encoder_out_dict = self.enc(xs_pad, ilens, k, s)
-            y_all, loss_st, acc, _ = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+        encoder_out_dict = self.enc(xs_pad, ilens, k, s)
+        y_all, loss_st, acc, _ = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
         self.loss_st += loss_st
         self.acc = acc
         """

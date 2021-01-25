@@ -343,6 +343,7 @@ class Encoder(torch.nn.Module):
             ilens_ = ilens_.new_full(ilens.size(), fill_value=(Tmax - offset))
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+            print('states: ', states.size())
             current_states_.append(states)
 
         if "b" in self.etype:
