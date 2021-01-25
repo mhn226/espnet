@@ -205,6 +205,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     # Only support 1 enc for now
                     self.att[att_idx].reset()
                     att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+                    print("input + att size end: ", hs_pad[0].size(), att_w.size())
                     logging.info("input + att size end: " + str(hs_pad[0].size()) + ' ' + str(att_w.size()))
                 else:
                     for idx in range(self.num_encs):
@@ -238,6 +239,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     # Only support 1 enc for now
                     self.att[att_idx].reset()
                     att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+                    print("input + att size end: ", hs_pad[0].size(), att_w.size())
                     logging.info("input + att size end: " + str(hs_pad[0].size()) + ' ' + str(att_w.size()))
                 else:
                     for idx in range(self.num_encs):
