@@ -314,7 +314,7 @@ class Encoder(torch.nn.Module):
                 print('x_pad_ encoded', xs_pad_.size(), ilens_[0])
                 if states is not None:
                     for i, state in enumerate(states):
-                        print('state ' + str(i) + ': ', states.size())
+                        print('state ' + str(i) + ': ', state.size())
                 current_states_.append(states)
 
             # make mask to remove bias value in padded part
