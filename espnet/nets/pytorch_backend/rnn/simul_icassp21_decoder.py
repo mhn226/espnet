@@ -309,7 +309,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.vlabeldist).view(-1), dim=0) / len(ys_in)
             self.loss = (1. - self.lsm_weight) * self.loss + self.lsm_weight * loss_reg
 
-        return y_all, self.loss
+        return y_all, self.loss, acc, ppl
 
     def recognize_step(self, h, vy, hyp, z_list, c_list, model_index, recog_args, char_list, rnnlm=None, strm_idx=0):
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim

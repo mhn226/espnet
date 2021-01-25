@@ -426,6 +426,11 @@ class E2E(STInterface, torch.nn.Module):
         dec_step = 1
         y_all = None
 
+        encoder_out_dict = self.enc(xs_pad, ilens, k, s)
+        y_all, loss_st, acc, _ = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
+        self.loss_st += loss_st
+        self.acc = acc
+        """
         if self.training:
             encoder_out_dict = self.enc(xs_pad, ilens, k, s)
             y_all, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
@@ -435,7 +440,6 @@ class E2E(STInterface, torch.nn.Module):
             logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
 
             # show predicted character sequence for debug
-            """
             if self.verbose > 0 and self.char_list is not None:
                 ys_hat = y_all.view(batch, olength, -1)
                 ys_true = ys_out_pad
