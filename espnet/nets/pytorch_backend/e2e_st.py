@@ -425,7 +425,7 @@ class E2E(STInterface, torch.nn.Module):
 
         dec_step = 1
         y_all = None
-
+        print('################################# ' + str(self.training) + ' ##################################')
         encoder_out_dict = self.enc(xs_pad, ilens, k, s)
         y_all, loss_st, acc, _ = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
         self.loss_st += loss_st
@@ -512,18 +512,7 @@ class E2E(STInterface, torch.nn.Module):
             bleu = 0.0
         else:
             lpz = None
-
             bleus = []
-            step = 0
-            # y_hats = []
-            self.maxlen = olength
-            encoder_out_dict = self.enc(xs_pad, ilens, k, s)
-            y_all, loss_st = self.dec(encoder_out_dict["encoder_output"], encoder_out_dict["ilens"], ys_pad, y_all, self.N)
-            self.loss_st += loss_st
-
-            self.acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
-
             y_all = y_all.view(batch, olength, -1)
             for i, y_hat in enumerate(y_all):
                 y_hat = y_hat.detach().cpu().numpy()
