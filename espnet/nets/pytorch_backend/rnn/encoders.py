@@ -278,7 +278,7 @@ class Encoder(torch.nn.Module):
         #if prev_states is None:
         #    prev_states = [None] * len(self.enc)
         #assert len(prev_states) == len(self.enc)
-
+        """
         encoder_output = []
         current_states = []
         ilens_out = []
@@ -356,8 +356,37 @@ class Encoder(torch.nn.Module):
             ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
             ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
+        """
+        encoder_output = []
+        current_states = []
+        ilens_out = []
+        g = k
+        Tmax = xs_pad.size(1)
+        prev_states = [None] * len(self.enc)
+        offset = 0
+        u_xs_pad_buff = torch.empty((xs_pad.size(0), 0, self.eunits), device=xs_pad.device)
+        ilen_buff = [0] * xs_pad.size(0)
+        # u_xs_pad_buff = None
+        print(self.etype, self.eunits, len(self.enc), xs_pad.size())
+        # B, Tmax, D -> Tmax, B, D
+        # xs_pad = xs_pad.transpose(0, 1)
+        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        while (g < Tmax):
+            xs_pad_ = xs_pad.transpose(0, 1).clone()[:g].transpose(0, 1)
+            ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+            print(xs_pad_.size(), ilens_.size())
+            current_states_ = []
+            for module, prev_state in zip(self.enc, prev_states):
+                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                print('x_pad_ encoded', xs_pad_.size(), ilens_[0])
+                current_states_.append(states)
+            mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
+            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            ilens_out.append(ilens_)
+            current_states.append(current_states_)
+            g += s
 
-        current_states.append(current_states_)
+        #current_states.append(current_states_)
         print("enc ends")
         return {
             "encoder_output": encoder_output,
