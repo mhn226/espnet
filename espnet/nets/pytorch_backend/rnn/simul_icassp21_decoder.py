@@ -232,6 +232,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
                 if len(z_all) >= olength:
                     break
+            if len(z_all) >= olength:
+                break
         if len(z_all) < olength:
             len_ = len(z_all)
             for i in range(len_, olength):
