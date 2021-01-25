@@ -170,6 +170,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         z_list = None
         z_all = []
         if self.num_encs == 1:
+            logging.info('num encs: ' + str(self.num_encs))
             att_w = None
             self.att[att_idx].reset()  # reset pre-computation of h
         else:
