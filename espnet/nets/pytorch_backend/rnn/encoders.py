@@ -376,6 +376,7 @@ def encoder_for(args, idim, subsample):
         print('aaaaaaaaaaaaaaaaaaaa ' + str(num_encs))
         return Encoder(args.etype, idim, args.elayers, args.eunits, args.eprojs, subsample, args.dropout_rate)
     elif num_encs >= 1:
+        print('bbbbbbbbbbbbbbb ' + str(num_encs))
         enc_list = torch.nn.ModuleList()
         for idx in range(num_encs):
             enc = Encoder(args.etype[idx], idim[idx], args.elayers[idx], args.eunits[idx], args.eprojs, subsample[idx],
