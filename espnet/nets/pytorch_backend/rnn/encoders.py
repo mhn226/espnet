@@ -292,6 +292,7 @@ class Encoder(torch.nn.Module):
         print(self.etype, self.eunits, len(self.enc), xs_pad.size())
         # B, Tmax, D -> Tmax, B, D
         #xs_pad = xs_pad.transpose(0, 1)
+        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         while (g < Tmax):
             if "b" in self.etype:
                 #prev_states = [None] * len(self.enc)
@@ -302,7 +303,6 @@ class Encoder(torch.nn.Module):
             else:
                 #xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
                 xs_pad_ = xs_pad.transpose(0, 1).clone()[offset:g].transpose(0, 1)
-                ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=(g - offset))
                 print(xs_pad_.size(), ilens_.size())
 
@@ -339,7 +339,7 @@ class Encoder(torch.nn.Module):
         elif offset < Tmax:
             #xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:Tmax].transpose(1, 2)
             xs_pad_ = xs_pad.transpose(0, 1).clone()[offset:Tmax].transpose(0, 1)
-            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
             ilens_ = ilens_.new_full(ilens.size(), fill_value=(Tmax - offset))
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
