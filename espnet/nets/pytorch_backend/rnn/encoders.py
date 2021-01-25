@@ -296,8 +296,8 @@ class Encoder(torch.nn.Module):
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
-                print(type(xs_pad_))
-                logging('x_pad_: ' + str(type(xs_pad_)) + ' ' + str(type(ilens_)))
+                print(type(xs_pad_), type(ilens_))
+                logging('x_pad_: ' + str(type(xs_pad_)))
             else:
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -308,7 +308,7 @@ class Encoder(torch.nn.Module):
             current_states_ = []
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
-                logging('x_pad_ encoded: ' + str(xs_pad_.size()) + ' ' + str(ilens_.size()))
+                #logging('x_pad_ encoded: ' + str(xs_pad_.size()) + ' ' + str(ilens_.size()))
                 current_states_.append(states)
 
             # make mask to remove bias value in padded part
