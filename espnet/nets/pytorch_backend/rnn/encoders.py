@@ -372,8 +372,8 @@ class Encoder(torch.nn.Module):
         # xs_pad = xs_pad.transpose(0, 1)
         ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         while (g < Tmax):
-            xs_pad_ = xs_pad.transpose(0, 1).clone().detach()[:g].transpose(0, 1)
-            ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+            xs_pad_ = xs_pad.transpose(0, 1).detach().clone()[:g].transpose(0, 1)
+            ilens_ = ilens_.new_full(ilens.size(), fill_value=g).detach()
             print(xs_pad_.size(), ilens_.size())
             current_states_ = []
             for module, prev_state in zip(self.enc, prev_states):
