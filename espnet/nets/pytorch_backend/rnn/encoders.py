@@ -415,6 +415,7 @@ class Encoder(torch.nn.Module):
             print('x_pad_ encoded', xs_pad_.size())
             encoder_output.append(xs_pad_)
             ilens_out.append(ilens_)
+            g += s
         encoder_output.append(xs_pad)
         ilens_out.append(Tmax)
 
