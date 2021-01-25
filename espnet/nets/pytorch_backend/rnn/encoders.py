@@ -379,6 +379,9 @@ class Encoder(torch.nn.Module):
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
                 print('x_pad_ encoded', xs_pad_.size(), ilens_[0])
+                if states is not None:
+                    for state in states:
+                        print('state: ', state.size())
                 current_states_.append(states)
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
             encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
