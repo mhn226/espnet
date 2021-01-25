@@ -262,7 +262,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                     z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
                 else:
                     z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
-
+        logging.info('z_all size: ' + str(len(z_all)))
+        logging.info('olength: ' + str(olength))
         z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
         y_all = self.output(z_all)
 
