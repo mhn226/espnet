@@ -435,6 +435,7 @@ class E2E(STInterface, torch.nn.Module):
             logging.info('att loss:' + ''.join(str(self.loss_st.item()).split('\n')))
 
             # show predicted character sequence for debug
+            """
             if self.verbose > 0 and self.char_list is not None:
                 ys_hat = y_all.view(batch, olength, -1)
                 ys_true = ys_out_pad
@@ -450,7 +451,7 @@ class E2E(STInterface, torch.nn.Module):
                     seq_true = "".join(seq_true)
                     logging.info("groundtruth[%d]: " % i + seq_true)
                     logging.info("prediction [%d]: " % i + seq_hat)
-
+            """
             #if self.dec.labeldist is not None:
             #    if self.dec.vlabeldist is None:
             #        self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
