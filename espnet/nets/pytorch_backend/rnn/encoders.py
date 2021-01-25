@@ -303,7 +303,7 @@ class Encoder(torch.nn.Module):
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=(g - offset))
-                print(xs_pad_.size(), ilens_.size(), xs_pad.transpose(0, 1).clone[offset:g].size())
+                print(xs_pad_.size(), ilens_.size(), xs_pad.transpose(0, 1).clone()[offset:g].size())
 
             assert len(prev_states) == len(self.enc)
 
