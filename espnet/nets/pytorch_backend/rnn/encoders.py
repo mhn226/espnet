@@ -402,7 +402,6 @@ class Encoder(torch.nn.Module):
         current_states = []
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-            print(ilens)
             current_states.append(states)
 
         # make mask to remove bias value in padded part
@@ -410,16 +409,17 @@ class Encoder(torch.nn.Module):
         xs_pad.masked_fill(mask, 0.0)
 
         while (g < Tmax):
-            ilens_ = math.ceil(g / 2)
-            ilens_ = math.ceil(ilens_ / 2)
-            print(type(ilens_), ilens_)
-            xs_pad_ = xs_pad.transpose(0, 1).clone()[:ilens_].transpose(0, 1)
+            lens_ = math.ceil(g / 2)
+            lens_ = math.ceil(lens_ / 2)
+            print(type(lens_), lens_)
+            xs_pad_ = xs_pad.transpose(0, 1).clone()[:lens_].transpose(0, 1)
             print('x_pad_ encoded', xs_pad_.size())
             encoder_output.append(xs_pad_)
-            ilens_out.append(ilens_)
+            #ilens_.new_full(ilens_.size(), fill_value=lens_).detach()
+            ilens_out.append(ilens.new_full(ilens.size(), fill_value=lens_))
             g += s
         encoder_output.append(xs_pad)
-        ilens_out.append(Tmax)
+        ilens_out.append(ilens)
 
         #current_states.append(current_states_)
         print("enc ends")
