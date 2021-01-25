@@ -413,13 +413,15 @@ class Encoder(torch.nn.Module):
             lens_ = math.ceil(lens_ / 2)
             print(type(lens_), lens_)
             xs_pad_ = xs_pad.transpose(0, 1).clone()[:lens_].transpose(0, 1)
-            print('x_pad_ encoded', xs_pad_.size())
+            print('x_pad_ encoded', xs_pad_.size(), ilens.new_full(ilens.size(), fill_value=lens_))
             encoder_output.append(xs_pad_)
             #ilens_.new_full(ilens_.size(), fill_value=lens_).detach()
             ilens_out.append(ilens.new_full(ilens.size(), fill_value=lens_))
             g += s
         encoder_output.append(xs_pad)
+        print('x_pad_ encoded', xs_pad.size(), ilens)
         ilens_out.append(ilens)
+
 
         #current_states.append(current_states_)
         print("enc ends")
