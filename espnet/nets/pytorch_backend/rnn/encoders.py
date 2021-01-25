@@ -373,6 +373,7 @@ def encoder_for(args, idim, subsample):
     num_encs = getattr(args, "num_encs", 1)  # use getattr to keep compatibility
     if num_encs == 1:
         # compatible with single encoder asr mode
+        print('aaaaaaaaaaaaaaaaaaaa ' + str(num_encs))
         return Encoder(args.etype, idim, args.elayers, args.eunits, args.eprojs, subsample, args.dropout_rate)
     elif num_encs >= 1:
         enc_list = torch.nn.ModuleList()
