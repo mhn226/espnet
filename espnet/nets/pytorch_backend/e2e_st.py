@@ -662,6 +662,7 @@ class E2E(STInterface, torch.nn.Module):
         """
 
         # 6. compute bleu
+        self.report_bleu = False
         if self.training or not self.report_bleu:
             bleu = 0.0
         else:
