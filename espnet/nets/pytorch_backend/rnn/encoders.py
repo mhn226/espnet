@@ -11,6 +11,7 @@ from espnet.nets.e2e_asr_common import get_vgg2l_odim
 from espnet.nets.pytorch_backend.nets_utils import make_pad_mask
 from espnet.nets.pytorch_backend.nets_utils import to_device
 
+import math
 
 class RNNP(torch.nn.Module):
     """RNN with projection layer module
@@ -408,8 +409,8 @@ class Encoder(torch.nn.Module):
         xs_pad.masked_fill(mask, 0.0)
 
         while (g < Tmax):
-            ilens_ = np.ceil(g / 2)
-            ilens_ = np.ceil(ilens_ / 2)
+            ilens_ = math.ceil(g / 2)
+            ilens_ = math.ceil(ilens_ / 2)
             print(type(ilens_), ilens_)
             xs_pad_ = xs_pad.transpose(0, 1).clone()[:ilens_].transpose(0, 1)
             print('x_pad_ encoded', xs_pad_.size())
