@@ -307,7 +307,7 @@ class Encoder(torch.nn.Module):
             current_states_ = []
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
-                print('x_pad_ encoded', xs_pad_.size(), ilens_[0].size())
+                print('x_pad_ encoded', xs_pad_.size(), ilens_[0])
                 current_states_.append(states)
 
             # make mask to remove bias value in padded part
