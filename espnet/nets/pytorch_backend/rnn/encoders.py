@@ -296,6 +296,7 @@ class Encoder(torch.nn.Module):
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
                 ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
+                logging('x_pad_: ' + str(xs_pad_.size()) + ' ' + str(ilens_.size()))
             else:
                 xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
                 ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
@@ -306,6 +307,7 @@ class Encoder(torch.nn.Module):
             current_states_ = []
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                logging('x_pad_ encoded: ' + str(xs_pad_.size()) + ' ' + str(ilens_.size()))
                 current_states_.append(states)
 
             # make mask to remove bias value in padded part
@@ -373,10 +375,8 @@ def encoder_for(args, idim, subsample):
     num_encs = getattr(args, "num_encs", 1)  # use getattr to keep compatibility
     if num_encs == 1:
         # compatible with single encoder asr mode
-        print('aaaaaaaaaaaaaaaaaaaa ' + str(num_encs))
         return Encoder(args.etype, idim, args.elayers, args.eunits, args.eprojs, subsample, args.dropout_rate)
     elif num_encs >= 1:
-        print('bbbbbbbbbbbbbbb ' + str(num_encs))
         enc_list = torch.nn.ModuleList()
         for idx in range(num_encs):
             enc = Encoder(args.etype[idx], idim[idx], args.elayers[idx], args.eunits[idx], args.eprojs, subsample[idx],
