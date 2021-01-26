@@ -442,15 +442,15 @@ class E2E(STInterface, torch.nn.Module):
         dec_step = 1
         if self.training:
             while not finished_read:
-                hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
-                                                                                         last_enc_states, offset, g,
-                                                                                         finished_read)
-                for idx in range(self.dec.num_encs):
-                    hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
+                #hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
+                #                                                                         last_enc_states, offset, g,
+                #                                                                         finished_read)
+                #for idx in range(self.dec.num_encs):
+                #    hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
                     # hlens[idx] = hlens[idx] + hlens_[idx]
-                    hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                offset = g
-                #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+                #    hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
+                #offset = g
+                hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                 #z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
                 #z_all.append(z_.detach())
                 #print(len(z_all))
