@@ -387,7 +387,7 @@ class Encoder(torch.nn.Module):
                 #current_states_.append(states)
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
             encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
-            mask.detach()
+            encoder_output = torch.cat(encoder_output, dim=1)
             #ilens_out.append(ilens_)
             current_states.append(current_states_)
             g += s
