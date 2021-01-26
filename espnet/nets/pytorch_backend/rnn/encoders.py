@@ -358,7 +358,7 @@ class Encoder(torch.nn.Module):
             ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
         """
-        """
+
         encoder_output = []
         current_states = []
         ilens_out = []
@@ -390,6 +390,7 @@ class Encoder(torch.nn.Module):
             ilens_out.append(ilens_)
             current_states.append(current_states_)
             g += s
+
         """
         encoder_output = []
         current_states = []
@@ -421,7 +422,7 @@ class Encoder(torch.nn.Module):
         encoder_output.append(xs_pad)
         print('x_pad_ encoded', xs_pad.size(), ilens)
         ilens_out.append(ilens)
-
+        """
 
         #current_states.append(current_states_)
         print("enc ends")
