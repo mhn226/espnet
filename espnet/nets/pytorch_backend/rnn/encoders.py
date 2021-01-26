@@ -280,7 +280,7 @@ class Encoder(torch.nn.Module):
         #if prev_states is None:
         #    prev_states = [None] * len(self.enc)
         #assert len(prev_states) == len(self.enc)
-
+        """
         encoder_output = []
         current_states = []
         ilens_out = []
@@ -325,11 +325,11 @@ class Encoder(torch.nn.Module):
                 prev_states = current_states_
                 #print("enc", xs_pad_.size(), u_xs_pad_buff.size(), xs_pad.size())
                 u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
-                #encoder_output.append(u_xs_pad_buff)
+                encoder_output.append(u_xs_pad_buff)
                 ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
-                #ilens_out.append(ilen_buff)
+                ilens_out.append(ilen_buff)
                 offset = g
-            #current_states.append(current_states_)
+            current_states.append(current_states_)
             g += s
 
         # g = Tmax
@@ -354,12 +354,12 @@ class Encoder(torch.nn.Module):
             #print('enc: ', prev_states, ilens_, xs_pad_.size())
         elif offset < Tmax:
             u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
-            #encoder_output.append(u_xs_pad_buff)
+            encoder_output.append(u_xs_pad_buff)
             ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
-            #ilens_out.append(ilen_buff)
+            ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
-
         """
+
         encoder_output = None
         current_states = []
         ilens_out = []
@@ -390,12 +390,13 @@ class Encoder(torch.nn.Module):
             #encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
             if encoder_output is None:
                 encoder_output = xs_pad_.masked_fill(mask, 0.0)
-            #else:
-            #    encoder_output = torch.cat((encoder_output, xs_pad_.masked_fill(mask, 0.0)), dim=1)
+            else:
+                encoder_output = torch.cat((encoder_output, xs_pad_.masked_fill(mask, 0.0)), dim=1)
+            print(encoder_output.size())
             #ilens_out.append(ilens_)
             #current_states.append(current_states_)
             g += s
-        """
+
         """
         encoder_output = []
         current_states = []
