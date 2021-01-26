@@ -443,7 +443,7 @@ class E2E(STInterface, torch.nn.Module):
         if self.training:
             while not finished_read:
                 hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-                z_list, c_list, att_w, z_all = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
+                #z_list, c_list, att_w, z_all = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
                 #z_all.append(z_)
                 #print(hs_pad.size(), len(z_all))
                 dec_step += 1
