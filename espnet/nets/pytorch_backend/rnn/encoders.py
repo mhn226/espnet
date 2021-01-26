@@ -359,7 +359,7 @@ class Encoder(torch.nn.Module):
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
         """
 
-        encoder_output = []
+        encoder_output = None
         current_states = []
         ilens_out = []
         g = k
@@ -386,8 +386,11 @@ class Encoder(torch.nn.Module):
                         print('state: ', state.size())
                 #current_states_.append(states)
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
-            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
-            encoder_output = torch.cat(encoder_output, dim=1)
+            #encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            if encoder_output is None:
+                encoder_output = xs_pad_
+            else:
+                encoder_output = torch.cat((encoder_output,xs_pad_), dim=1)
             #ilens_out.append(ilens_)
             current_states.append(current_states_)
             g += s
