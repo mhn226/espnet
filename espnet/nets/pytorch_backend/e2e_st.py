@@ -363,6 +363,345 @@ class E2E(STInterface, torch.nn.Module):
 
     def forward(self, xs_pad, ilens, ys_pad, ys_pad_src):
         """E2E forward.
+        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)
+        :param torch.Tensor ilens: batch of lengths of input sequences (B)
+        :param torch.Tensor ys_pad: batch of padded character id sequence tensor (B, Lmax)
+        :return: loss value
+        :rtype: torch.Tensor
+        """
+        # 0. Extract target language ID
+
+        k = self.k
+        g = self.g
+        s = self.s
+
+        if self.multilingual:
+            tgt_lang_ids = ys_pad[:, 0:1]
+            ys_pad = ys_pad[:, 1:]  # remove target language ID in the beggining
+        else:
+            tgt_lang_ids = None
+
+        self.loss_st = 0.0
+        acc = 0.0
+
+        ys = [y[y != self.dec.ignore_id] for y in ys_pad]  # parse padded ys
+        # attention index for the attention module
+        # in SPA (speaker parallel attention), att_idx is used to select attention module. In other cases, it is 0.
+        strm_idx = 0
+        att_idx = min(strm_idx, len(self.dec.att) - 1)
+
+        # prepare input and output word sequences with sos/eos IDs
+        eos = ys[0].new([self.eos])
+        sos = ys[0].new([self.sos])
+
+        self.dec.loss = None
+        lang_ids = tgt_lang_ids
+
+        if self.dec.replace_sos:
+            ys_in = [torch.cat([idx, y], dim=0) for idx, y in zip(lang_ids, ys)]
+        else:
+            ys_in = [torch.cat([sos, y], dim=0) for y in ys]
+        ys_out = [torch.cat([y, eos], dim=0) for y in ys]
+
+        # padding for ys with -1
+        # pys: utt x olen
+        ys_in_pad = pad_list(ys_in, self.eos)
+        ys_out_pad = pad_list(ys_out, self.dec.ignore_id)
+
+        # get dim, length info
+        batch = ys_out_pad.size(0)
+        olength = ys_out_pad.size(1)
+
+        # initialization
+        c_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
+        z_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
+        for _ in six.moves.range(1, self.dec.dlayers):
+            c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
+            z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
+
+        z_all = []
+        if self.dec.num_encs == 1:
+            att_w = None
+            self.dec.att[att_idx].reset()  # reset pre-computation of h
+        else:
+            att_w_list = [None] * (self.dec.num_encs + 1)  # atts + han
+            att_c_list = [None] * (self.dec.num_encs)  # atts
+            for idx in range(self.dec.num_encs + 1):
+                self.dec.att[idx].reset()  # reset pre-computation of h in atts and han
+
+        # pre-computation of embedding
+        eys = self.dec.dropout_emb(self.dec.embed(ys_in_pad))  # utt x olen x zdim
+
+        finished_read = False
+        finished_write = False
+        hs_pad = [torch.empty((batch, 0, self.args.eunits), device=xs_pad.device)] * self.dec.num_encs
+        hlens = [[0] * batch] * self.dec.num_encs
+        last_enc_states = None
+        offset = 0
+
+        dec_step = 1
+        if self.training:
+            while not finished_read:
+                hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+                z_list, c_list, att_w, z_all = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
+                #z_all.append(z_)
+                dec_step += 1
+                g += s
+
+            # when finished_read
+            if finished_read:
+                for i in range(dec_step, six.moves.range(olength)):
+                    z_list, c_list, att_w, z_all = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
+
+            z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+            # compute loss
+            y_all = self.dec.output(z_all)
+
+            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+                reduction_str = 'elementwise_mean'
+            else:
+                reduction_str = 'mean'
+            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+                                            ignore_index=self.dec.ignore_id,
+                                            reduction=reduction_str)
+
+            # compute perplexity
+            ppl = math.exp(self.dec.loss.item())
+            # -1: eos, which is removed in the loss computation
+            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+
+            # show predicted character sequence for debug
+            if self.verbose > 0 and self.char_list is not None:
+                ys_hat = y_all.view(batch, olength, -1)
+                ys_true = ys_out_pad
+                for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+                                              ys_true.detach().cpu().numpy()):
+                    if i == self.dec.MAX_DECODER_OUTPUT:
+                        break
+                    idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                    idx_true = y_true[y_true != self.ignore_id]
+                    seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                    seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                    seq_hat = "".join(seq_hat)
+                    seq_true = "".join(seq_true)
+                    logging.info("groundtruth[%d]: " % i + seq_true)
+                    logging.info("prediction [%d]: " % i + seq_hat)
+
+            if self.dec.labeldist is not None:
+                if self.dec.vlabeldist is None:
+                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+
+            self.acc = acc
+            self.loss_st = self.dec.loss
+
+        # 2. ASR CTC loss
+        if self.asr_weight == 0 or self.mtlalpha == 0:
+            self.loss_ctc = 0.0
+        else:
+            self.loss_ctc = self.ctc(hs_pad, hlens, ys_pad_src)
+
+        # 3. ASR attention loss
+        if self.asr_weight == 0 or self.mtlalpha == 1:
+            self.loss_asr = 0.0
+            self.acc_asr = 0.0
+        else:
+            self.loss_asr, acc_asr, _ = self.dec_asr(hs_pad, hlens, ys_pad_src)
+            self.acc_asr = acc_asr
+
+        # 3. MT attention loss
+        if self.mt_weight == 0:
+            self.loss_mt = 0.0
+            self.acc_mt = 0.0
+        else:
+            # ys_pad_src, ys_pad = self.target_forcing(ys_pad_src, ys_pad)
+            ilens_mt = torch.sum(ys_pad_src != -1, dim=1).cpu().numpy()
+            # NOTE: ys_pad_src is padded with -1
+            ys_src = [y[y != -1] for y in ys_pad_src]  # parse padded ys_src
+            ys_zero_pad_src = pad_list(ys_src, self.pad)  # re-pad with zero
+            hs_pad_mt, hlens_mt, _ = self.enc_mt(self.dropout_mt(self.embed_mt(ys_zero_pad_src)), ilens_mt)
+            self.loss_mt, acc_mt, _ = self.dec(hs_pad_mt, hlens_mt, ys_pad)
+            self.acc_mt = acc_mt
+
+        # 4. compute cer without beam search
+        if (self.asr_weight == 0 or self.mtlalpha == 0) or self.char_list is None:
+            cer_ctc = None
+        else:
+            cers = []
+
+            y_hats = self.ctc.argmax(hs_pad).data
+            for i, y in enumerate(y_hats):
+                y_hat = [x[0] for x in groupby(y)]
+                y_true = ys_pad_src[i]
+
+                seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
+                seq_true = [self.char_list[int(idx)] for idx in y_true if int(idx) != -1]
+                seq_hat_text = "".join(seq_hat).replace(self.space, ' ')
+                seq_hat_text = seq_hat_text.replace(self.blank, '')
+                seq_true_text = "".join(seq_true).replace(self.space, ' ')
+
+                hyp_chars = seq_hat_text.replace(' ', '')
+                ref_chars = seq_true_text.replace(' ', '')
+                if len(ref_chars) > 0:
+                    cers.append(editdistance.eval(hyp_chars, ref_chars) / len(ref_chars))
+
+            cer_ctc = sum(cers) / len(cers) if cers else None
+
+        # 5. compute cer/wer
+        if self.training or (self.asr_weight == 0 or self.mtlalpha == 1 or not (self.report_cer or self.report_wer)):
+            cer, wer = 0.0, 0.0
+            # oracle_cer, oracle_wer = 0.0, 0.0
+        else:
+            if (self.asr_weight > 0 and self.mtlalpha > 0) and self.recog_args.ctc_weight > 0.0:
+                lpz = self.ctc.log_softmax(hs_pad).data
+            else:
+                lpz = None
+
+            word_eds, word_ref_lens, char_eds, char_ref_lens = [], [], [], []
+            nbest_hyps_asr = self.dec_asr.recognize_beam_batch(
+                hs_pad, torch.tensor(hlens), lpz,
+                self.recog_args, self.char_list,
+                self.rnnlm)
+            # remove <sos> and <eos>
+            y_hats = [nbest_hyp[0]['yseq'][1:-1] for nbest_hyp in nbest_hyps_asr]
+            for i, y_hat in enumerate(y_hats):
+                y_true = ys_pad[i]
+
+                seq_hat = [self.char_list[int(idx)] for idx in y_hat if int(idx) != -1]
+                seq_true = [self.char_list[int(idx)] for idx in y_true if int(idx) != -1]
+                seq_hat_text = "".join(seq_hat).replace(self.recog_args.space, ' ')
+                seq_hat_text = seq_hat_text.replace(self.recog_args.blank, '')
+                seq_true_text = "".join(seq_true).replace(self.recog_args.space, ' ')
+
+                hyp_words = seq_hat_text.split()
+                ref_words = seq_true_text.split()
+                word_eds.append(editdistance.eval(hyp_words, ref_words))
+                word_ref_lens.append(len(ref_words))
+                hyp_chars = seq_hat_text.replace(' ', '')
+                ref_chars = seq_true_text.replace(' ', '')
+                char_eds.append(editdistance.eval(hyp_chars, ref_chars))
+                char_ref_lens.append(len(ref_chars))
+
+            wer = 0.0 if not self.report_wer else float(sum(word_eds)) / sum(word_ref_lens)
+            cer = 0.0 if not self.report_cer else float(sum(char_eds)) / sum(char_ref_lens)
+
+        # 6. compute bleu
+        self.report_bleu = False
+        if self.training or not self.report_bleu:
+            bleu = 0.0
+        else:
+            lpz = None
+
+            bleus = []
+            step = 0
+            # y_hats = []
+            self.maxlen = olength
+            while not finished_read:
+                if "b" not in self.etype:
+                    hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
+                                                                                             last_enc_states, offset, g,
+                                                                                             finished_read)
+                    for idx in range(self.dec.num_encs):
+                        hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
+                        # hlens[idx] = hlens[idx] + hlens_[idx]
+                        hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
+                    offset = g
+                else:
+                    hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+
+                c_list = [self.dec.zero_state(hs_pad[0])]
+                z_list = [self.dec.zero_state(hs_pad[0])]
+                for _ in six.moves.range(1, self.dec.dlayers):
+                    c_list.append(self.dec.zero_state(hs_pad[0]))
+                    z_list.append(self.dec.zero_state(hs_pad[0]))
+                for i in range(dec_step):
+                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                z_all.append(z_)
+                dec_step += 1
+                g += s
+
+            # when finished_read
+            if finished_read:
+                c_list = [self.dec.zero_state(hs_pad[0])]
+                z_list = [self.dec.zero_state(hs_pad[0])]
+                for _ in six.moves.range(1, self.dec.dlayers):
+                    c_list.append(self.dec.zero_state(hs_pad[0]))
+                    z_list.append(self.dec.zero_state(hs_pad[0]))
+                for i in six.moves.range(olength):
+                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
+                    if i >= dec_step - 1:
+                        z_all.append(z_)
+
+            # z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
+            # compute loss
+            # y_all = self.dec.output(z_all)
+            z_all = torch.stack(z_all, dim=1)
+            y_all = self.dec.output(z_all)
+
+            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+                reduction_str = 'elementwise_mean'
+            else:
+                reduction_str = 'mean'
+            self.dec.loss = F.cross_entropy(y_all.view(batch * olength, -1), ys_out_pad.view(-1),
+                                            ignore_index=self.dec.ignore_id,
+                                            reduction=reduction_str)
+            # compute perplexity
+            ppl = math.exp(self.dec.loss.item())
+            # -1: eos, which is removed in the loss computation
+            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+            acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
+            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+            if self.dec.labeldist is not None:
+                if self.dec.vlabeldist is None:
+                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+                loss_reg = - torch.sum(
+                    (F.log_softmax(y_all.view(batch * olength, -1), dim=1) * self.dec.vlabeldist).view(-1),
+                    dim=0) / len(ys_in)
+                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+
+            self.acc = acc
+            self.loss_st = self.dec.loss
+
+            for i, y_hat in enumerate(y_all):
+                y_hat = y_hat.detach().cpu().numpy()
+                y_true = ys_out_pad[i]
+                y_true = y_true.detach().cpu().numpy()
+                idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.dec.ignore_id]
+
+                seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                seq_hat_text = "".join(seq_hat).replace(self.trans_args.space, ' ')
+                seq_hat_text = seq_hat_text.replace(self.trans_args.blank, '')
+                seq_true_text = "".join(seq_true).replace(self.trans_args.space, ' ')
+
+                bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
+                bleus.append(bleu)
+
+            bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
+
+        alpha = self.mtlalpha
+        self.loss = (1 - self.asr_weight - self.mt_weight) * self.loss_st + self.asr_weight * \
+                    (alpha * self.loss_ctc + (1 - alpha) * self.loss_asr) + self.mt_weight * self.loss_mt
+        loss_st_data = float(self.loss_st)
+        loss_asr_data = float(alpha * self.loss_ctc + (1 - alpha) * self.loss_asr)
+        loss_mt_data = None if self.mt_weight == 0 else float(self.loss_mt)
+
+        loss_data = float(self.loss)
+        if loss_data < CTC_LOSS_THRESHOLD and not math.isnan(loss_data):
+            self.reporter.report(loss_asr_data, loss_mt_data, loss_st_data,
+                                 self.acc_asr, self.acc_mt, acc,
+                                 cer_ctc, cer, wer, bleu, loss_data)
+        else:
+            logging.warning('loss (=%f) is not correct', loss_data)
+
+        return self.loss
+
+    def forward_maha(self, xs_pad, ilens, ys_pad, ys_pad_src):
+        """E2E forward.
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)
         :param torch.Tensor ilens: batch of lengths of input sequences (B)
