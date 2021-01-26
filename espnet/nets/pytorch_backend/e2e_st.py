@@ -416,8 +416,8 @@ class E2E(STInterface, torch.nn.Module):
         c_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
         z_list = [torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)]
         for _ in six.moves.range(1, self.dec.dlayers):
-            c_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
-            z_list.append([torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device)])
+            c_list.append(torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device))
+            z_list.append(torch.zeros(batch, self.args.eunits, dtype=xs_pad.dtype, device=xs_pad.device))
 
         z_all = []
         if self.dec.num_encs == 1:
