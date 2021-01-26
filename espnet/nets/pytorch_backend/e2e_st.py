@@ -452,8 +452,7 @@ class E2E(STInterface, torch.nn.Module):
                 offset = g
                 #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
-                z_all = [z_]
-                #z_all.append(z_)
+                z_all.append(z_.detach())
                 #print(hs_pad.size(), len(z_all))
                 dec_step += 1
                 g += s
