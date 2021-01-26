@@ -158,7 +158,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
             else:
                 ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
-            print(type(ey), type(z_list), type(c_list), len(z_list), len(c_list), z_list[0].size(), c_list[0].size(), eys)
+            print(type(ey), type(z_list), type(c_list), len(z_list), len(c_list), z_list[0].size(), c_list[0].size(), z_list[1].size(), c_list[1].size())
             z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
             if self.context_residual:
                 z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
