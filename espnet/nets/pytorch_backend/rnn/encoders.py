@@ -244,7 +244,7 @@ class Encoder(torch.nn.Module):
                 self.enc = torch.nn.ModuleList([RNN(idim, elayers, eunits, eprojs, dropout, typ=typ)])
                 logging.info(typ.upper() + ' without projection for encoder')
 
-    def forward_def(self, xs_pad, ilens, prev_states=None):
+    def forward(self, xs_pad, ilens, prev_states=None):
         """Encoder forward
 
     #    :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
@@ -268,7 +268,7 @@ class Encoder(torch.nn.Module):
 
         return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
-    def forward(self, xs_pad, ilens, k, s):
+    def forward_maha(self, xs_pad, ilens, k, s):
         """Encoder forward
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)

@@ -361,7 +361,7 @@ class E2E(STInterface, torch.nn.Module):
         z_all.append(z_)
         return z_list, c_list, att_w, z_all
 
-    def forward_def(self, xs_pad, ilens, ys_pad, ys_pad_src):
+    def forward(self, xs_pad, ilens, ys_pad, ys_pad_src):
         """E2E forward.
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)
         :param torch.Tensor ilens: batch of lengths of input sequences (B)
@@ -712,7 +712,7 @@ class E2E(STInterface, torch.nn.Module):
 
         return self.loss
 
-    def forward(self, xs_pad, ilens, ys_pad, ys_pad_src):
+    def forward_maha(self, xs_pad, ilens, ys_pad, ys_pad_src):
         """E2E forward.
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)

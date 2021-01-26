@@ -120,7 +120,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 z_list[l] = self.decoder[l](self.dropout_dec[l - 1](z_list[l - 1]), z_prev[l])
         return z_list, c_list
 
-    def forward_def(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
+    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
         """Decoder forward
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
                                     [in multi-encoder case,
@@ -167,7 +167,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
         return z_list, c_list, att_w, z_
 
-    def forward(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
+    def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
     #def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
         """Decoder forward
 
