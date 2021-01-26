@@ -384,11 +384,11 @@ class Encoder(torch.nn.Module):
                 if states is not None:
                     for state in states:
                         print('state: ', state.size())
-                current_states_.append(states)
+                #current_states_.append(states)
             mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
-            encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
+            #encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
             mask.detach()
-            ilens_out.append(ilens_)
+            #ilens_out.append(ilens_)
             current_states.append(current_states_)
             g += s
 
