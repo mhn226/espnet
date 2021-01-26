@@ -139,6 +139,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         for i in six.moves.range(self.N):
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+                print(hs_pad[0].size())
             """
             else:
                 for idx in range(self.num_encs):
@@ -158,7 +159,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
             else:
                 ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
-            print(type(ey), type(z_list), type(c_list), len(z_list), len(c_list), z_list[0].size(), c_list[0].size(), z_list[1].size(), c_list[1].size())
             z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
             if self.context_residual:
                 z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
