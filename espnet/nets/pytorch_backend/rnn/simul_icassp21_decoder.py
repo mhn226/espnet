@@ -135,7 +135,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         :return: accuracy
         :rtype: float
         """
-        #self.att[att_idx].reset()
+        self.att[att_idx].reset()
         for i in six.moves.range(self.N):
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
