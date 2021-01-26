@@ -390,8 +390,8 @@ class Encoder(torch.nn.Module):
             #encoder_output.append(xs_pad_.masked_fill(mask, 0.0))
             if encoder_output is None:
                 encoder_output = xs_pad_.masked_fill(mask, 0.0)
-            else:
-                encoder_output = torch.cat((encoder_output, xs_pad_.masked_fill(mask, 0.0)), dim=1)
+            #else:
+            #    encoder_output = torch.cat((encoder_output, xs_pad_.masked_fill(mask, 0.0)), dim=1)
             #ilens_out.append(ilens_)
             #current_states.append(current_states_)
             g += s
