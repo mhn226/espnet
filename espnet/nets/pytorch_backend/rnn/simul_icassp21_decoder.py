@@ -161,11 +161,11 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             print(type(ey), type(z_list), type(c_list), len(z_list), len(c_list), z_list[0].size(), c_list[0].size(), z_list[1].size(), c_list[1].size())
             z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
             if self.context_residual:
-                z_all.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
+                z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
             else:
-                z_all.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
+                z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
 
-        return z_list, c_list, att_w, z_all
+        return z_list, c_list, att_w, z_
 
     def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
     #def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
