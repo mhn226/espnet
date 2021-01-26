@@ -452,6 +452,7 @@ class E2E(STInterface, torch.nn.Module):
                 #offset = g
                 print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
                 hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+                g += s
                 continue
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, eys)
                 #z_all.append(z_.detach())
