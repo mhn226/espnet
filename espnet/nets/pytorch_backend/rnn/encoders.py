@@ -329,7 +329,7 @@ class Encoder(torch.nn.Module):
                 ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
                 ilens_out.append(ilen_buff)
                 offset = g
-            current_states.append(current_states_)
+            #current_states.append(current_states_)
             g += s
 
         # g = Tmax
@@ -354,7 +354,7 @@ class Encoder(torch.nn.Module):
             #print('enc: ', prev_states, ilens_, xs_pad_.size())
         elif offset < Tmax:
             u_xs_pad_buff = torch.cat((u_xs_pad_buff, xs_pad_), dim=1)
-            encoder_output.append(u_xs_pad_buff)
+            #encoder_output.append(u_xs_pad_buff)
             ilen_buff = [x + y for x, y in zip(ilen_buff, ilens_)]
             ilens_out.append(ilen_buff)
             #print('enc: ', prev_states, ilens_, xs_pad_.size(), u_xs_pad_buff.size())
