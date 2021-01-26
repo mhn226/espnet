@@ -135,68 +135,39 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         :return: accuracy
         :rtype: float
         """
-        #self.att[att_idx].reset()
-        #for i in six.moves.range(self.N):
-        #    if self.num_encs == 1:
-        #        att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-        #        print(hs_pad[0].size(), att_w.size())
-        #    """
-        #    else:
-        #        for idx in range(self.num_encs):
-        #            att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
-        #                                                             self.dropout_dec[0](z_list[0]), att_w_list[idx])
-        #        hs_pad_han = torch.stack(att_c_list, dim=1)
-        #        hlens_han = [self.num_encs] * len(ys_in)
-        #        att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
-        #                                                                   self.dropout_dec[0](z_list[0]),
-        #                                                                   att_w_list[self.num_encs])
-        #    """
-        #    if step > 1 and random.random() < self.sampling_probability:
-        #        logging.info(' scheduled sampling ')
-        #        z_out = self.output(z_all[-1])
-        #        z_out = np.argmax(z_out.detach().cpu(), axis=1)
-        #        z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-        #        ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
-        #    else:
-        #        ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
-        #    z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
-        #    if self.context_residual:
-        #        z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
-        #    else:
-        #        z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
-        #    print(ey.size(), z_.size())
+        print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
         self.att[att_idx].reset()
-        att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
-        if eys is not None:
-            if step > 0 and random.random() < self.sampling_probability:
+
+        return
+        for i in six.moves.range(self.N):
+            if self.num_encs == 1:
+                att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
+                print(hs_pad[0].size(), att_w.size())
+            """
+            else:
+                for idx in range(self.num_encs):
+                    att_c_list[idx], att_w_list[idx] = self.att[idx](hs_pad[idx], hlens[idx],
+                                                                     self.dropout_dec[0](z_list[0]), att_w_list[idx])
+                hs_pad_han = torch.stack(att_c_list, dim=1)
+                hlens_han = [self.num_encs] * len(ys_in)
+                att_c, att_w_list[self.num_encs] = self.att[self.num_encs](hs_pad_han, hlens_han,
+                                                                           self.dropout_dec[0](z_list[0]),
+                                                                           att_w_list[self.num_encs])
+            """
+            if step > 1 and random.random() < self.sampling_probability:
                 logging.info(' scheduled sampling ')
                 z_out = self.output(z_all[-1])
                 z_out = np.argmax(z_out.detach().cpu(), axis=1)
                 z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
                 ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
             else:
-                ey = torch.cat((eys[:, step, :], att_c), dim=1)  # utt x (zdim + hdim)
-        else:
-            if step == 0:
-                z_out = torch.zeros((hs_pad[0].size(0)), device=hs_pad[0].device)
-                # z_out = z_all[-1].new_zeros(hs_pad.size(0))
-                z_out = z_out.new_full(z_out.size(), fill_value=self.sos, device=hs_pad[0].device, dtype=torch.long)
-                # print(z_all[-1].size())
-                #print('hs_pad: ', len(hs_pad), hs_pad[0].size())
-                #print('z_out init eos: ', z_out.size(), z_out)
+                ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
+            z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
+            if self.context_residual:
+                z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
             else:
-                z_out = self.output(z_all[-1])
-                z_out = np.argmax(z_out.detach().cpu(), axis=1)
-            z_out = self.dropout_emb(self.embed(to_device(self, z_out)))
-            ey = torch.cat((z_out, att_c), dim=1)  # utt x (zdim + hdim)
-        # print(z_list[0].size())
-        # print(c_list[0].size())
-        z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
-        if self.context_residual:
-            z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
-        else:
-            z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
-
+                z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
+            print(ey.size(), z_.size())
         return z_list, c_list, att_w, z_
 
     def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
