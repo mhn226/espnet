@@ -162,11 +162,13 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 ey = torch.cat((eys[:, i, :], att_c), dim=1)  # utt x (zdim + hdim)
             z_list, c_list = self.rnn_forward(ey, z_list, c_list, z_list, c_list)
             if self.context_residual:
-                z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
+                #z_ = torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1)  # utt x (zdim + hdim)
+                z_out_.append(torch.cat((self.dropout_dec[-1](z_list[-1]), att_c), dim=-1))  # utt x (zdim + hdim)
             else:
-                z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
-            print(ey.size(), z_.size())
-            z_out_.append(z_.detach())
+                #z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
+                z_out_.append(self.dropout_dec[-1](z_list[-1]))  # utt x (zdim)
+            #print(ey.size(), z_.size())
+            #z_out_.append(z_.detach())
         return z_list, c_list, att_w, z_out_
 
     def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
