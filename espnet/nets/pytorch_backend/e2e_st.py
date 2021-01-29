@@ -616,8 +616,6 @@ class E2E(STInterface, torch.nn.Module):
             ys_true = ys_out_pad
             for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
                                           ys_true.detach().cpu().numpy()):
-                if i == self.dec.MAX_DECODER_OUTPUT:
-                    break
                 idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
                 idx_true = y_true[y_true != self.ignore_id]
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
