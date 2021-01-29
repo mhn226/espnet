@@ -166,7 +166,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             else:
                 z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
             print(ey.size(), z_.size())
-            z_out.append(z_.detach().cpu())
+            z_out.append(z_.detach())
         return z_list, c_list, att_w, z_out
 
     def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
