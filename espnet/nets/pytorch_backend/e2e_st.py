@@ -995,7 +995,7 @@ class E2E(STInterface, torch.nn.Module):
             self.train()
         return y
 
-    def calculate_all_attentions(self, xs_pad, ilens, ys_pad, ys_pad_src):
+    def calculate_all_attentions_maha(self, xs_pad, ilens, ys_pad, ys_pad_src):
         """E2E attention calculation.
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)
@@ -1019,6 +1019,30 @@ class E2E(STInterface, torch.nn.Module):
             # 2. Decoder
             hpad = encoder_out_dict["encoder_output"][0]
             hlens = encoder_out_dict["ilens"][0]
+            att_ws = self.dec.calculate_all_attentions(hpad, hlens, ys_pad, lang_ids=tgt_lang_ids)
+
+        return att_ws
+
+    def calculate_all_attentions(self, xs_pad, ilens, ys_pad, ys_pad_src):
+        """E2E attention calculation.
+        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, idim)
+        :param torch.Tensor ilens: batch of lengths of input sequences (B)
+        :param torch.Tensor ys_pad: batch of padded character id sequence tensor (B, Lmax)
+        :return: attention weights with the following shape,
+            1) multi-head case => attention weights (B, H, Lmax, Tmax),
+            2) other case => attention weights (B, Lmax, Tmax).
+        :rtype: float ndarray
+        """
+        with torch.no_grad():
+            # 1. Encoder
+            if self.multilingual:
+                tgt_lang_ids = ys_pad[:, 0:1]
+                ys_pad = ys_pad[:, 1:]  # remove target language ID in the beggining
+            else:
+                tgt_lang_ids = None
+            hpad, hlens, _ = self.enc(xs_pad, ilens)
+
+            # 2. Decoder
             att_ws = self.dec.calculate_all_attentions(hpad, hlens, ys_pad, lang_ids=tgt_lang_ids)
 
         return att_ws
