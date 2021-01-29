@@ -455,11 +455,11 @@ class E2E(STInterface, torch.nn.Module):
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, 1, eys)
                 z_all.extend(z_)
                 g += s
-                continue
-                #z_all.append(z_.detach())
                 print(len(z_all))
+                #continue
+                #z_all.append(z_.detach())
+
                 dec_step += 1
-                g += s
 
             # when finished_read
             if finished_read:
