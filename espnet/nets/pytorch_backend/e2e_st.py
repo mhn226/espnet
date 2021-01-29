@@ -439,7 +439,7 @@ class E2E(STInterface, torch.nn.Module):
         last_enc_states = None
         offset = 0
 
-        dec_step = 1
+        dec_step = 0
         if self.training:
             while not finished_read:
                 #hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,

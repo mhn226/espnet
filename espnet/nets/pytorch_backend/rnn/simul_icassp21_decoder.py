@@ -152,7 +152,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                                                                            self.dropout_dec[0](z_list[0]),
                                                                            att_w_list[self.num_encs])
             """
-            if step > 1 and random.random() < self.sampling_probability:
+            if step > 0 and random.random() < self.sampling_probability:
                 logging.info(' scheduled sampling ')
                 z_out = self.output(z_all[-1])
                 z_out = np.argmax(z_out.detach().cpu(), axis=1)
