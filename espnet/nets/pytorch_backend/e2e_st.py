@@ -611,17 +611,15 @@ class E2E(STInterface, torch.nn.Module):
             bleu = 0.0
         else:
             lpz = None
-
             bleus = []
-            step = 0
-
-            for i, y_hat in enumerate(y_all):
-                y_hat = y_hat.detach().cpu().numpy()
-                y_true = ys_out_pad[i]
-                y_true = y_true.detach().cpu().numpy()
-                idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
-                idx_true = y_true[y_true != self.dec.ignore_id]
-
+            ys_hat = y_all.view(batch, olength, -1)
+            ys_true = ys_out_pad
+            for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+                                          ys_true.detach().cpu().numpy()):
+                if i == self.dec.MAX_DECODER_OUTPUT:
+                    break
+                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.ignore_id]
                 seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
                 seq_true = [self.char_list[int(idx)] for idx in idx_true]
                 seq_hat_text = "".join(seq_hat).replace(self.trans_args.space, ' ')
@@ -630,6 +628,21 @@ class E2E(STInterface, torch.nn.Module):
 
                 bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
                 bleus.append(bleu)
+            #for i, y_hat in enumerate(y_all):
+            #    y_hat = y_hat.detach().cpu().numpy()
+            #    y_true = ys_out_pad[i]
+            #    y_true = y_true.detach().cpu().numpy()
+            #    idx_hat = np.argmax(y_hat[y_true != self.dec.ignore_id], axis=1)
+            #    idx_true = y_true[y_true != self.dec.ignore_id]
+
+            #    seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+            #    seq_true = [self.char_list[int(idx)] for idx in idx_true]
+            #    seq_hat_text = "".join(seq_hat).replace(self.trans_args.space, ' ')
+            #    seq_hat_text = seq_hat_text.replace(self.trans_args.blank, '')
+            #    seq_true_text = "".join(seq_true).replace(self.trans_args.space, ' ')
+
+            #    bleu = nltk.bleu_score.sentence_bleu([seq_true_text], seq_hat_text) * 100
+            #    bleus.append(bleu)
 
             bleu = 0.0 if not self.report_bleu else sum(bleus) / len(bleus)
 
