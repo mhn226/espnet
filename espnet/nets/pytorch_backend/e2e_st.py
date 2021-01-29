@@ -440,79 +440,80 @@ class E2E(STInterface, torch.nn.Module):
         offset = 0
 
         dec_step = 0
-        if self.training:
-            while not finished_read:
-                #hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
-                #                                                                         last_enc_states, offset, g,
-                #                                                                         finished_read)
-                #for idx in range(self.dec.num_encs):
-                #    hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
-                    # hlens[idx] = hlens[idx] + hlens_[idx]
-                #    hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                #offset = g
-                print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
-                hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, 1, eys)
-                z_all.extend(z_)
-                g += s
-                print(len(z_all))
-                #continue
-                #z_all.append(z_.detach())
 
-                dec_step += 1
+        while not finished_read:
+            # hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
+            #                                                                         last_enc_states, offset, g,
+            #                                                                         finished_read)
+            # for idx in range(self.dec.num_encs):
+            #    hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
+            # hlens[idx] = hlens[idx] + hlens_[idx]
+            #    hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
+            # offset = g
+            print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
+            hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, 1, eys)
+            z_all.extend(z_)
+            g += s
+            print(len(z_all))
+            # continue
+            # z_all.append(z_.detach())
 
-            # when finished_read
-            if finished_read:
-                z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, olength-dec_step, eys)
-                z_all.extend(z_)
-                print(len(z_all), len(z_))
-            z_all = torch.stack(z_all, dim=1)
-            print(z_all.size(), batch * olength)
-            z_all = z_all.view(batch * olength, -1)
-            print(z_all.size())
-            # compute loss
-            y_all = self.dec.output(z_all)
+            dec_step += 1
 
-            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-                reduction_str = 'elementwise_mean'
-            else:
-                reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
-                                            ignore_index=self.dec.ignore_id,
-                                            reduction=reduction_str)
+        # when finished_read
+        if finished_read:
+            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all,
+                                                 olength - dec_step, eys)
+            z_all.extend(z_)
+            print(len(z_all), len(z_))
+        z_all = torch.stack(z_all, dim=1)
+        print(z_all.size(), batch * olength)
+        z_all = z_all.view(batch * olength, -1)
+        print(z_all.size())
+        # compute loss
+        y_all = self.dec.output(z_all)
 
-            # compute perplexity
-            ppl = math.exp(self.dec.loss.item())
-            # -1: eos, which is removed in the loss computation
-            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
+        if LooseVersion(torch.__version__) < LooseVersion('1.0'):
+            reduction_str = 'elementwise_mean'
+        else:
+            reduction_str = 'mean'
+        self.dec.loss = F.cross_entropy(y_all, ys_out_pad.view(-1),
+                                        ignore_index=self.dec.ignore_id,
+                                        reduction=reduction_str)
 
-            # show predicted character sequence for debug
-            if self.verbose > 0 and self.char_list is not None:
-                ys_hat = y_all.view(batch, olength, -1)
-                ys_true = ys_out_pad
-                for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
-                                              ys_true.detach().cpu().numpy()):
-                    if i == self.dec.MAX_DECODER_OUTPUT:
-                        break
-                    idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
-                    idx_true = y_true[y_true != self.ignore_id]
-                    seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
-                    seq_true = [self.char_list[int(idx)] for idx in idx_true]
-                    seq_hat = "".join(seq_hat)
-                    seq_true = "".join(seq_true)
-                    logging.info("groundtruth[%d]: " % i + seq_true)
-                    logging.info("prediction [%d]: " % i + seq_hat)
+        # compute perplexity
+        ppl = math.exp(self.dec.loss.item())
+        # -1: eos, which is removed in the loss computation
+        self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
+        acc = th_accuracy(y_all, ys_out_pad, ignore_label=self.dec.ignore_id)
+        logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
 
-            if self.dec.labeldist is not None:
-                if self.dec.vlabeldist is None:
-                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-                loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
-                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+        # show predicted character sequence for debug
+        if self.verbose > 0 and self.char_list is not None:
+            ys_hat = y_all.view(batch, olength, -1)
+            ys_true = ys_out_pad
+            for (i, y_hat), y_true in zip(enumerate(ys_hat.detach().cpu().numpy()),
+                                          ys_true.detach().cpu().numpy()):
+                if i == self.dec.MAX_DECODER_OUTPUT:
+                    break
+                idx_hat = np.argmax(y_hat[y_true != self.ignore_id], axis=1)
+                idx_true = y_true[y_true != self.ignore_id]
+                seq_hat = [self.char_list[int(idx)] for idx in idx_hat]
+                seq_true = [self.char_list[int(idx)] for idx in idx_true]
+                seq_hat = "".join(seq_hat)
+                seq_true = "".join(seq_true)
+                logging.info("groundtruth[%d]: " % i + seq_true)
+                logging.info("prediction [%d]: " % i + seq_hat)
 
-            self.acc = acc
-            self.loss_st = self.dec.loss
+        if self.dec.labeldist is not None:
+            if self.dec.vlabeldist is None:
+                self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
+            loss_reg = - torch.sum((F.log_softmax(y_all, dim=1) * self.dec.vlabeldist).view(-1), dim=0) / len(ys_in)
+            self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
+
+        self.acc = acc
+        self.loss_st = self.dec.loss
 
         # 2. ASR CTC loss
         if self.asr_weight == 0 or self.mtlalpha == 0:
@@ -605,7 +606,7 @@ class E2E(STInterface, torch.nn.Module):
             cer = 0.0 if not self.report_cer else float(sum(char_eds)) / sum(char_ref_lens)
 
         # 6. compute bleu
-        self.report_bleu = False
+        #self.report_bleu = False
         if self.training or not self.report_bleu:
             bleu = 0.0
         else:
@@ -613,73 +614,6 @@ class E2E(STInterface, torch.nn.Module):
 
             bleus = []
             step = 0
-            # y_hats = []
-            self.maxlen = olength
-            while not finished_read:
-                if "b" not in self.etype:
-                    hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
-                                                                                             last_enc_states, offset, g,
-                                                                                             finished_read)
-                    for idx in range(self.dec.num_encs):
-                        hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
-                        # hlens[idx] = hlens[idx] + hlens_[idx]
-                        hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                    offset = g
-                else:
-                    hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in range(dec_step):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                z_all.append(z_)
-                dec_step += 1
-                g += s
-
-            # when finished_read
-            if finished_read:
-                c_list = [self.dec.zero_state(hs_pad[0])]
-                z_list = [self.dec.zero_state(hs_pad[0])]
-                for _ in six.moves.range(1, self.dec.dlayers):
-                    c_list.append(self.dec.zero_state(hs_pad[0]))
-                    z_list.append(self.dec.zero_state(hs_pad[0]))
-                for i in six.moves.range(olength):
-                    z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, i, att_idx, z_list, c_list, att_w, z_all, eys)
-                    if i >= dec_step - 1:
-                        z_all.append(z_)
-
-            # z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
-            # compute loss
-            # y_all = self.dec.output(z_all)
-            z_all = torch.stack(z_all, dim=1)
-            y_all = self.dec.output(z_all)
-
-            if LooseVersion(torch.__version__) < LooseVersion('1.0'):
-                reduction_str = 'elementwise_mean'
-            else:
-                reduction_str = 'mean'
-            self.dec.loss = F.cross_entropy(y_all.view(batch * olength, -1), ys_out_pad.view(-1),
-                                            ignore_index=self.dec.ignore_id,
-                                            reduction=reduction_str)
-            # compute perplexity
-            ppl = math.exp(self.dec.loss.item())
-            # -1: eos, which is removed in the loss computation
-            self.dec.loss *= (np.mean([len(x) for x in ys_in]) - 1)
-            acc = th_accuracy(y_all.view(batch * olength, -1), ys_out_pad, ignore_label=self.dec.ignore_id)
-            logging.info('att loss:' + ''.join(str(self.dec.loss.item()).split('\n')))
-            if self.dec.labeldist is not None:
-                if self.dec.vlabeldist is None:
-                    self.dec.vlabeldist = to_device(self.dec, torch.from_numpy(self.dec.labeldist))
-                loss_reg = - torch.sum(
-                    (F.log_softmax(y_all.view(batch * olength, -1), dim=1) * self.dec.vlabeldist).view(-1),
-                    dim=0) / len(ys_in)
-                self.dec.loss = (1. - self.dec.lsm_weight) * self.dec.loss + self.dec.lsm_weight * loss_reg
-
-            self.acc = acc
-            self.loss_st = self.dec.loss
 
             for i, y_hat in enumerate(y_all):
                 y_hat = y_hat.detach().cpu().numpy()
