@@ -465,9 +465,9 @@ class E2E(STInterface, torch.nn.Module):
             if finished_read:
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, olength-dec_step, eys)
                 z_all.extend(z_)
-                print(len(z_all))
+                print(len(z_all), len(z_))
             z_ = torch.stack(z_, dim=1)
-            print(z_.size())
+            print(z_.size(), torch.stack(z_all, dim=1).size())
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             print(z_all.size())
             # compute loss
