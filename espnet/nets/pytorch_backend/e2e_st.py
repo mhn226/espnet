@@ -453,7 +453,7 @@ class E2E(STInterface, torch.nn.Module):
                 print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
                 hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, 1, eys)
-                z_all.extend(z_.detach().cpu())
+                z_all.extend(z_)
                 g += s
                 continue
                 #z_all.append(z_.detach())
@@ -464,7 +464,7 @@ class E2E(STInterface, torch.nn.Module):
             # when finished_read
             if finished_read:
                 z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, olength-dec_step, eys)
-                z_all.extend(z_.detach().cpu())
+                z_all.extend(z_)
                 print(len(z_all))
             z_all = torch.stack(z_all, dim=1).view(batch * olength, -1)
             # compute loss
