@@ -136,7 +136,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         :rtype: float
         """
         self.att[att_idx].reset()
-        z_out = []
+        z_out_ = []
         for i in six.moves.range(N):
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
@@ -166,8 +166,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             else:
                 z_ = self.dropout_dec[-1](z_list[-1])  # utt x (zdim)
             print(ey.size(), z_.size())
-            z_out.append(z_.detach())
-        return z_list, c_list, att_w, z_out
+            z_out_.append(z_.detach())
+        return z_list, c_list, att_w, z_out_
 
     def forward_maha(self, hs_pad_list, hlens_list, ys_pad, out_buff=None, N=1, finished_read=False, strm_idx=0, lang_ids=None):
     #def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, eys=None):
