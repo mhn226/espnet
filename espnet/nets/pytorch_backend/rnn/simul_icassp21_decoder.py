@@ -942,11 +942,11 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
         print('x before sliced: ', x.size(), x.transpose(0 ,1).size())
         window_size = 60
-        if x.size(0) > window_size:
-            idx = x.size(0) - window_size
-            print('idx: ', idx)
-            x = x[idx:]
-            print('x sliced: ', x.size())
+        #if x.size(0) > window_size:
+        #    idx = x.size(0) - window_size
+        #    print('idx: ', idx)
+        #    x = x[idx:]
+        #    print('x sliced: ', x.size())
         if self.num_encs == 1:
             x = [x]
         """
