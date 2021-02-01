@@ -940,8 +940,11 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
     def score(self, yseq, state, x):
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
+        print(x.size())
+        aaaaaaaaaaaaa
         if self.num_encs == 1:
             x = [x]
+        """
         a_prev_padded = None
         if state['a_prev'] is not None:
             # num_encs == 1
@@ -951,19 +954,24 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 logging.info(str(a_prev_padded.size()))
                 a_prev_padded[:a_prev_size] = state['a_prev'][0]
                 a_prev_padded = [a_prev_padded]
+        """
 
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
         if self.num_encs == 1:
-            #att_c, att_w = self.att[att_idx](
-            #    x[0].unsqueeze(0), [x[0].size(0)],
-            #    self.dropout_dec[0](state['z_prev'][0]), state['a_prev'])
+            att_c, att_w = self.att[att_idx](
+                x[0].unsqueeze(0), [x[0].size(0)],
+                self.dropout_dec[0](state['z_prev'][0]), state['a_prev'])
+
+            """
             self.att[att_idx].pre_compute_enc_h = None
             self.att[att_idx].mask = None
+            
             att_c, att_w = self.att[att_idx](
                 x[0].unsqueeze(0), [x[0].size(0)],
                 self.dropout_dec[0](state['z_prev'][0]), a_prev_padded)
+            """
         else:
             att_w = [None] * (self.num_encs + 1)  # atts + han
             att_c_list = [None] * (self.num_encs)  # atts
