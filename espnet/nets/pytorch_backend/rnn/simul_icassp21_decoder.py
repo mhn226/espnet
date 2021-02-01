@@ -946,7 +946,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         print(idx)
         x = x.transpose(0, 1)[idx:].transpose(0, 1)
         print(x.size())
-        aaaaaaaaaaaaaaaaa
         if self.num_encs == 1:
             x = [x]
         """
