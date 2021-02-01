@@ -466,6 +466,7 @@ class E2E(STInterface, torch.nn.Module):
 
         # when finished_read
         if finished_read and len(z_all) < olength:
+            print('olength - dec_step: ', olength-dec_step)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all,
                                                  olength - dec_step, eys)
             z_all.extend(z_)
