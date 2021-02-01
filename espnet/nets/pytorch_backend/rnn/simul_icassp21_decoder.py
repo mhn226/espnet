@@ -137,7 +137,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         """
         self.att[att_idx].reset()
         z_out_ = []
-        window_size = 200
+        window_size = 50
         if hs_pad[0].size(1) > window_size:
             idx = hs_pad[0].size(1) - window_size
             hs_pad[0] = hs_pad[0].transpose(0, 1)[idx:].transpose(0, 1)
