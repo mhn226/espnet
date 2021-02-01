@@ -141,8 +141,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         if hs_pad[0].size(1) > window_size:
             idx = hs_pad[0].size(1) - window_size
             hs_pad[0] = hs_pad[0].transpose(0, 1)[idx:].transpose(0, 1)
+            hlens[0] = [window_size]
             print(hs_pad[0].size(), hlens)
-            aaaaaaaaaaaaa
         for i in six.moves.range(N):
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
