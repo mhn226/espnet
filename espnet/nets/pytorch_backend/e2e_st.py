@@ -374,6 +374,7 @@ class E2E(STInterface, torch.nn.Module):
         k = self.k
         g = self.g
         s = self.s
+        N = 2
 
         if self.multilingual:
             tgt_lang_ids = ys_pad[:, 0:1]
@@ -452,7 +453,7 @@ class E2E(STInterface, torch.nn.Module):
             # offset = g
             print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
             hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, 2, eys)
+            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, eys)
             z_all.extend(z_)
             g += s
             print(len(z_all))
@@ -461,7 +462,7 @@ class E2E(STInterface, torch.nn.Module):
             # continue
             # z_all.append(z_.detach())
 
-            dec_step += 1
+            dec_step += N
 
         # when finished_read
         if finished_read and len(z_all) < olength:
