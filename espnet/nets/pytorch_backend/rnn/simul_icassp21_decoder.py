@@ -135,6 +135,12 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         :return: accuracy
         :rtype: float
         """
+        if c_list is None:
+            c_list = [self.zero_state(hs_pad[0])]
+            z_list = [self.zero_state(hs_pad[0])]
+            for _ in six.moves.range(1, self.dlayers):
+                c_list.append(self.zero_state(hs_pad[0]))
+                z_list.append(self.zero_state(hs_pad[0]))
         self.att[att_idx].reset()
         z_out_ = []
         #window_size = 50
