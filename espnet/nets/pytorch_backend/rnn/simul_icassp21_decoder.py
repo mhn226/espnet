@@ -964,6 +964,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         vy = yseq[-1].unsqueeze(0)
         ey = self.dropout_emb(self.embed(vy))  # utt list (1) x zdim
         if self.num_encs == 1:
+            self.att[att_idx].reset()
             att_c, att_w = self.att[att_idx](
                 x[0].unsqueeze(0), [x[0].size(0)],
                 self.dropout_dec[0](state['z_prev'][0]), state['a_prev'])
