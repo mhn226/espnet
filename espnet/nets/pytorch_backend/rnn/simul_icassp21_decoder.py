@@ -944,7 +944,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         window_size = 50
         idx = x.size(0) - window_size
         print('idx: ', idx)
-        x = x.transpose(0, 1)[idx:].transpose(0, 1)
+        x = x[idx:]
         print('x sliced: ', x.size())
         if self.num_encs == 1:
             x = [x]
