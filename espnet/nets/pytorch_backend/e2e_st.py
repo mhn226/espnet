@@ -374,7 +374,7 @@ class E2E(STInterface, torch.nn.Module):
         k = self.k
         g = self.g
         s = self.s
-        N = 4
+        N = 2
 
         if self.multilingual:
             tgt_lang_ids = ys_pad[:, 0:1]
