@@ -453,12 +453,12 @@ class E2E(STInterface, torch.nn.Module):
             # offset = g
             print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
             hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
-            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, eys)
+            z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, olength, eys)
             z_all.extend(z_)
             g += s
             print(len(z_all))
             if len(z_all) >= olength:
-                z_all = z_all[:olength]
+                #z_all = z_all[:olength]
                 break
             # continue
             # z_all.append(z_.detach())
@@ -469,7 +469,7 @@ class E2E(STInterface, torch.nn.Module):
         if finished_read and len(z_all) < olength:
             print('olength - dec_step: ', olength-dec_step)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all,
-                                                 olength - dec_step, eys)
+                                                 olength - dec_step, olength, eys)
             z_all.extend(z_)
             print(len(z_all), len(z_))
         z_all = torch.stack(z_all, dim=1)

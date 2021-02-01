@@ -120,7 +120,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 z_list[l] = self.decoder[l](self.dropout_dec[l - 1](z_list[l - 1]), z_prev[l])
         return z_list, c_list
 
-    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, N, eys=None):
+    def forward(self, hs_pad, hlens, step, att_idx, z_list, c_list, att_w, z_all, N, olength, eys=None):
         """Decoder forward
         :param torch.Tensor hs_pad: batch of padded hidden state sequences (B, Tmax, D)
                                     [in multi-encoder case,
@@ -143,6 +143,8 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
         #    hs_pad[0] = hs_pad[0].transpose(0, 1)[idx:].transpose(0, 1)
         #    hlens[0] = [window_size]
         #    print(hs_pad[0].size(), hlens)
+        if len(z_all) + N > olength:
+            N = olength - len(z_all)
         for i in six.moves.range(N):
             if self.num_encs == 1:
                 att_c, att_w = self.att[att_idx](hs_pad[0], hlens[0], self.dropout_dec[0](z_list[0]), att_w)
