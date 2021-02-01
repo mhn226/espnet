@@ -458,6 +458,7 @@ class E2E(STInterface, torch.nn.Module):
             g += s
             print(len(z_all))
             if len(z_all) >= olength:
+                print(len(z_all), dec_step)
                 break
             # continue
             # z_all.append(z_.detach())
