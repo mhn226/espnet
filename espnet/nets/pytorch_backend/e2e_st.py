@@ -456,13 +456,15 @@ class E2E(STInterface, torch.nn.Module):
             z_all.extend(z_)
             g += s
             print(len(z_all))
+            if len(z_all) >= olength:
+                break
             # continue
             # z_all.append(z_.detach())
 
             dec_step += 1
 
         # when finished_read
-        if finished_read:
+        if finished_read and len(z_all) < olength:
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all,
                                                  olength - dec_step, eys)
             z_all.extend(z_)
