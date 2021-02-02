@@ -321,7 +321,8 @@ class E2E(STInterface, torch.nn.Module):
             finished_read = True
         else:
             xs_pad_ = xs_pad.transpose(1, 2)[:, :, :g].transpose(1, 2)
-            ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+            ilens_ = torch.zeros(ilens.size())
             ilens_ = ilens_.new_full(ilens.size(), fill_value=g)
         hs_pad, hlens, _ = self.enc(xs_pad_, ilens_)
         # print('hs_pad: ', len(hs_pad), hs_pad[0].size())
@@ -339,7 +340,8 @@ class E2E(STInterface, torch.nn.Module):
 
         xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
         #xs_pad_, ilens_ = self.subsample_frames(xs_pad_)
-        ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
+        ilens_ = torch.zeros(ilens.size())
         ilens_ = ilens_.new_full(ilens.size(), fill_value=(g-offset))
         hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states)
 
@@ -444,16 +446,16 @@ class E2E(STInterface, torch.nn.Module):
         dec_step = 0
 
         while not finished_read:
-            # hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
-            #                                                                         last_enc_states, offset, g,
-            #                                                                         finished_read)
-            # for idx in range(self.dec.num_encs):
-            #    hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
-            # hlens[idx] = hlens[idx] + hlens_[idx]
-            #    hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-            # offset = g
+            hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
+                                                                                     last_enc_states, offset, g,
+                                                                                     finished_read)
+            for idx in range(self.dec.num_encs):
+                hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
+                #hlens[idx] = hlens[idx] + hlens_[idx]
+                hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
+            offset = g
             print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
-            hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
+            #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, olength, eys)
             z_all.extend(z_)
             g += s
