@@ -296,14 +296,14 @@ def trans_waitk(args):
             #hyp_word_indices = word_splitter(nbest_hyps[0]['yseq'], 28, model.dec.eos)
             #hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 819, 1986, model.dec.eos)
             #hyp_word_indices = word_splitter_spm(nbest_hyps[0]['yseq'], 263, 393, model.dec.eos)
-            #ref_seq = list(map(int, js[name]['output'][0]['tokenid'].split()))
-            #ref_word_indices = word_splitter(torch.tensor(ref_seq), 179, model.dec.eos)
+            ref_seq = list(map(int, js[name]['output'][0]['tokenid'].split()))
+            ref_word_indices = word_splitter(torch.tensor(ref_seq), 179, model.dec.eos)
             #logging.info('delays: ' + str(action['value']['dec_hyp']['delays']))
             hyp_word_delays = [action['value']['dec_hyp']['delays'][i] for i in hyp_word_indices]
             logging.info('delays: ' + str(hyp_word_delays))
             #latency = eval_all_latency(action['value']['dec_hyp']['delays'], js[name]['input'][0]['shape'][0], js[name]['output'][0]['shape'][0])
-            #latency = eval_all_latency(hyp_word_delays, js[name]['input'][0]['shape'][0], len(ref_word_indices))
-            latency = eval_all_latency(hyp_word_delays, js[name]['input'][0]['shape'][0], None)
+            latency = eval_all_latency(hyp_word_delays, js[name]['input'][0]['shape'][0], len(ref_word_indices))
+            #latency = eval_all_latency(hyp_word_delays, js[name]['input'][0]['shape'][0], None)
             nbest_hyps[0]['latency'] = latency
             new_js[name] = add_results_to_json(js[name], nbest_hyps, train_args.char_list)
             logging.info('latency: ' + str(latency))
