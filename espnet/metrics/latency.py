@@ -114,6 +114,8 @@ def AverageLagging(delays, src_lens, tgt_lens, target_padding_mask=None):
     lagging = lagging.masked_fill(lagging_padding_mask, 0)
 
     tau = (1 - lagging_padding_mask.type_as(lagging)).sum(dim=1)
+    print(delays, tau)
+    aaaaaaaaaaaa
     AL = lagging.sum(dim=1) / tau
     return AL
 
