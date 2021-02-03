@@ -940,16 +940,16 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
 
     def score(self, yseq, state, x):
         # to support mutiple encoder asr mode, in single encoder mode, convert torch.Tensor to List of torch.Tensor
-        print('x before sliced: ', x.size(), x.transpose(0 ,1).size())
-        window_size = 200
-        if x.size(0) > window_size:
-            idx = x.size(0) - window_size
-            print('idx: ', idx)
-            x = x[idx:]
-            print('x sliced: ', x.size())
+        #print('x before sliced: ', x.size(), x.transpose(0 ,1).size())
+        #window_size = 200
+        #if x.size(0) > window_size:
+        #    idx = x.size(0) - window_size
+        #    print('idx: ', idx)
+        #    x = x[idx:]
+        #    print('x sliced: ', x.size())
         if self.num_encs == 1:
             x = [x]
-        """
+
         a_prev_padded = None
         if state['a_prev'] is not None:
             # num_encs == 1
@@ -959,7 +959,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 logging.info(str(a_prev_padded.size()))
                 a_prev_padded[:a_prev_size] = state['a_prev'][0]
                 a_prev_padded = [a_prev_padded]
-        """
+
 
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
