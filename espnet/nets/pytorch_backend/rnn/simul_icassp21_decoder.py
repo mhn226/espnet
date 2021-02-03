@@ -949,7 +949,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             print('x sliced: ', x.size())
         if self.num_encs == 1:
             x = [x]
-
+        """
         a_prev_padded = None
         if state['a_prev'] is not None:
             # num_encs == 1
@@ -959,6 +959,7 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
                 logging.info(str(a_prev_padded.size()))
                 a_prev_padded[:a_prev_size] = state['a_prev'][0]
                 a_prev_padded = [a_prev_padded]
+        """
 
         att_idx, z_list, c_list = state["workspace"]
         vy = yseq[-1].unsqueeze(0)
@@ -976,7 +977,6 @@ class SimultaneousICASSP21Decoder(torch.nn.Module, ScorerInterface):
             att_c, att_w = self.att[att_idx](
                 x[0].unsqueeze(0), [x[0].size(0)],
                 self.dropout_dec[0](state['z_prev'][0]), a_prev_padded)
-            """
         else:
             att_w = [None] * (self.num_encs + 1)  # atts + han
             att_c_list = [None] * (self.num_encs)  # atts
