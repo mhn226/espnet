@@ -363,7 +363,8 @@ class SimultaneousSTE2E(object):
         logging.info('len_in=' + str(len(x)))
         logging.info('enc_step: ' + str(segment_step))
         if self.max_len < int(len(x) / 4):
-            self.max_len = int(len(x) / 4)
+            self.max_len = math.floor(len(x) / 2)
+            self.max_len = math.floor(self.max_len / 2)
         if (self.g >= len(x)) or (segments is not None and segment_step >= len(segments)-1):
             x_ = x
             self.g = len(x)
