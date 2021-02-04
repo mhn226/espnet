@@ -352,8 +352,8 @@ class SimultaneousSTE2E(object):
                 self.last_action = WRITE
                 dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
-                action = self.write_action_until(dec_step=dec_step)
-                #action = self.write_action()
+                #action = self.write_action_until(dec_step=dec_step)
+                action = self.write_action()
 
         return action
 
@@ -529,22 +529,22 @@ class SimultaneousSTE2E(object):
                     (self.finish_read and len(self.hyp['yseq']) < self.min_len and int(
                         local_best_id) == self._e2e.dec.eos):
                 # Chose the second best
-                #local_best_score, local_best_id = torch.topk(score, 2)
-                #local_best_score = local_best_score[-1].view(1)
-                #local_best_id = local_best_id[-1].view(1)
-                #logging.info(local_best_score)
-                #logging.info(local_best_id)
-                #if not self.finish_read:
-                #    logging.info(
-                #        'EOS emits before reading all of source frames, choose the second best target token instead: '
-                #        + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
-                #else:
-                #    logging.info('EOS emits before reaching minlen, choose the second best target token instead: '
-                #                 + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+                local_best_score, local_best_id = torch.topk(score, 2)
+                local_best_score = local_best_score[-1].view(1)
+                local_best_id = local_best_id[-1].view(1)
+                logging.info(local_best_score)
+                logging.info(local_best_id)
+                if not self.finish_read:
+                    logging.info(
+                        'EOS emits before reading all of source frames, choose the second best target token instead: '
+                        + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
+                else:
+                    logging.info('EOS emits before reaching minlen, choose the second best target token instead: '
+                                 + str(local_best_id[-1]) + ', ' + self._char_list[local_best_id[-1]])
                 ## Or maybe just skip to wait (min len should be set to be zero?)
-                logging.info(
-                    'EOS emits before reading all of source frames, wait for more to come')
-                return
+                #logging.info(
+                #    'EOS emits before reading all of source frames, wait for more to come')
+                #return
 
             # [:] is needed!
             self.hyp['states']['z_prev'] = states['z_prev']
