@@ -341,11 +341,11 @@ class SimultaneousSTE2E(object):
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
-                action = self.read_action_blstm(x)
-                #if "b" in self._e2e.etype:
-                #    action = self.read_action_blstm(x)
-                #else:
-                #    action = self.read_action_ulstm(x)
+                #action = self.read_action_blstm(x)
+                if "b" in self._e2e.etype:
+                    action = self.read_action_blstm(x)
+                else:
+                    action = self.read_action_ulstm(x)
 
             else:
                 # WRITE
@@ -413,12 +413,12 @@ class SimultaneousSTE2E(object):
             self.g = segments[segment_step + 1][1]
 
         if self.finish_read:
-            tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
-            tmp_h, _, tmp_prev = self._e2e.enc(tmp_h.unsqueeze(0), tmp_ilens, None)
-            self.enc_states = tmp_h.squeeze(0)
+            #tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
+            #tmp_h, _, tmp_prev = self._e2e.enc(tmp_h.unsqueeze(0), tmp_ilens, None)
+            #self.enc_states = tmp_h.squeeze(0)
             # offline mode
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
-            self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
 
     def write_action_until(self, dec_step=1):

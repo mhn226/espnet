@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2019 Kyoto University (Hirofumi Inaguma)
+# Copyright 2021 Kyoto University (Hirofumi Inaguma)
 #  Apache 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
 
 export LC_ALL=C
@@ -46,9 +46,9 @@ else
 fi
 
 # detokenize
-perl /gpfswork/rech/nsm/ueb56uf/espnet_interspeech20/espnet/tools/moses/scripts/tokenizer/detokenizer.perl -l ${tgt_lang} -q < ${dir}/ref.wrd.trn > ${dir}/ref.wrd.trn.detok
-perl /gpfswork/rech/nsm/ueb56uf/espnet_interspeech20/espnet/tools/moses/scripts/tokenizer/detokenizer.perl -l ${tgt_lang} -q < ${dir}/hyp.wrd.trn > ${dir}/hyp.wrd.trn.detok
-perl /gpfswork/rech/nsm/ueb56uf/espnet_interspeech20/espnet/tools/moses/scripts/tokenizer/detokenizer.perl -l ${tgt_lang} -q < ${dir}/src.wrd.trn > ${dir}/src.wrd.trn.detok
+detokenizer.perl -l ${tgt_lang} -q < ${dir}/ref.wrd.trn > ${dir}/ref.wrd.trn.detok
+detokenizer.perl -l ${tgt_lang} -q < ${dir}/hyp.wrd.trn > ${dir}/hyp.wrd.trn.detok
+detokenizer.perl -l ${tgt_lang} -q < ${dir}/src.wrd.trn > ${dir}/src.wrd.trn.detok
 
 # remove language IDs
 if [ -n "${nlsyms}" ]; then
@@ -68,12 +68,12 @@ fi
 
 if [ ${case} = tc ]; then
     echo ${set} > ${dir}/result.tc.txt
-    /gpfswork/rech/nsm/ueb56uf/espnet_interspeech20/espnet/tools/moses/scripts/generic/multi-bleu-detok.perl ${dir}/ref.wrd.trn.detok < ${dir}/hyp.wrd.trn.detok >> ${dir}/result.tc.txt
+    multi-bleu-detok.perl ${dir}/ref.wrd.trn.detok < ${dir}/hyp.wrd.trn.detok >> ${dir}/result.tc.txt
     echo "write a case-sensitive BLEU result in ${dir}/result.tc.txt"
     cat ${dir}/result.tc.txt
 else
     echo ${set} > ${dir}/result.lc.txt
-    /gpfswork/rech/nsm/ueb56uf/espnet_interspeech20/espnet/tools/moses/scripts/generic/multi-bleu-detok.perl -lc ${dir}/ref.wrd.trn.detok < ${dir}/hyp.wrd.trn.detok > ${dir}/result.lc.txt
+    multi-bleu-detok.perl -lc ${dir}/ref.wrd.trn.detok < ${dir}/hyp.wrd.trn.detok > ${dir}/result.lc.txt
     echo "write a case-insensitive BLEU result in ${dir}/result.lc.txt"
     cat ${dir}/result.lc.txt
 fi
