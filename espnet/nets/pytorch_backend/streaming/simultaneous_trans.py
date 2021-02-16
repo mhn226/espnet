@@ -448,6 +448,9 @@ class SimultaneousSTE2E(object):
         if (self.g >= len(x)) or (segments is not None and segment_step >= len(segments) - 1):
             self.g = len(x)
             self.finish_read = True
+            logging.info('frame_count=' + str(self.g))
+            logging.info('ulstm len_in=' + str(len(x)))
+            logging.info('enc_step: ' + str(segment_step))
             x_ = x[self.offset:self.g]
             h, ilens = self._e2e.subsample_frames(x_)
             h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens,
