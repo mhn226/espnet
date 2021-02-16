@@ -399,6 +399,7 @@ class SimultaneousSTE2E(object):
         x_ = x[self.offset:self.g]
         h, ilens = self._e2e.subsample_frames(x_)
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
+        logging.info('prev_states: ' + str(len(self.previous_encoder_recurrent_state)) + ', ' + str(self.previous_encoder_recurrent_state[0]))
         if self.enc_states is None:
             #self.enc_states = torch.empty((0, h.size(2)), device=self.device)
             self.enc_states = h.squeeze(0)
