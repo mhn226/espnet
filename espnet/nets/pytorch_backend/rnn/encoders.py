@@ -330,6 +330,8 @@ class Encoder(torch.nn.Module):
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
                 current_states.append(states)
+            prev_states[0] = None
+            prev_states[1] = states
             if output is None:
                 output = xs_pad_.squeeze(0)
                 o_ilens = ilens_
@@ -345,6 +347,8 @@ class Encoder(torch.nn.Module):
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
                 current_states.append(states)
+            prev_states[0] = None
+            prev_states[1] = states
             if output is None:
                 output = xs_pad_.squeeze(0)
                 o_ilens = ilens_
@@ -357,9 +361,11 @@ class Encoder(torch.nn.Module):
         current_states = []
 
         # return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        print(prev_states)
         print(output.size())
         print(output.unsqueeze(0).size())
         print(ilens_, torch.tensor(ilens_), o_ilens)
+        return output.unsqueeze(0).masked_fill(mask, 0.0), o_ilens, current_states
 
 def encoder_for(args, idim, subsample):
     """Instantiates an encoder module given the program arguments
