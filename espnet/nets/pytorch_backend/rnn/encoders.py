@@ -304,7 +304,7 @@ class Encoder(torch.nn.Module):
         #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
         print(output.size())
         print(output.unsqueeze(0).size())
-        print(ilens_)
+        print(ilens_, ilens2)
         return output.masked_fill(mask, 0.0), ilens, current_states
 
 
