@@ -254,6 +254,14 @@ class Encoder(torch.nn.Module):
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
 
+        # Test
+        g = 200
+        s = 20
+        xs_pad_, ilens_, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
+        print(xs_pad.size(), xs_pad_.size())
+        aaaaaaaaaaaaaaa
+        # End test
+
         current_states = []
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
