@@ -265,6 +265,7 @@ class Encoder(torch.nn.Module):
         mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
         """
 
+        """
         # Test
         prev_state = None
         g = 200
@@ -312,7 +313,53 @@ class Encoder(torch.nn.Module):
         print(output.unsqueeze(0).size())
         print(ilens_, ilens2, torch.tensor(ilens_))
         return output.unsqueeze(0).masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
+        """
 
+        # Test
+        prev_state = None
+        g = 200
+        s = 20
+        offset = 0
+        output = None
+        current_states = []
+        o_ilens = None
+        while (g < xs_pad.size(1)):
+            current_states = []
+            xs_pad_ = xs_pad.tranpose(0, 1)[offset:g].transpose(0, 1)
+            ilens_ = torch.tensor([g-offset])
+            for module, prev_state in zip(self.enc, prev_states):
+                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                current_states.append(states)
+            if output is None:
+                output = xs_pad_.squeeze(0)
+                o_ilens = ilens_
+            else:
+                output = torch.cat((output, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
+            offset = g
+            g += s
+        if (g >= xs_pad.size(1)):
+            g = xs_pad.size(1)
+            xs_pad_ = xs_pad.tranpose(0, 1)[offset:g].transpose(0, 1)
+            ilens_ = torch.tensor([g - offset])
+            for module, prev_state in zip(self.enc, prev_states):
+                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
+                current_states.append(states)
+            if output is None:
+                output = xs_pad_.squeeze(0)
+                o_ilens = ilens_
+            else:
+                output = torch.cat((output, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
+        mask = to_device(self, make_pad_mask(torch.tensor(o_ilens)).unsqueeze(-1))
+        # End test
+
+        current_states = []
+
+        # return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        print(output.size())
+        print(output.unsqueeze(0).size())
+        print(ilens_, torch.tensor(ilens_), o_ilens)
 
 def encoder_for(args, idim, subsample):
     """Instantiates an encoder module given the program arguments
