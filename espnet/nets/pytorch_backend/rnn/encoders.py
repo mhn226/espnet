@@ -184,11 +184,13 @@ class VGG2L(torch.nn.Module):
         print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
         print(xs_pad.size())
-        aaaaaaaaaa
 
         xs_pad = F.relu(self.conv2_1(xs_pad))
+        print(xs_pad.size())
         xs_pad = F.relu(self.conv2_2(xs_pad))
+        print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
+        print(xs_pad.size())
         if torch.is_tensor(ilens):
             ilens = ilens.cpu().numpy()
         else:
