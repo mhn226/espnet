@@ -277,11 +277,12 @@ class Encoder(torch.nn.Module):
             offset = g_
             g += s
         if (g >= xs_pad.size(1)):
-            g = xs_pad.size(1)
-            g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
-            g_ = np.array(
-                np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
-            g_ = g_[0]
+            #g = xs_pad.size(1)
+            #g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
+            #g_ = np.array(
+            #    np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
+            #g_ = g_[0]
+            g_ = ilens_[0]
             xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)[offset:g_].transpose(0, 1),
                                                       [g_ - offset], prev_state=prev_state)
             if output is None:
