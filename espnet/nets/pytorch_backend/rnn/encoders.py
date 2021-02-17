@@ -255,22 +255,53 @@ class Encoder(torch.nn.Module):
         assert len(prev_states) == len(self.enc)
 
         # Test
+        prev_state = None
         g = 200
         s = 20
+        offset = 0
         xs_pad_, ilens_, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
         print(xs_pad.size(), xs_pad_.size())
-        aaaaaaaaaaaaaaa
+        output = None
+        while (g < xs_pad.size(1)):
+            g_ = np.ceil([g] / 2)
+            g_ = np.array(np.ceil([g] / 2), dtype=np.int64)
+            g_ = np.array(
+                np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
+            g_ = int(g_)
+            xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)(0, 1)[offset:g_].transpose(0, 1),
+                                                      [g_-offset], prev_state=prev_state)
+            if output is None:
+                output = xs_pad2
+            else:
+                output = torch.cat(output, xs_pad2)
+            offset = g_
+            g += s
+        if (g >= xs_pad.size(1)):
+            g = xs_pad.size(1)
+            g_ = np.ceil([g] / 2)
+            g_ = np.array(np.ceil([g] / 2), dtype=np.int64)
+            g_ = np.array(
+                np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
+            g_ = int(g_)
+            xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)(0, 1)[offset:g_].transpose(0, 1),
+                                                      [g_ - offset], prev_state=prev_state)
+            if output is None:
+                output = xs_pad2
+            else:
+                output = torch.cat(output, xs_pad2)
+        mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
         # End test
 
         current_states = []
-        for module, prev_state in zip(self.enc, prev_states):
-            xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-            current_states.append(states)
+        #for module, prev_state in zip(self.enc, prev_states):
+        #    xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+        #    current_states.append(states)
 
         # make mask to remove bias value in padded part
-        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+        #mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
 
-        return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        return output.masked_fill(mask, 0.0), ilens, current_states
 
 
 def encoder_for(args, idim, subsample):
