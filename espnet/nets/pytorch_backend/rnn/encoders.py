@@ -254,6 +254,7 @@ class Encoder(torch.nn.Module):
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
 
+        """
         current_states = []
         for module, prev_state in zip(self.enc, prev_states):
            xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
@@ -262,8 +263,7 @@ class Encoder(torch.nn.Module):
         print(xs_pad.size(), ilens)
         # make mask to remove bias value in padded part
         mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
-
-        aaaaaaaa
+        """
 
         # Test
         prev_state = None
@@ -311,7 +311,7 @@ class Encoder(torch.nn.Module):
         print(output.size())
         print(output.unsqueeze(0).size())
         print(ilens_, ilens2, torch.tensor(ilens_))
-        return output.masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
+        return output.unsqueeze(0).masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
 
 
 def encoder_for(args, idim, subsample):
