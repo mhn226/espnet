@@ -315,6 +315,7 @@ class Encoder(torch.nn.Module):
         return output.unsqueeze(0).masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
         """
 
+        """
         # Test
         prev_state = None
         g = 200
@@ -361,11 +362,45 @@ class Encoder(torch.nn.Module):
         current_states = []
 
         # return xs_pad.masked_fill(mask, 0.0), ilens, current_states
-        print(prev_states)
         print(output.size())
         print(output.unsqueeze(0).size())
         print(ilens_, torch.tensor(ilens_), o_ilens)
-        return output.unsqueeze(0).masked_fill(mask, 0.0), o_ilens, current_states
+        """
+
+        prev_state = None
+        g = 200
+        s = 20
+        offset = 0
+        output = None
+        out_vgg = None
+        o_ilens = None
+        current_states = []
+        while (g < xs_pad.size(1)):
+            xs_pad_, ilens_, prev_state = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
+                                                      torch.tensor([g - offset]), prev_state=prev_state)
+            if out_vgg is None:
+                out_vgg = xs_pad_.squeeze(0)
+                o_ilens = ilens_
+            else:
+                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
+            offset = g
+            g += s
+        if (g >= xs_pad.size(1)):
+            g = xs_pad.size(1)
+            xs_pad_, ilens_, prev_state = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
+                                                      torch.tensor([g - offset]), prev_state=prev_state)
+            if out_vgg is None:
+                out_vgg = xs_pad_.squeeze(0)
+                o_ilens = ilens_
+            else:
+                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
+        print(out_vgg.size(), o_ilens)
+        xs_pad, ilens, _ = self.enc[1](xs_pad_, o_ilens, prev_state=None)
+        mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
+
+        return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
 
 def encoder_for(args, idim, subsample):
     """Instantiates an encoder module given the program arguments
