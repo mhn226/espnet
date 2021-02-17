@@ -263,8 +263,7 @@ class Encoder(torch.nn.Module):
         print(xs_pad.size(), xs_pad_.size())
         output = None
         while (g < xs_pad.size(1)):
-            g_ = np.ceil([g] / 2)
-            g_ = np.array(np.ceil([g] / 2), dtype=np.int64)
+            g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
             g_ = np.array(
                 np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
             g_ = int(g_)
