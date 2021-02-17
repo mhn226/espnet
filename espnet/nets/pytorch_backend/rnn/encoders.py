@@ -390,6 +390,7 @@ class Encoder(torch.nn.Module):
             g = xs_pad.size(1)
             xs_pad_, ilens_, prev_state = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
                                                       torch.tensor([g - offset]), prev_state=prev_state)
+            print(xs_pad_.size(), ilens_)
             if out_vgg is None:
                 out_vgg = xs_pad_.squeeze(0)
                 o_ilens = ilens_
