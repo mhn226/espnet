@@ -176,11 +176,14 @@ class VGG2L(torch.nn.Module):
         # x: utt x 1 (input channel num) x frame x dim
         xs_pad = xs_pad.view(xs_pad.size(0), xs_pad.size(1), self.in_channel,
                              xs_pad.size(2) // self.in_channel).transpose(1, 2)
-
+        xs_pad.size()
         # NOTE: max_pool1d ?
         xs_pad = F.relu(self.conv1_1(xs_pad))
+        xs_pad.size()
         xs_pad = F.relu(self.conv1_2(xs_pad))
+        xs_pad.size()
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
+        xs_pad.size()
 
         xs_pad = F.relu(self.conv2_1(xs_pad))
         xs_pad = F.relu(self.conv2_2(xs_pad))
