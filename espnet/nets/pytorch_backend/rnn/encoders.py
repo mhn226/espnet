@@ -254,6 +254,17 @@ class Encoder(torch.nn.Module):
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
 
+        current_states = []
+        for module, prev_state in zip(self.enc, prev_states):
+           xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+           current_states.append(states)
+
+        print(xs_pad.size(), ilens)
+        # make mask to remove bias value in padded part
+        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+
+        aaaaaaaa
+
         # Test
         prev_state = None
         g = 200
@@ -294,12 +305,7 @@ class Encoder(torch.nn.Module):
         # End test
 
         current_states = []
-        #for module, prev_state in zip(self.enc, prev_states):
-        #    xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-        #    current_states.append(states)
 
-        # make mask to remove bias value in padded part
-        #mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
 
         #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
         print(output.size())
