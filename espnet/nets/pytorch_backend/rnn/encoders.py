@@ -396,6 +396,7 @@ class Encoder(torch.nn.Module):
             else:
                 out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
                 o_ilens += ilens_
+        o_ilens = sum(o_ilens)
         print(out_vgg.size(), o_ilens)
         aaaaaaaaaaaa
         xs_pad, ilens, _ = self.enc[1](xs_pad_, o_ilens, prev_state=None)
