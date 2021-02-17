@@ -325,7 +325,7 @@ class Encoder(torch.nn.Module):
         o_ilens = None
         while (g < xs_pad.size(1)):
             current_states = []
-            xs_pad_ = xs_pad.tranpose(0, 1)[offset:g].transpose(0, 1)
+            xs_pad_ = xs_pad.transpose(0, 1)[offset:g].transpose(0, 1)
             ilens_ = torch.tensor([g-offset])
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
@@ -340,7 +340,7 @@ class Encoder(torch.nn.Module):
             g += s
         if (g >= xs_pad.size(1)):
             g = xs_pad.size(1)
-            xs_pad_ = xs_pad.tranpose(0, 1)[offset:g].transpose(0, 1)
+            xs_pad_ = xs_pad.transpose(0, 1)[offset:g].transpose(0, 1)
             ilens_ = torch.tensor([g - offset])
             for module, prev_state in zip(self.enc, prev_states):
                 xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
