@@ -396,10 +396,9 @@ class Encoder(torch.nn.Module):
             else:
                 out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
                 o_ilens += ilens_
-        o_ilens = sum(o_ilens)
-        print(out_vgg.size(), o_ilens)
-        aaaaaaaaaaaa
-        xs_pad, ilens, _ = self.enc[1](xs_pad_, o_ilens, prev_state=None)
+        o_ilens = list(sum(o_ilens))
+        print(out_vgg.size().unsqueeze(0), o_ilens)
+        xs_pad, ilens, _ = self.enc[1](xs_pad_.unsqueeze(0), o_ilens, prev_state=None)
         mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
 
         return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
