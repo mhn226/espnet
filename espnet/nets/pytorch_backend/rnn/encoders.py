@@ -272,6 +272,7 @@ class Encoder(torch.nn.Module):
             if output is None:
                 output = xs_pad2
             else:
+                print(output.size())
                 output = torch.cat(output, xs_pad2)
             offset = g_
             g += s
