@@ -449,7 +449,7 @@ class SimultaneousSTE2E(object):
             self.g = len(x)
             self.finish_read = True
             logging.info('frame_count=' + str(self.g))
-            logging.info('ulstm len_in=' + str(len(x)))
+            logging.info('finish read ulstm len_in=' + str(len(x)))
             logging.info('enc_step: ' + str(segment_step))
             x_ = x[self.offset:self.g]
             h, ilens = self._e2e.subsample_frames(x_)
