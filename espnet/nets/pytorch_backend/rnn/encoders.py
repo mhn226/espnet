@@ -270,10 +270,10 @@ class Encoder(torch.nn.Module):
             xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)[offset:g_].transpose(0, 1),
                                                       [g_-offset], prev_state=prev_state)
             if output is None:
-                output = xs_pad2
+                output = xs_pad2.squeeze(0)
             else:
                 print(output.size())
-                output = torch.cat(output, xs_pad2)
+                output = torch.cat((output, xs_pad2.squeeze(0)))
             offset = g_
             g += s
         if (g >= xs_pad.size(1)):
@@ -285,9 +285,10 @@ class Encoder(torch.nn.Module):
             xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)[offset:g_].transpose(0, 1),
                                                       [g_ - offset], prev_state=prev_state)
             if output is None:
-                output = xs_pad2
+
+                output = xs_pad2.squeeze(0)
             else:
-                output = torch.cat(output, xs_pad2)
+                output = torch.cat((output, xs_pad2.squeeze(0)))
         mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
         # End test
 
@@ -300,6 +301,8 @@ class Encoder(torch.nn.Module):
         #mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
 
         #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+        print(output.size())
+        print(output.unsqueeze(0).size())
         return output.masked_fill(mask, 0.0), ilens, current_states
 
 
