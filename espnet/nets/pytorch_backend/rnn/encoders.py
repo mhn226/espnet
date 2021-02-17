@@ -266,6 +266,7 @@ class Encoder(torch.nn.Module):
             g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
             g_ = np.array(
                 np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
+            print(g_)
             g_ = int(g_)
             xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)(0, 1)[offset:g_].transpose(0, 1),
                                                       [g_-offset], prev_state=prev_state)
