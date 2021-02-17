@@ -290,7 +290,7 @@ class Encoder(torch.nn.Module):
                 output = xs_pad2.squeeze(0)
             else:
                 output = torch.cat((output, xs_pad2.squeeze(0)))
-        mask = to_device(self, make_pad_mask(ilens_).unsqueeze(-1))
+        mask = to_device(self, make_pad_mask(torch.tensor(ilens_)).unsqueeze(-1))
         # End test
 
         current_states = []
@@ -304,8 +304,8 @@ class Encoder(torch.nn.Module):
         #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
         print(output.size())
         print(output.unsqueeze(0).size())
-        print(ilens_, ilens2)
-        return output.masked_fill(mask, 0.0), ilens, current_states
+        print(ilens_, ilens2, torch.tensor(ilens_))
+        return output.masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
 
 
 def encoder_for(args, idim, subsample):
