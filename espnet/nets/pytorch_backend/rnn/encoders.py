@@ -250,6 +250,28 @@ class Encoder(torch.nn.Module):
 
     def forward(self, xs_pad, ilens, prev_states=None):
         """Encoder forward
+        :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
+        :param torch.Tensor ilens: batch of lengths of input sequences (B)
+        :param torch.Tensor prev_state: batch of previous encoder hidden states (?, ...)
+        :return: batch of hidden state sequences (B, Tmax, eprojs)
+        :rtype: torch.Tensor
+        """
+        if prev_states is None:
+            prev_states = [None] * len(self.enc)
+        assert len(prev_states) == len(self.enc)
+
+        current_states = []
+        for module, prev_state in zip(self.enc, prev_states):
+            xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
+            current_states.append(states)
+
+        # make mask to remove bias value in padded part
+        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
+
+        return xs_pad.masked_fill(mask, 0.0), ilens, current_states
+
+    def forward_test(self, xs_pad, ilens, prev_states=None):
+        """Encoder forward
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
         :param torch.Tensor ilens: batch of lengths of input sequences (B)
