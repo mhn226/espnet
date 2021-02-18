@@ -203,6 +203,7 @@ class VGG2L(torch.nn.Module):
         xs_pad = xs_pad.transpose(1, 2)
         xs_pad = xs_pad.contiguous().view(
             xs_pad.size(0), xs_pad.size(1), xs_pad.size(2) * xs_pad.size(3))
+        print(xs_pad.size())
         return xs_pad, ilens, None  # no state in this layer
 
 
@@ -407,7 +408,7 @@ class Encoder(torch.nn.Module):
         print(out_vgg.unsqueeze(0).size(), o_ilens)
         xs_pad, ilens, _ = self.enc[1](out_vgg.unsqueeze(0), o_ilens, prev_state=None)
         mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
-
+        aaaaaaaaaaaaaaaaaaa
         return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
 
 def encoder_for(args, idim, subsample):
