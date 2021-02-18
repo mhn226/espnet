@@ -389,10 +389,12 @@ class Encoder(torch.nn.Module):
                 out_vgg = xs_pad_.squeeze(0)
                 o_ilens = ilens_
             else:
-                out_vgg[-1] = xs_pad_.squeeze(0)[0]
-                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[1:]))
+                out_vgg[-3] = xs_pad_.squeeze(0)[0]
+                out_vgg[-2] = xs_pad_.squeeze(0)[1]
+                out_vgg[-1] = xs_pad_.squeeze(0)[2]
+                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
                 print(out_vgg.size())
-                o_ilens += [ilens_[0] - 1]
+                o_ilens += [ilens_[0] - 3]
             offset = g - 10
             g += s
         if (g >= xs_pad.size(1)):
@@ -406,9 +408,11 @@ class Encoder(torch.nn.Module):
             else:
                 #out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
                 #o_ilens += ilens_
-                out_vgg[-1] = xs_pad_.squeeze(0)[0]
-                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[1:]))
-                o_ilens += [ilens_[0] - 1]
+                out_vgg[-3] = xs_pad_.squeeze(0)[0]
+                out_vgg[-2] = xs_pad_.squeeze(0)[1]
+                out_vgg[-1] = xs_pad_.squeeze(0)[2]
+                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
+                o_ilens += [ilens_[0] - 3]
         o_ilens = [sum(o_ilens)]
         print(out_vgg.unsqueeze(0).size(), o_ilens)
         xs_pad, ilens, _ = self.enc[1](out_vgg.unsqueeze(0), o_ilens, prev_state=None)
