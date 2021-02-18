@@ -331,9 +331,7 @@ class SimultaneousSTE2E(object):
         Input is segmented randomly
         """
         segment_step = 0
-        print(x, type(x), len(x))
-        aaaaaaaaaaaaaaaaa
-        segments = rand_segs3(x.size(1), self.k, 10, 100)
+        segments = rand_segs3(len(x), self.k, 10, 100)
         logging.info('rand segments: ' + str(segments))
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
