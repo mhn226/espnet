@@ -262,8 +262,11 @@ def trans_waitk(args):
             while action.get('value', None) != model.dec.eos:
                 # take an action
                 #import os.path
+                random_seg = True
                 if os.path.isfile(textgrid_file):
                     action = se2e.predefined_policy(feat, textgrid_file, num_of_toks)
+                elif random_seg:
+                    action = se2e.random_policy(feat)
                 else:
                     action = se2e.policy(feat)
 
