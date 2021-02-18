@@ -338,16 +338,6 @@ class SimultaneousSTE2E(object):
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
         self.g = segments[0][1]
-        # HN 09/09 - predefined number of tokens
-        #num_of_toks =
-
-
-        #for i, segment in enumerate(segments):
-        #    if segment[i] >= self.g:
-        #        self.g = segment[i]
-        #        segment_step = i
-        #        break
-        # Read and Write policy
         action = None
         while action is None:
             if self.finished:
@@ -372,7 +362,6 @@ class SimultaneousSTE2E(object):
             else:
                 # WRITE
                 self.last_action = WRITE
-                #action = self.write_action()
                 dec_step = len(self.hyp['yseq'])
                 logging.info('dec_step: ' + str(dec_step))
                 #action = self.write_action_until(dec_step=dec_step)
