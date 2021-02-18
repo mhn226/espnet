@@ -176,6 +176,7 @@ class VGG2L(torch.nn.Module):
         # x: utt x 1 (input channel num) x frame x dim
         xs_pad = xs_pad.view(xs_pad.size(0), xs_pad.size(1), self.in_channel,
                              xs_pad.size(2) // self.in_channel).transpose(1, 2)
+        print('#################')
         print(xs_pad.size())
         # NOTE: max_pool1d ?
         xs_pad = F.relu(self.conv1_1(xs_pad))
@@ -184,14 +185,12 @@ class VGG2L(torch.nn.Module):
         print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
         print(xs_pad.size())
-
         xs_pad = F.relu(self.conv2_1(xs_pad))
         print(xs_pad.size())
         xs_pad = F.relu(self.conv2_2(xs_pad))
         print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
         print(xs_pad.size())
-        aaaaaaaaaaaa
         if torch.is_tensor(ilens):
             ilens = ilens.cpu().numpy()
         else:
@@ -391,7 +390,7 @@ class Encoder(torch.nn.Module):
             else:
                 out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
                 o_ilens += ilens_
-            offset = g
+            offset = g - 2
             g += s
         if (g >= xs_pad.size(1)):
             g = xs_pad.size(1)
