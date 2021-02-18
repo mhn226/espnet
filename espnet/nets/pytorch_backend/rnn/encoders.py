@@ -391,6 +391,7 @@ class Encoder(torch.nn.Module):
             else:
                 out_vgg[-1] = xs_pad_.squeeze(0)[0]
                 out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[1:]))
+                print(out_vgg.size())
                 o_ilens += [ilens_[0] - 1]
             offset = g - 2
             g += s
