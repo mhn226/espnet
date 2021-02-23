@@ -11,6 +11,7 @@ from espnet.nets.e2e_asr_common import get_vgg2l_odim
 from espnet.nets.pytorch_backend.nets_utils import make_pad_mask
 from espnet.nets.pytorch_backend.nets_utils import to_device
 
+import math
 
 class RNNP(torch.nn.Module):
     """RNN with projection layer module
@@ -283,11 +284,13 @@ class Encoder(torch.nn.Module):
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
 
+        overlap = math.ceil(math.ceil(overlap / 2) / 2)
+
         current_states = []
         xs_pad, ilens, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
         current_states.append(states)
         if not finished_read:
-            tmp_len = xs_pad.squeeze(0).size(0) - 3
+            tmp_len = xs_pad.squeeze(0).size(0) - overlap
             xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
             ilens = [tmp_len]
         xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
