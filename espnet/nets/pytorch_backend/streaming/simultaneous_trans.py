@@ -431,7 +431,7 @@ class SimultaneousSTE2E(object):
             self.g = segments[segment_step + 1][1]
         #self.g += self.s
 
-    def read_action_ulstm_bk(self, x, segments=None, segment_step=0):
+    def read_action_ulstm(self, x, segments=None, segment_step=0):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
         logging.info('ulstm len_in=' + str(len(x)))
@@ -442,7 +442,9 @@ class SimultaneousSTE2E(object):
 
         x_ = x[self.offset:self.g]
         h, ilens = self._e2e.subsample_frames(x_)
-        h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
+        #h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
+        h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
+                                                                    overlap=10, finished_read=self.finish_read)
         if self.enc_states is None:
             #self.enc_states = torch.empty((0, h.size(2)), device=self.device)
             self.enc_states = h.squeeze(0)
@@ -450,7 +452,7 @@ class SimultaneousSTE2E(object):
         else:
             self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
 
-        self.offset = self.g
+        self.offset = self.g - 10
         if segments == None and not self.finish_read:
             self.g += self.s
         elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read: 
@@ -465,7 +467,7 @@ class SimultaneousSTE2E(object):
             #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
             logging.info('min_len: ' + str(self.min_len))
 
-    def read_action_ulstm(self, x, segments=None, segment_step=0):
+    def read_action_ulstm_bk(self, x, segments=None, segment_step=0):
         # uni-direction lstm
         while (self.g < len(x)):
             logging.info('frame_count=' + str(self.g))
