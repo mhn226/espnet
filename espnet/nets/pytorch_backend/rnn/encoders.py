@@ -270,7 +270,7 @@ class Encoder(torch.nn.Module):
 
         return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
-    def forward(self, xs_pad, ilens, prev_states=None):
+    def forward(self, xs_pad, ilens, prev_states=None, overlap=10, finished_read=False):
         """Encoder forward
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
@@ -283,120 +283,18 @@ class Encoder(torch.nn.Module):
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
 
-        """
         current_states = []
-        for module, prev_state in zip(self.enc, prev_states):
-           xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-           current_states.append(states)
-
-        print(xs_pad.size(), ilens)
-        # make mask to remove bias value in padded part
-        mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
-        """
-
-        """
-        # Test
-        prev_state = None
-        g = 200
-        s = 20
-        offset = 0
-        xs_pad_, ilens_, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
-        print(xs_pad.size(), xs_pad_.size())
-        output = None
-        while (g < xs_pad.size(1)):
-            g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
-            g_ = np.array(
-                np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
-            g_ = g_[0]
-            xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)[offset:g_].transpose(0, 1),
-                                                      [g_-offset], prev_state=prev_state)
-            if output is None:
-                output = xs_pad2.squeeze(0)
-            else:
-                print(output.size(), xs_pad2.size())
-                output = torch.cat((output, xs_pad2.squeeze(0)))
-            offset = g_
-            g += s
-        if (g >= xs_pad.size(1)):
-            #g = xs_pad.size(1)
-            #g_ = np.array(np.ceil(torch.tensor([g]) / 2), dtype=np.int64)
-            #g_ = np.array(
-            #    np.ceil(np.array(g_, dtype=np.float32) / 2), dtype=np.int64).tolist()
-            #g_ = g_[0]
-            g_ = ilens_[0]
-            xs_pad2, ilens2, prev_state = self.enc[1](xs_pad_.transpose(0, 1)[offset:g_].transpose(0, 1),
-                                                      [g_ - offset], prev_state=prev_state)
-            if output is None:
-
-                output = xs_pad2.squeeze(0)
-            else:
-                output = torch.cat((output, xs_pad2.squeeze(0)))
-        mask = to_device(self, make_pad_mask(torch.tensor(ilens_)).unsqueeze(-1))
-        # End test
-
-        current_states = []
-
-
-        #return xs_pad.masked_fill(mask, 0.0), ilens, current_states
-        print(output.size())
-        print(output.unsqueeze(0).size())
-        print(ilens_, ilens2, torch.tensor(ilens_))
-        return output.unsqueeze(0).masked_fill(mask, 0.0), torch.tensor(ilens_), current_states
-        """
+        xs_pad, ilens, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
+        current_states.append(states)
+        if not finished_read:
+            tmp_len = xs_pad.squeeze(0).size(0) - 3
+            xs_pad = xs_pad.squeeze(0)[0:tmp_len]
+            ilens = [tmp_len]
+        xs_pad_, ilens_, states = self.enc[1](xs_pad.unsqueeze(0), ilens, prev_state=prev_states[1])
+        current_states.append(states)
+        mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
 
         """
-        # Test
-        prev_state = None
-        g = 200
-        s = 20
-        offset = 0
-        output = None
-        current_states = []
-        o_ilens = None
-        while (g < xs_pad.size(1)):
-            current_states = []
-            xs_pad_ = xs_pad.transpose(0, 1)[offset:g].transpose(0, 1)
-            ilens_ = torch.tensor([g-offset])
-            for module, prev_state in zip(self.enc, prev_states):
-                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
-                current_states.append(states)
-            prev_states[0] = None
-            prev_states[1] = states
-            if output is None:
-                output = xs_pad_.squeeze(0)
-                o_ilens = ilens_
-            else:
-                output = torch.cat((output, xs_pad_.squeeze(0)))
-                o_ilens += ilens_
-            offset = g
-            g += s
-        if (g >= xs_pad.size(1)):
-            g = xs_pad.size(1)
-            xs_pad_ = xs_pad.transpose(0, 1)[offset:g].transpose(0, 1)
-            ilens_ = torch.tensor([g - offset])
-            for module, prev_state in zip(self.enc, prev_states):
-                xs_pad_, ilens_, states = module(xs_pad_, ilens_, prev_state=prev_state)
-                current_states.append(states)
-            prev_states[0] = None
-            prev_states[1] = states
-            if output is None:
-                output = xs_pad_.squeeze(0)
-                o_ilens = ilens_
-            else:
-                output = torch.cat((output, xs_pad_.squeeze(0)))
-                o_ilens += ilens_
-        mask = to_device(self, make_pad_mask(torch.tensor(o_ilens)).unsqueeze(-1))
-        # End test
-
-        current_states = []
-
-        # return xs_pad.masked_fill(mask, 0.0), ilens, current_states
-        print(output.size())
-        print(output.unsqueeze(0).size())
-        print(ilens_, torch.tensor(ilens_), o_ilens)
-        """
-
-        prev_state = None
         g = 200
         s = 20
         offset = 0
@@ -407,7 +305,7 @@ class Encoder(torch.nn.Module):
         current_states = []
         while (g < xs_pad.size(1)):
             xs_pad_, ilens_, _ = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
-                                                      torch.tensor([g - offset]), prev_state=None)
+                                                      torch.tensor([g - offset]), prev_state=prev_states[0])
             #if out_vgg is None:
             #    out_vgg = xs_pad_.squeeze(0)
             #    o_ilens = ilens_
@@ -421,7 +319,7 @@ class Encoder(torch.nn.Module):
             tmp_len = xs_pad_.squeeze(0).size(0) - 3
             xs_pad_ = xs_pad_.squeeze(0)[0:tmp_len]
             ilens_ = [tmp_len]
-            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_.unsqueeze(0), ilens_, prev_state=prev_state)
+            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_.unsqueeze(0), ilens_, prev_state=prev_states[1])
             print(xs_pad_.size(), ilens_)
             if out_rnn is None:
                 out_rnn = xs_pad_.squeeze(0)
@@ -435,7 +333,7 @@ class Encoder(torch.nn.Module):
         if (g >= xs_pad.size(1)):
             g = xs_pad.size(1)
             xs_pad_, ilens_, _ = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
-                                                      torch.tensor([g - offset]), prev_state=None)
+                                                      torch.tensor([g - offset]), prev_state=prev_states[0])
             #print(xs_pad_.size(), ilens_)
             #if out_vgg is None:
             #    out_vgg = xs_pad_.squeeze(0)
@@ -449,7 +347,7 @@ class Encoder(torch.nn.Module):
             #    out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
             #    o_ilens += [ilens_[0] - 3]
 
-            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_, ilens_, prev_state=prev_state)
+            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_, ilens_, prev_state=prev_states[1])
             print(xs_pad_.size(), ilens_)
             if out_rnn is None:
                 out_rnn = xs_pad_.squeeze(0)
@@ -467,6 +365,8 @@ class Encoder(torch.nn.Module):
         #return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
         mask = to_device(self, make_pad_mask(torch.tensor(o_ilens)).unsqueeze(-1))
         return out_rnn.unsqueeze(0).masked_fill(mask, 0.0), o_ilens, current_states
+        """
+        return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
 
 def encoder_for(args, idim, subsample):
