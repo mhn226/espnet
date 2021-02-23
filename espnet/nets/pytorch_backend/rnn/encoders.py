@@ -450,12 +450,15 @@ class Encoder(torch.nn.Module):
             #    o_ilens += [ilens_[0] - 3]
 
             xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_, ilens_, prev_state=prev_state)
+            print(xs_pad_.size(), ilens_)
             if out_rnn is None:
                 out_rnn = xs_pad_.squeeze(0)
                 o_ilens = ilens_
             else:
                 out_rnn = torch.cat((out_rnn, xs_pad_.squeeze(0)))
                 o_ilens += ilens_
+            print(o_ilens)
+        print(out_rnn.size())
 
         #o_ilens = [sum(o_ilens)]
         #print(out_vgg.unsqueeze(0).size(), o_ilens)
