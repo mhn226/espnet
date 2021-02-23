@@ -429,6 +429,7 @@ class Encoder(torch.nn.Module):
             else:
                 out_rnn = torch.cat((out_rnn, xs_pad_.squeeze(0)))
                 o_ilens += ilens_
+            print(o_ilens)
             offset = g - 10
             g += s
         if (g >= xs_pad.size(1)):
