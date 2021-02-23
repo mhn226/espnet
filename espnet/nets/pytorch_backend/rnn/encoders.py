@@ -248,7 +248,7 @@ class Encoder(torch.nn.Module):
                 self.enc = torch.nn.ModuleList([RNN(idim, elayers, eunits, eprojs, dropout, typ=typ)])
                 logging.info(typ.upper() + ' without projection for encoder')
 
-    def forward(self, xs_pad, ilens, prev_states=None):
+    def forward_org(self, xs_pad, ilens, prev_states=None):
         """Encoder forward
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
         :param torch.Tensor ilens: batch of lengths of input sequences (B)
@@ -270,7 +270,7 @@ class Encoder(torch.nn.Module):
 
         return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
-    def forward_test(self, xs_pad, ilens, prev_states=None):
+    def forward(self, xs_pad, ilens, prev_states=None):
         """Encoder forward
 
         :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
@@ -402,44 +402,67 @@ class Encoder(torch.nn.Module):
         offset = 0
         output = None
         out_vgg = None
+        out_rnn = None
         o_ilens = None
         current_states = []
         while (g < xs_pad.size(1)):
-            xs_pad_, ilens_, prev_state = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
-                                                      torch.tensor([g - offset]), prev_state=prev_state)
-            if out_vgg is None:
-                out_vgg = xs_pad_.squeeze(0)
+            xs_pad_, ilens_, _ = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
+                                                      torch.tensor([g - offset]), prev_state=None)
+            #if out_vgg is None:
+            #    out_vgg = xs_pad_.squeeze(0)
+            #    o_ilens = ilens_
+            #else:
+            #    out_vgg[-3] = xs_pad_.squeeze(0)[0]
+            #    out_vgg[-2] = xs_pad_.squeeze(0)[1]
+            #    out_vgg[-1] = xs_pad_.squeeze(0)[2]
+            #    out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
+            #    print(out_vgg.size())
+            #    o_ilens += [ilens_[0] - 3]
+            tmp_len = xs_pad_.squeeze(0).size(0) - 3
+            xs_pad_ = xs_pad_.squeeze(0)[0:tmp_len]
+            ilens_ = [tmp_len]
+            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_.unsqueeze(0), ilens_, prev_state=prev_state)
+            if out_rnn is None:
+                out_rnn = xs_pad_.squeeze(0)
                 o_ilens = ilens_
             else:
-                out_vgg[-3] = xs_pad_.squeeze(0)[0]
-                out_vgg[-2] = xs_pad_.squeeze(0)[1]
-                out_vgg[-1] = xs_pad_.squeeze(0)[2]
-                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
-                print(out_vgg.size())
-                o_ilens += [ilens_[0] - 3]
+                out_rnn = torch.cat((out_rnn, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
             offset = g - 10
             g += s
         if (g >= xs_pad.size(1)):
             g = xs_pad.size(1)
             xs_pad_, ilens_, prev_state = self.enc[0](xs_pad.transpose(0, 1)[offset:g].transpose(0, 1),
                                                       torch.tensor([g - offset]), prev_state=prev_state)
-            print(xs_pad_.size(), ilens_)
-            if out_vgg is None:
-                out_vgg = xs_pad_.squeeze(0)
+            #print(xs_pad_.size(), ilens_)
+            #if out_vgg is None:
+            #    out_vgg = xs_pad_.squeeze(0)
+            #    o_ilens = ilens_
+            #else:
+            #    #out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
+            #    #o_ilens += ilens_
+            #    out_vgg[-3] = xs_pad_.squeeze(0)[0]
+            #    out_vgg[-2] = xs_pad_.squeeze(0)[1]
+            #    out_vgg[-1] = xs_pad_.squeeze(0)[2]
+            #    out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
+            #    o_ilens += [ilens_[0] - 3]
+
+            xs_pad_, ilens_, prev_state = self.enc[1](xs_pad_.unsqueeze(0), ilens_, prev_state=prev_state)
+            if out_rnn is None:
+                out_rnn = xs_pad_.squeeze(0)
                 o_ilens = ilens_
             else:
-                #out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)))
-                #o_ilens += ilens_
-                out_vgg[-3] = xs_pad_.squeeze(0)[0]
-                out_vgg[-2] = xs_pad_.squeeze(0)[1]
-                out_vgg[-1] = xs_pad_.squeeze(0)[2]
-                out_vgg = torch.cat((out_vgg, xs_pad_.squeeze(0)[3:]))
-                o_ilens += [ilens_[0] - 3]
+                out_rnn = torch.cat((out_rnn, xs_pad_.squeeze(0)))
+                o_ilens += ilens_
+
         o_ilens = [sum(o_ilens)]
         print(out_vgg.unsqueeze(0).size(), o_ilens)
-        xs_pad, ilens, _ = self.enc[1](out_vgg.unsqueeze(0), o_ilens, prev_state=None)
-        mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
-        return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
+        #xs_pad, ilens, _ = self.enc[1](out_vgg.unsqueeze(0), o_ilens, prev_state=None)
+        #mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
+        #return xs_pad.masked_fill(mask, 0.0), o_ilens, current_states
+        mask = to_device(self, make_pad_mask(torch.tensor(o_ilens)).unsqueeze(-1))
+        return out_rnn.masked_fill(mask, 0.0), o_ilens, current_states
+
 
 def encoder_for(args, idim, subsample):
     """Instantiates an encoder module given the program arguments
