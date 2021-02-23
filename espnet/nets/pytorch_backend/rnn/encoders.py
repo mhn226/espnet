@@ -288,9 +288,9 @@ class Encoder(torch.nn.Module):
         current_states.append(states)
         if not finished_read:
             tmp_len = xs_pad.squeeze(0).size(0) - 3
-            xs_pad = xs_pad.squeeze(0)[0:tmp_len]
+            xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
             ilens = [tmp_len]
-        xs_pad, ilens, states = self.enc[1](xs_pad.unsqueeze(0), ilens, prev_state=prev_states[1])
+        xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
         current_states.append(states)
         mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
 
