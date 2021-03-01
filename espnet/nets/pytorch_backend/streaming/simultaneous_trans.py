@@ -442,6 +442,7 @@ class SimultaneousSTE2E(object):
             self.finish_read = True
 
         x_ = x[self.offset:self.g]
+        logging.info('####### len(x_): ' + str(len(x_)))
         h, ilens = self._e2e.subsample_frames(x_)
         #h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
         h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
