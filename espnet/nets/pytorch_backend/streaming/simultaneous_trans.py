@@ -436,7 +436,8 @@ class SimultaneousSTE2E(object):
         logging.info('frame_count=' + str(self.g))
         logging.info('ulstm len_in=' + str(len(x)))
         logging.info('enc_step: ' + str(segment_step))
-        overlap = math.ceil(self.s / 2)
+        #overlap = math.ceil(self.s / 2)
+        overlap = 0
         if (self.g >= len(x)) or (segments is not None and segment_step>=len(segments)-1):
             self.g = len(x)
             self.finish_read = True
