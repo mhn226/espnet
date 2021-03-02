@@ -992,7 +992,11 @@ class E2E(STInterface, torch.nn.Module):
                 ys_pad = ys_pad[:, 1:]  # remove target language ID in the beggining
             else:
                 tgt_lang_ids = None
-            hpad, hlens, _ = self.enc.forward_step_by_step(xs_pad, ilens)
+            # HN 02/03/2021
+            # We might want to train with different k, s, N.
+            # So it's not clear how we should report attention
+            # Temporarily report forward_all
+            hpad, hlens, _ = self.enc.forward_all(xs_pad, ilens)
 
             # 2. Decoder
             att_ws = self.dec.calculate_all_attentions(hpad, hlens, ys_pad, lang_ids=tgt_lang_ids)

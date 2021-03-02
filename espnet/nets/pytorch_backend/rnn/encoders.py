@@ -295,7 +295,7 @@ class Encoder(torch.nn.Module):
 
         return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
-    def forward_step_by_step(self, xs_pad, ilens, prev_states=None, overlap=10, finished_read=False):
+    def forward_all(self, xs_pad, ilens, prev_states=None, overlap=10, finished_read=False):
         """Encoder forward
         #    :param torch.Tensor xs_pad: batch of padded input sequences (B, Tmax, D)
         #    :param torch.Tensor ilens: batch of lengths of input sequences (B)
@@ -307,34 +307,14 @@ class Encoder(torch.nn.Module):
         if prev_states is None:
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
-        print('########### enc: ', xs_pad.size())
-        overlap = math.ceil(math.ceil(overlap / 2) / 2)
-
-        current_states = []
-        xs_pad, ilens, states = self.enc[0](xs_pad, ilens, prev_state=prev_states[0])
-        current_states.append(states)
-        if not finished_read:
-            tmp_len = xs_pad.squeeze(0).size(0) - overlap
-            xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
-            ilens = [tmp_len]
-        xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
-        current_states.append(states)
-        mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
-
-        """
-        if prev_states is None:
-            prev_states = [None] * len(self.enc)
-        assert len(prev_states) == len(self.enc)
 
         current_states = []
         for module, prev_state in zip(self.enc, prev_states):
             xs_pad, ilens, states = module(xs_pad, ilens, prev_state=prev_state)
-            print('x_pad_ encoded', xs_pad.size(), ilens[0])
             current_states.append(states)
 
         # make mask to remove bias value in padded part
         mask = to_device(self, make_pad_mask(ilens).unsqueeze(-1))
-        """
 
         return xs_pad.masked_fill(mask, 0.0), ilens, current_states
 
