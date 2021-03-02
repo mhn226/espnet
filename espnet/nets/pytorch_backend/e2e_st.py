@@ -452,12 +452,12 @@ class E2E(STInterface, torch.nn.Module):
                 #hlens[idx] = hlens[idx] + hlens_[idx]
                 hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
             offset = g - overlap
-            print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
+            #print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
             #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, olength, eys)
             z_all.extend(z_)
             g += s
-            print(len(z_all))
+            #print(len(z_all))
             if len(z_all) >= olength:
                 #z_all = z_all[:olength]
                 break
