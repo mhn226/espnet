@@ -277,7 +277,7 @@ class Encoder(torch.nn.Module):
             #xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
             xs_pad = xs_pad.transpose(0, 1)[0:47].transpose(0, 1)
             print('ddddddddddd ', xs_pad.size(), ilens)
-            ilens = [tmp_len]
+            ilens = [tmp_len] * xs_pad.size(0)
         xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
         current_states.append(states)
         mask = to_device(self, make_pad_mask(torch.tensor(ilens)).unsqueeze(-1))
