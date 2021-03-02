@@ -275,8 +275,8 @@ class Encoder(torch.nn.Module):
             tmp_len = xs_pad.size(1) - overlap
             print('ccccccccccc ', tmp_len)
             #xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
-            xs_pad_ = xs_pad.transpose(1, 2)[0:47].transpose(1, 2)
-            print('ddddddddddd ', xs_pad_.size())
+            xs_pad = xs_pad.transpose(0, 1)[0:47].transpose(0, 1)
+            print('ddddddddddd ', xs_pad.size())
             ilens = [tmp_len]
         xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
         current_states.append(states)
