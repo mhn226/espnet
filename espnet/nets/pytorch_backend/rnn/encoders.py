@@ -264,7 +264,7 @@ class Encoder(torch.nn.Module):
         if prev_states is None:
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
-        print(xs_pad.size())
+        print('########### enc: ', xs_pad.size())
         overlap = math.ceil(math.ceil(overlap / 2) / 2)
 
         current_states = []
