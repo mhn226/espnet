@@ -451,7 +451,7 @@ class E2E(STInterface, torch.nn.Module):
                 hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
                 #hlens[idx] = hlens[idx] + hlens_[idx]
                 hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-                print(hs_pad.size(), ilens)
+                print(hs_pad[0].size(), ilens)
             offset = g - overlap
             #print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
             #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
