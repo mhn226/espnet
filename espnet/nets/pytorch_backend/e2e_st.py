@@ -332,7 +332,7 @@ class E2E(STInterface, torch.nn.Module):
         hlens = [list(map(int, hlens[idx])) for idx in range(self.dec.num_encs)]
         return hs_pad, hlens, finished_read
 
-    def action_read_ulstm(self, xs_pad, ilens, last_enc_states, offset, g, finished_read):
+    def action_read_ulstm(self, xs_pad, ilens, last_enc_states, offset, g, overlap, finished_read):
         # uni-direction lstm
         if g >= torch.max(ilens):
             g = max(ilens)
@@ -343,7 +343,7 @@ class E2E(STInterface, torch.nn.Module):
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         ilens_ = torch.zeros(ilens.size())
         ilens_ = ilens_.new_full(ilens.size(), fill_value=(g-offset))
-        hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states)
+        hs_pad, hlens, last_enc_states = self.enc(xs_pad_, ilens_, last_enc_states, overlap, finished_read)
 
         if self.dec.num_encs == 1:
             hs_pad = [hs_pad]
@@ -442,18 +442,16 @@ class E2E(STInterface, torch.nn.Module):
         hlens = [[0] * batch] * self.dec.num_encs
         last_enc_states = None
         offset = 0
-
         dec_step = 0
-
+        overlap = math.ceil(s / 2)
         while not finished_read:
-            hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens,
-                                                                                     last_enc_states, offset, g,
-                                                                                     finished_read)
+            hs_pad_, hlens_, last_enc_states, finished_read = self.action_read_ulstm(xs_pad, ilens, last_enc_states,
+                                                                                     offset, g, overlap, finished_read)
             for idx in range(self.dec.num_encs):
                 hs_pad[idx] = torch.cat((hs_pad[idx], hs_pad_[idx]), dim=1)
                 #hlens[idx] = hlens[idx] + hlens_[idx]
                 hlens[idx] = [x + y for x, y in zip(hlens[idx], hlens_[idx])]
-            offset = g
+            offset = g - overlap
             print(torch.cuda.memory_allocated() / torch.cuda.max_memory_allocated())
             #hs_pad, hlens, finished_read = self.action_read(xs_pad, ilens, g, finished_read)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all, N, olength, eys)
