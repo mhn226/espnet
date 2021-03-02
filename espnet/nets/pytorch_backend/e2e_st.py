@@ -337,8 +337,9 @@ class E2E(STInterface, torch.nn.Module):
         if g >= torch.max(ilens):
             g = max(ilens)
             finished_read = True
-
+        print('aaaaaaaaaa ', xs_pad.size())
         xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
+        print('bbbbbbbbbb ', xs_pad_.size())
         #xs_pad_, ilens_ = self.subsample_frames(xs_pad_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         ilens_ = torch.zeros(ilens.size())
