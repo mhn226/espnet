@@ -119,7 +119,7 @@ class RNN(torch.nn.Module):
         :rtype: torch.Tensor
         """
         logging.info(self.__class__.__name__ + ' input lengths: ' + str(ilens))
-        print('encccccccccccccccc: ', xs_pad.size(), ilens)
+        #print('encccccccccccccccc: ', xs_pad.size(), ilens)
         xs_pack = pack_padded_sequence(xs_pad, ilens, batch_first=True)
         self.nbrnn.flatten_parameters()
         if prev_state is not None and self.nbrnn.bidirectional:
@@ -178,21 +178,21 @@ class VGG2L(torch.nn.Module):
         # x: utt x 1 (input channel num) x frame x dim
         xs_pad = xs_pad.view(xs_pad.size(0), xs_pad.size(1), self.in_channel,
                              xs_pad.size(2) // self.in_channel).transpose(1, 2)
-        print('#################')
-        print(xs_pad.size())
+        #print('#################')
+        #print(xs_pad.size())
         # NOTE: max_pool1d ?
         xs_pad = F.relu(self.conv1_1(xs_pad))
-        print(xs_pad.size())
+        #print(xs_pad.size())
         xs_pad = F.relu(self.conv1_2(xs_pad))
-        print(xs_pad.size())
+        #print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
-        print(xs_pad.size())
+        #print(xs_pad.size())
         xs_pad = F.relu(self.conv2_1(xs_pad))
-        print(xs_pad.size())
+        #print(xs_pad.size())
         xs_pad = F.relu(self.conv2_2(xs_pad))
-        print(xs_pad.size())
+        #print(xs_pad.size())
         xs_pad = F.max_pool2d(xs_pad, 2, stride=2, ceil_mode=True)
-        print(xs_pad.size())
+        #print(xs_pad.size())
         if torch.is_tensor(ilens):
             ilens = ilens.cpu().numpy()
         else:
@@ -205,7 +205,7 @@ class VGG2L(torch.nn.Module):
         xs_pad = xs_pad.transpose(1, 2)
         xs_pad = xs_pad.contiguous().view(
             xs_pad.size(0), xs_pad.size(1), xs_pad.size(2) * xs_pad.size(3))
-        print(xs_pad.size())
+        #print(xs_pad.size())
         return xs_pad, ilens, None  # no state in this layer
 
 
@@ -264,7 +264,7 @@ class Encoder(torch.nn.Module):
         if prev_states is None:
             prev_states = [None] * len(self.enc)
         assert len(prev_states) == len(self.enc)
-        print('########### enc: ', xs_pad.size())
+        #print('########### enc: ', xs_pad.size())
         overlap = math.ceil(math.ceil(overlap / 2) / 2)
 
         current_states = []
@@ -273,10 +273,10 @@ class Encoder(torch.nn.Module):
         if not finished_read:
             #tmp_len = xs_pad.squeeze(0).size(0) - overlap
             tmp_len = xs_pad.size(1) - overlap
-            print('ccccccccccc ', tmp_len)
+            #print('ccccccccccc ', tmp_len)
             #xs_pad = xs_pad.squeeze(0)[0:tmp_len].unsqueeze(0)
             xs_pad = xs_pad.transpose(0, 1)[0:47].transpose(0, 1)
-            print('ddddddddddd ', xs_pad.size(), ilens)
+            #print('ddddddddddd ', xs_pad.size(), ilens)
             ilens = [tmp_len] * xs_pad.size(0)
         xs_pad, ilens, states = self.enc[1](xs_pad, ilens, prev_state=prev_states[1])
         current_states.append(states)

@@ -337,9 +337,9 @@ class E2E(STInterface, torch.nn.Module):
         if g >= torch.max(ilens):
             g = max(ilens)
             finished_read = True
-        print('aaaaaaaaaa ', xs_pad.size())
+        #print('aaaaaaaaaa ', xs_pad.size())
         xs_pad_ = xs_pad.transpose(1, 2)[:, :, offset:g].transpose(1, 2)
-        print('bbbbbbbbbb ', xs_pad_.size())
+        #print('bbbbbbbbbb ', xs_pad_.size())
         #xs_pad_, ilens_ = self.subsample_frames(xs_pad_)
         #ilens_ = torch.zeros(ilens.size(), dtype=ilens.dtype, device=ilens.device)
         ilens_ = torch.zeros(ilens.size())
@@ -470,15 +470,15 @@ class E2E(STInterface, torch.nn.Module):
 
         # when finished_read
         if finished_read and len(z_all) < olength:
-            print('olength - dec_step: ', olength-dec_step)
+            #print('olength - dec_step: ', olength-dec_step)
             z_list, c_list, att_w, z_ = self.dec(hs_pad, hlens, dec_step, att_idx, z_list, c_list, att_w, z_all,
                                                  olength - dec_step, olength, eys)
             z_all.extend(z_)
-            print(len(z_all), len(z_))
+            #print(len(z_all), len(z_))
         z_all = torch.stack(z_all, dim=1)
-        print(z_all.size(), batch * olength)
+        #print(z_all.size(), batch * olength)
         z_all = z_all.view(batch * olength, -1)
-        print(z_all.size())
+        #print(z_all.size())
         # compute loss
         y_all = self.dec.output(z_all)
         if LooseVersion(torch.__version__) < LooseVersion('1.0'):
