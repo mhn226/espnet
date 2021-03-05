@@ -385,11 +385,11 @@ class SimultaneousSTE2E(object):
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
-                #action = self.read_action_blstm(x)
-                if "b" in self._e2e.etype:
-                    action = self.read_action_blstm(x)
-                else:
-                    action = self.read_action_ulstm(x)
+                action = self.read_action_blstm(x)
+                #if "b" in self._e2e.etype:
+                #    action = self.read_action_blstm(x)
+                #else:
+                #    action = self.read_action_ulstm(x)
 
             else:
                 # WRITE
