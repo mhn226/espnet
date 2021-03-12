@@ -268,6 +268,7 @@ def trans_waitk(args):
                 elif random_seg:
                     action = se2e.random_policy(feat)
                 else:
+                    aaaaaaaaaaaaaaaaaaaaa
                     action = se2e.policy(feat)
 
 
