@@ -301,7 +301,7 @@ class SimultaneousSTE2E(object):
                     action = self.read_action_blstm(x, segments)
                     self.segment_step += 1
                 else:
-                    action = self.read_action_ulstm(x, segments)
+                    action = self.read_action_ulstm_from_segments(x, segments)
                     self.segment_step += 1
 
             else:
@@ -341,7 +341,7 @@ class SimultaneousSTE2E(object):
                     action = self.read_action_blstm(x, segments)
                     self.segment_step += 1
                 else:
-                    action = self.read_action_ulstm(x, segments)
+                    action = self.read_action_ulstm_from_segments(x, segments)
                     self.segment_step += 1
 
             else:
