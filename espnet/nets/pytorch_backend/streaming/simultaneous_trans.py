@@ -318,7 +318,7 @@ class SimultaneousSTE2E(object):
         """
         Input is segmented randomly
         """
-        segments = rand_segs3(len(x), self.k, 5, 10)
+        segments = rand_segs3(len(x), self.k, 10, 200)
         logging.info('rand segments: ' + str(segments))
         #segments = read_textgrid2(segment_file, k=5)
         #self.min_len = num_of_toks
