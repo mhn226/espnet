@@ -242,9 +242,9 @@ def trans_waitk(args):
 
             # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/librispeech/data/' + name + '.TextGrid'
             # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-de/wav/' + name + '.TextGrid'
-            #textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
+            textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
             # textgrid_file = '/gpfswork/rech/nsm/ueb56uf/montreal-forced-aligner/mustc_tst-HE_en-de/wav/' + name + '.TextGrid'
-            textgrid_file = ''
+            #textgrid_file = ''
             # textgrid_file = '/home/getalp/nguyen35/montreal-forced-aligner/mustc_tst-COMMON_en-pt/wav/' + name + '.TextGrid'
             # se2e = SimultaneousSTE2E(e2e=model, recog_args=args, rnnlm=rnnlm)
 
@@ -262,7 +262,7 @@ def trans_waitk(args):
             while action.get('value', None) != model.dec.eos:
                 # take an action
                 #import os.path
-                random_seg = True
+                random_seg = False
                 if os.path.isfile(textgrid_file):
                     action = se2e.predefined_policy(feat, textgrid_file, num_of_toks)
                 elif random_seg:
