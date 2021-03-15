@@ -422,7 +422,7 @@ class SimultaneousSTE2E(object):
         logging.info('ulstm len_in=' + str(len(x)))
         logging.info('enc_step: ' + str(self.segment_step))
         if self.segment_step == 0:
-            overlap = math.ceil(math.ceil(self.g / 2) / 2)
+            overlap = math.ceil(self.g / 2)
         else:
             overlap = math.ceil((segments[self.segment_step][1] - segments[self.segment_step-1][1]) / 2)
         while self.segment_step < (len(segments) - 1) and \
