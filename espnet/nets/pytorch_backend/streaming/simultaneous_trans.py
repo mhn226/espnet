@@ -424,14 +424,14 @@ class SimultaneousSTE2E(object):
         if self.segment_step == 0:
             overlap = 5
         else:
-            overlap = math.ceil(segments[self.segment_step][1] / 2)
+            overlap = math.ceil((segments[self.segment_step][1] - segments[self.segment_step-1][1]) / 2)
         while self.segment_step < (len(segments) - 1) and \
                 (math.ceil(math.ceil(overlap / 2) / 2) >= math.ceil(math.ceil(segments[self.segment_step][1] / 2) / 2)):
             logging.info("Cannot do overlap, wait for more segment to come (read one more segment)")
             self.segment_step += 1
-            overlap = math.ceil(segments[self.segment_step][1] / 2)
+            overlap = math.ceil((segments[self.segment_step][1] - segments[self.segment_step-1][1]) / 2)
             self.g = segments[self.segment_step + 1][1]
-
+        logging.info('overlap: ' + str(overlap))
         if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
             self.g = len(x)
             overlap = 0
