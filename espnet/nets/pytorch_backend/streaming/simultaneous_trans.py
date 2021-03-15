@@ -170,6 +170,7 @@ class SimultaneousSTE2E(object):
         self.max_len = 400
         self.min_len = 0
         self.offset = 0
+        self.segment_step = 0
         #self.all_states = []
         #self.max_len = 1000
 
@@ -277,23 +278,10 @@ class SimultaneousSTE2E(object):
         """
         If a forced-aligment file is available, one could use it
         """
-        segment_step = 0
-        #segments = read_textgrid(segment_file, k=10)
         segments = self.read_textgrid(segment_file)
-        #segments = rand_segs3(segments, self.k, 10, 50)
         logging.info('pref segments: ' + str(segments))
-        #segments = read_textgrid2(segment_file, k=5)
-        #self.min_len = num_of_toks
         self.g = segments[0][1]
-        # HN 09/09 - predefined number of tokens
-        #num_of_toks =
 
-
-        #for i, segment in enumerate(segments):
-        #    if segment[i] >= self.g:
-        #        self.g = segment[i]
-        #        segment_step = i
-        #        break
         # Read and Write policy
         action = None
         while action is None:
@@ -310,11 +298,11 @@ class SimultaneousSTE2E(object):
                 # READ
                 self.last_action = decision
                 if "b" in self._e2e.etype:
-                    action = self.read_action_blstm(x, segments, segment_step)
-                    segment_step += 1
+                    action = self.read_action_blstm(x, segments)
+                    self.segment_step += 1
                 else:
-                    action = self.read_action_ulstm(x, segments, segment_step)
-                    segment_step += 1
+                    action = self.read_action_ulstm(x, segments)
+                    self.segment_step += 1
 
             else:
                 # WRITE
@@ -330,7 +318,6 @@ class SimultaneousSTE2E(object):
         """
         Input is segmented randomly
         """
-        segment_step = 0
         segments = rand_segs3(len(x), self.k, 5, 10)
         logging.info('rand segments: ' + str(segments))
         #segments = read_textgrid2(segment_file, k=5)
@@ -350,14 +337,12 @@ class SimultaneousSTE2E(object):
             if decision == READ and not self.finish_read:
                 # READ
                 self.last_action = decision
-                #action = self.read_action_blstm(x, segments, segment_step)
-                #segment_step += 1
                 if "b" in self._e2e.etype:
-                    action = self.read_action_blstm(x, segments, segment_step)
-                    segment_step += 1
+                    action = self.read_action_blstm(x, segments)
+                    self.segment_step += 1
                 else:
-                    action = self.read_action_ulstm(x, segments, segment_step)
-                    segment_step += 1
+                    action = self.read_action_ulstm(x, segments)
+                    self.segment_step += 1
 
             else:
                 # WRITE
@@ -401,15 +386,15 @@ class SimultaneousSTE2E(object):
 
         return action
 
-    def read_action_blstm(self, x,  segments=None, segment_step=0):
+    def read_action_blstm(self, x,  segments=None):
         # segment_size =  160000  # Wait-until-end
         logging.info('frame_count=' + str(self.g))
         logging.info('len_in=' + str(len(x)))
-        logging.info('enc_step: ' + str(segment_step))
+        logging.info('enc_step: ' + str(self.segment_step))
         #if self.max_len < int(len(x) / 4):
         #    self.max_len = math.floor(len(x) / 2)
         #    self.max_len = math.floor(self.max_len / 2)
-        if (self.g >= len(x)) or (segments is not None and segment_step >= len(segments)-1):
+        if (self.g >= len(x)) or (segments is not None and self.segment_step >= len(segments)-1):
             x_ = x
             self.g = len(x)
             self.finish_read = True
@@ -427,17 +412,58 @@ class SimultaneousSTE2E(object):
             logging.info('min_len: ' + str(self.min_len))
         if segments == None and not self.finish_read:
             self.g += self.s
-        elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read:
-            self.g = segments[segment_step + 1][1]
+        elif segments is not None and self.segment_step < (len(segments)-1) and not self.finish_read:
+            self.g = segments[self.segment_step + 1][1]
         #self.g += self.s
 
-    def read_action_ulstm(self, x, segments=None, segment_step=0):
+    def read_action_ulstm_from_segments(self, x, segments=None):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
         logging.info('ulstm len_in=' + str(len(x)))
-        logging.info('enc_step: ' + str(segment_step))
+        logging.info('enc_step: ' + str(self.segment_step))
+        if self.segment_step == 0:
+            overlap = 5
+        else:
+            overlap = math.ceil(segments[self.segment_step][1] / 2)
+        while self.segment_step < (len(segments) - 1) and \
+                (math.ceil(math.ceil(overlap / 2) / 2) >= math.ceil(math.ceil(segments[self.segment_step][1] / 2) / 2)):
+            logging.info("Cannot do overlap, wait for more segment to come (read one more segment)")
+            self.segment_step += 1
+            overlap = math.ceil(segments[self.segment_step][1] / 2)
+            self.g = segments[self.segment_step + 1][1]
+
+        if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
+            self.g = len(x)
+            overlap = 0
+            self.finish_read = True
+
+        x_ = x[self.offset:self.g]
+        logging.info('####### len(x_): ' + str(len(x_)))
+        h, ilens = self._e2e.subsample_frames(x_)
+        h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
+                                                                    overlap=overlap, finished_read=self.finish_read)
+        if self.enc_states is None:
+            self.enc_states = h.squeeze(0)
+        else:
+            self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
+
+        self.offset = self.g - overlap
+        if segments == None and not self.finish_read:
+            self.g += self.s
+        elif segments is not None and self.segment_step < (len(segments)-1) and not self.finish_read:
+            self.g = segments[self.segment_step + 1][1]
+
+        if self.finish_read:
+            self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
+            logging.info('min_len: ' + str(self.min_len))
+
+    def read_action_ulstm(self, x, segments=None):
+        # uni-direction lstm
+        logging.info('frame_count=' + str(self.g))
+        logging.info('ulstm len_in=' + str(len(x)))
+        logging.info('enc_step: ' + str(self.segment_step))
         overlap = math.ceil(self.s / 2)
-        if (self.g >= len(x)) or (segments is not None and segment_step>=len(segments)-1):
+        if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
             self.g = len(x)
             self.finish_read = True
 
@@ -457,59 +483,8 @@ class SimultaneousSTE2E(object):
         self.offset = self.g - overlap
         if segments == None and not self.finish_read:
             self.g += self.s
-        elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read: 
-            self.g = segments[segment_step + 1][1]
-
-        if self.finish_read:
-            #tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
-            #tmp_h, _, tmp_prev = self._e2e.enc(tmp_h.unsqueeze(0), tmp_ilens, None)
-            #self.enc_states = tmp_h.squeeze(0)
-            # offline mode
-            self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
-            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
-            logging.info('min_len: ' + str(self.min_len))
-
-    def read_action_ulstm_bk(self, x, segments=None, segment_step=0):
-        # uni-direction lstm
-        while (self.g < len(x)):
-            logging.info('frame_count=' + str(self.g))
-            logging.info('ulstm len_in=' + str(len(x)))
-            logging.info('enc_step: ' + str(segment_step))
-
-
-            x_ = x[self.offset:self.g]
-            h, ilens = self._e2e.subsample_frames(x_)
-            h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
-                                                                        overlap=10, finished_read=self.finish_read)
-            if self.enc_states is None:
-                #self.enc_states = torch.empty((0, h.size(2)), device=self.device)
-                self.enc_states = h.squeeze(0)
-            #self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
-            else:
-                self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
-
-            self.offset = self.g - 10
-            if segments == None and not self.finish_read:
-                self.g += self.s
-            elif segments is not None and segment_step < (len(segments)-1) and not self.finish_read:
-                self.g = segments[segment_step + 1][1]
-
-        if (self.g >= len(x)) or (segments is not None and segment_step >= len(segments) - 1):
-            self.g = len(x)
-            self.finish_read = True
-            logging.info('frame_count=' + str(self.g))
-            logging.info('finish read ulstm len_in=' + str(len(x)))
-            logging.info('enc_step: ' + str(segment_step))
-            x_ = x[self.offset:self.g]
-            h, ilens = self._e2e.subsample_frames(x_)
-            h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
-                                                                        overlap=10, finished_read=self.finish_read)
-            if self.enc_states is None:
-                # self.enc_states = torch.empty((0, h.size(2)), device=self.device)
-                self.enc_states = h.squeeze(0)
-            # self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
-            else:
-                self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
+        elif segments is not None and self.segment_step < (len(segments)-1) and not self.finish_read:
+            self.g = segments[self.segment_step + 1][1]
 
         if self.finish_read:
             #tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
