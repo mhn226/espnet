@@ -433,7 +433,7 @@ class SimultaneousSTE2E(object):
             self.g = segments[self.segment_step][1]
         logging.info('segment_step: ' + str(self.segment_step))
         logging.info('segments: ' + str(segments[self.segment_step]))
-        logging.info('g: ' + str(self.g) + '    offset: ' + str(self.offset) + '    overlap: ' + overlap)
+        logging.info('g: ' + str(self.g) + '    offset: ' + str(self.offset) + '    overlap: ' + str(overlap))
         if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
             self.g = len(x)
             overlap = 0
