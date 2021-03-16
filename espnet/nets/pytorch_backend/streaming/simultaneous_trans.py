@@ -229,7 +229,7 @@ class SimultaneousSTE2E(object):
 
     #    return segments
 
-    def read_textgrid_bk(self, segment_file, k=5, sample_rate=16000):
+    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
         segments = []
@@ -274,7 +274,7 @@ class SimultaneousSTE2E(object):
 
         return segments
 
-    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+    def read_textgrid_2(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
         segments = []
