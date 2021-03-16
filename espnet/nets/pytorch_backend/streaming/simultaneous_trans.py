@@ -229,7 +229,7 @@ class SimultaneousSTE2E(object):
 
     #    return segments
 
-    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+    def read_textgrid_bk(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
         segments = []
@@ -254,6 +254,51 @@ class SimultaneousSTE2E(object):
                     count -= 1
                     # offset = grid['words'][count].xmax
                 offset = grid['words'][count].xmin
+                break
+            count += 1
+        if count < len(grid['words']):
+            for i in range(count, len(grid['words'])):
+                w = grid['words'][i]
+                # Convert Praat to Unicode in the label
+                label = w.text.transcode()
+                if label == '':  # space
+                    continue
+                if i == len(grid['words']) - 2 and grid['words'][i + 1].text.transcode() == '':
+                    segments.append([len2numframes(offset), len2numframes(grid['words'][i + 1].xmax)])
+                else:
+                    # segments.append([offset, w.xmax])
+                    segments.append([len2numframes(offset), len2numframes(w.xmax)])
+                offset = w.xmax
+        if len(segments) == 0:
+            segments.append([0, len2numframes(grid.xmax)])
+
+        return segments
+
+    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+        # If a TextGrid file is available, read it
+        grid = textgrids.TextGrid(segment_file)
+        segments = []
+        offset = 0.0
+        count = 0
+
+        while len2numframes(offset) < self.k:
+            if count >= len(grid['words']):
+                break
+            w = grid['words'][count]
+            # count += 1
+            # Convert Praat to Unicode in the label
+            label = w.text.transcode()
+            if label == '':  # space
+                count += 1
+                continue
+            offset = w.xmax
+            if len2numframes(offset) >= self.k:
+                #count -= 1
+                #if count > 0 and grid['words'][count].text.transcode() == '':
+                #    count -= 1
+                #offset = grid['words'][count].xmin
+                segments.append([0, len2numframes(offset)])
+                count += 1
                 break
             count += 1
         if count < len(grid['words']):
