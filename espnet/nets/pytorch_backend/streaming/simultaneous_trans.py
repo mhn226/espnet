@@ -505,6 +505,44 @@ class SimultaneousSTE2E(object):
             self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
             logging.info('min_len: ' + str(self.min_len))
 
+    def read_action_ulstm_bk(self, x, segments=None):
+        # uni-direction lstm
+        logging.info('frame_count=' + str(self.g))
+        logging.info('ulstm len_in=' + str(len(x)))
+        logging.info('enc_step: ' + str(self.segment_step))
+        overlap = math.ceil(self.s / 2)
+        if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
+            self.g = len(x)
+            self.finish_read = True
+
+        x_ = x[self.offset:self.g]
+        logging.info('####### len(x_): ' + str(len(x_)))
+        h, ilens = self._e2e.subsample_frames(x_)
+        #h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state)
+        h, _, self.previous_encoder_recurrent_state = self._e2e.enc(h.unsqueeze(0), ilens, self.previous_encoder_recurrent_state,
+                                                                    overlap=overlap, finished_read=self.finish_read)
+        if self.enc_states is None:
+            #self.enc_states = torch.empty((0, h.size(2)), device=self.device)
+            self.enc_states = h.squeeze(0)
+        #self.enc_states = torch.cat((self.enc_states, h.squeeze(0)), dim=0)
+        else:
+            self.enc_states = torch.cat((self.enc_states, h.squeeze(0)))
+
+        self.offset = self.g - overlap
+        if segments == None and not self.finish_read:
+            self.g += self.s
+        elif segments is not None and self.segment_step < (len(segments)-1) and not self.finish_read:
+            self.g = segments[self.segment_step + 1][1]
+
+        if self.finish_read:
+            #tmp_h, tmp_ilens = self._e2e.subsample_frames(x)
+            #tmp_h, _, tmp_prev = self._e2e.enc(tmp_h.unsqueeze(0), tmp_ilens, None)
+            #self.enc_states = tmp_h.squeeze(0)
+            # offline mode
+            self.max_len = max(1, int(self._trans_args.maxlenratio * self.enc_states.size(0)))
+            #self.min_len = int(self._trans_args.minlenratio * self.enc_states.size(0))
+            logging.info('min_len: ' + str(self.min_len))
+
     def read_action_ulstm(self, x, segments=None):
         # uni-direction lstm
         logging.info('frame_count=' + str(self.g))
@@ -514,6 +552,7 @@ class SimultaneousSTE2E(object):
             overlap = math.ceil(self.g / 2)
         else:
             overlap = math.ceil(self.s / 2)
+        logging.info('g: ' + str(self.g) + '    offset: ' + str(self.offset) + '    overlap: ' + str(overlap))
         if (self.g >= len(x)) or (segments is not None and self.segment_step>=len(segments)-1):
             self.g = len(x)
             self.finish_read = True
