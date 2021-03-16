@@ -229,7 +229,7 @@ class SimultaneousSTE2E(object):
 
     #    return segments
 
-    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
+    def read_textgrid_bk(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
         segments = []
@@ -274,7 +274,7 @@ class SimultaneousSTE2E(object):
 
         return segments
 
-    def read_textgrid_2(self, segment_file, k=5, sample_rate=16000):
+    def read_textgrid(self, segment_file, k=5, sample_rate=16000):
         # If a TextGrid file is available, read it
         grid = textgrids.TextGrid(segment_file)
         segments = []
@@ -288,15 +288,16 @@ class SimultaneousSTE2E(object):
             # count += 1
             # Convert Praat to Unicode in the label
             label = w.text.transcode()
-            if label == '':  # space
-                count += 1
-                continue
+            #if label == '':  # space
+            #    count += 1
+            #    continue
             offset = w.xmax
             if len2numframes(offset) >= self.k:
                 #count -= 1
                 #if count > 0 and grid['words'][count].text.transcode() == '':
                 #    count -= 1
                 #offset = grid['words'][count].xmin
+                #logging.info("aaaaaaaaaaa: " + str(segment_file) + '     offset: ' + str(offset) + '   label: ' + )
                 segments.append([0, len2numframes(offset)])
                 count += 1
                 break
